@@ -14,6 +14,7 @@ public class HPMap {
 
     private String name;
     private String author;
+    private int id;
 
     private List<List<Integer>> redSpawns;
     private List<List<Integer>> blueSpawns;
@@ -23,7 +24,8 @@ public class HPMap {
     private List<Integer> waitingLobby;
 
 
-    public HPMap(String name, String author, List<List<Integer>> red, List<List<Integer>> blue, List<List<Integer>> tnt, File zip, List<Integer> waitingLobby) {
+    public HPMap(int id, String name, String author, List<List<Integer>> red, List<List<Integer>> blue, List<List<Integer>> tnt, File zip, List<Integer> waitingLobby) {
+        this.id = id;
         this.name = name;
         this.redSpawns = red;
         this.blueSpawns = blue;

@@ -41,4 +41,6 @@ public class CacheManager {
             games.get(player.getGameID()).playerLeave(player);
         }
     }
+
+    public static void setMaps(List<HPMap> mapsList){maps = mapsList;}
 }

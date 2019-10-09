@@ -1,0 +1,25 @@
+#_    _       _   _____      _        _
+#| |  | |     | | |  __ \    | |      | |
+#| |__| | ___ | |_| |__) |__ | |_ __ _| |_ ___
+#|  __  |/ _ \| __|  ___/ _ \| __/ _` | __/ _ \
+#| |  | | (_) | |_| |  | (_) | || (_| | || (_) |
+#|_|  |_|\___/ \__|_|   \___/ \__\__,_|\__\___/
+#
+# This is the default configuration file for "HotPotato" by Block2Block.
+#
+# Do not remove any of the different values. They cannot be disabled, however
+# I may introduce a system for them to be disabled in the near future if there
+# is enough demand. If you do remove values, the plugin will just load them in
+# again with their default values. The same occurs when there is an invalid value
+# used.
+#
+# I have worked quite hard on the plugin to make it as configurable as possible. Please
+# rate it on the Spigot page! Every review helps!
+#
+# If you have any questions, bug reports or suggestions, feel free to add it as an
+# issue on the GitHub.
+#
+# Most of the settings/messages are self explanatory, but I have explained the less obvious ones.
+Version: 0.1
+
+

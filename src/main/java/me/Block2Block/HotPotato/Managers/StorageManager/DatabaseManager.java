@@ -1,11 +1,16 @@
 package me.Block2Block.HotPotato.Managers.StorageManager;
 
+import me.Block2Block.HotPotato.Entities.HPMap;
 import me.Block2Block.HotPotato.Main;
 import org.bukkit.Bukkit;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.logging.Level;
 
 public class DatabaseManager {
@@ -28,13 +33,33 @@ public class DatabaseManager {
 
     private void createTables() {
         try {
-            PreparedStatement statement = connection.prepareStatement("CREATE TABLE IF NOT EXISTS hp_maps (`type` tinyint(3) NOT NULL,`x` bigint(64) NOT NULL,`y` bigint(64) NOT NULL,`z` bigint(64) NOT NULL, `checkno` tinyint(64) NULL, `world` varchar(64) NOT NULL, PRIMARY KEY (`type`, x, y, z))");
+            PreparedStatement statement = connection.prepareStatement("CREATE TABLE IF NOT EXISTS hp_maps ( `id` INT NOT NULL AUTO_INCREMENT , `name` TEXT NOT NULL , `red_spawns` TEXT NOT NULL , `blue_spawns` TEXT NOT NULL , `tnt_spawns` TEXT NOT NULL , `zip_name` TEXT NOT NULL , `waiting_lobby` TEXT NOT NULL , `author` TEXT NOT NULL , PRIMARY KEY (`id`)) ENGINE = MyISAM");
             boolean set = statement.execute();
         } catch (Exception e) {
             Bukkit.getLogger().log(Level.SEVERE, "There has been an error creating Database tables. The plugin will be disabled. Stack Trace:");
             e.printStackTrace();
             Bukkit.getServer().getPluginManager().disablePlugin(Main.getInstance());
         }
+    }
+
+    public void loadMaps() {
+        try {
+            PreparedStatement statement = connection.prepareStatement("SELECT * from hp_maps");
+            ResultSet results = statement.executeQuery();
+
+            List<HPMap> maps = new ArrayList<>();
+
+            while (results.next()) {
+
+                List<String> red = Arrays.asList(results.getString(3).split(""));
+
+            }
+        } catch (Exception e) {
+            Bukkit.getLogger().log(Level.SEVERE, "There has been an error loading Database tables. The plugin will be disabled. Stack Trace:");
+            e.printStackTrace();
+            Bukkit.getServer().getPluginManager().disablePlugin(Main.getInstance());
+        }
+
     }
 
 }
