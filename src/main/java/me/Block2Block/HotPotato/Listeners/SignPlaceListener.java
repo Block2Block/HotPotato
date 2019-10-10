@@ -25,6 +25,7 @@ public class SignPlaceListener implements Listener {
 
                     Location locationQueue = sign.getLocation();
                     CacheManager.addLocation(locationQueue, "queue");
+                    Main.getDbManager().addSign(locationQueue, "queue");
 
 
                     break;
@@ -38,6 +39,7 @@ public class SignPlaceListener implements Listener {
 
                     Location locationStats = sign.getLocation();
                     CacheManager.addLocation(locationStats, "stats");
+                    Main.getDbManager().addSign(locationStats, "queue");
 
                     break;
             }

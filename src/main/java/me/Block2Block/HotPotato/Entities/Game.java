@@ -2,7 +2,14 @@ package me.Block2Block.HotPotato.Entities;
 
 import me.Block2Block.HotPotato.Main;
 import org.bukkit.*;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
+import org.bukkit.entity.FallingBlock;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+import org.bukkit.event.entity.EntityChangeBlockEvent;
+import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
@@ -11,7 +18,7 @@ import java.util.List;
 
 import static me.Block2Block.HotPotato.Entities.GameState.*;
 
-public class Game {
+public class Game implements Listener {
 
     private int gameID;
     private GameState state;
@@ -24,6 +31,12 @@ public class Game {
     private List<HotPotatoPlayer> red;
     private int max;
 
+    private int livesBlue;
+    private int livesRed;
+    private Location tntLocation;
+    private FallingBlock fallingBlock;
+    private boolean inAir;
+
 
     public Game(int gameID, HPMap map) {
         state = GameState.WAITING;
@@ -34,6 +47,10 @@ public class Game {
         world = Bukkit.getServer().createWorld(new WorldCreator("HP" + gameID));
 
         max = map.getBlueSpawns().size() + map.getRedSpawns().size();
+
+        Bukkit.getServer().getPluginManager().registerEvents(this, Main.getInstance());
+
+        inAir = false;
     }
 
     public int getGameID() {return gameID;}
@@ -126,7 +143,6 @@ public class Game {
         state = INPROGRESS;
         List<List<Integer>> blueSpawns = map.getBlueSpawns();
         List<List<Integer>> redSpawns = map.getRedSpawns();
-        //TODO: begin start timer.
 
         //Teleporting Players
         int counter = 0;
@@ -140,6 +156,11 @@ public class Game {
             p.getPlayer().teleport(new Location(world, location.get(0),location.get(1),location.get(2),location.get(3),location.get(4)));
             counter++;
         }
+
+        livesBlue = 3;
+        livesRed = 3;
+
+        newTnt();
     }
 
     public void startTimer(int time) {
@@ -198,4 +219,101 @@ public class Game {
             pl.sendMessage(Main.c("HotPotato","&a" + p.getName() + "&r has left the game."));
         }
     }
+
+    private void spawnTNT() {
+        long delay = Main.chooseRan(100,800);
+        int spawn = Main.chooseRan(0, map.getTntSpawns().size()-1);
+
+        Location l = new Location(world, new Double(map.getTntSpawns().get(spawn).get(0)),new Double(map.getTntSpawns().get(spawn).get(1)),new Double(map.getTntSpawns().get(spawn).get(2)),0,0);
+        FallingBlock e = world.spawnFallingBlock(l, Material.TNT, (byte) 0);
+
+        timer = new BukkitRunnable() {
+            @Override
+            public void run() {
+                Location location;
+                if (inAir) {
+                    fallingBlock.remove();
+                    location = fallingBlock.getLocation();
+                } else {
+                    location = tntLocation;
+                    location.getBlock().setType(Material.AIR);
+                }
+
+                location.getWorld().createExplosion(location, 3f, false);
+                location.getWorld().playEffect(location, Effect.EXPLOSION_HUGE, 1);
+
+                //TODO: Check which team it was over and deduct a life.
+                int y = location.getBlockY();
+                while (y >= 0) {
+
+                }
+
+
+                newTnt();
+            }
+        }.runTaskLater(Main.getInstance(), delay);
+    }
+
+    public void newTnt() {
+        timerTime = 10;
+
+        timer = new BukkitRunnable() {
+            @Override
+            public void run() {
+                timerTime--;
+                for (Player p : players) {
+                    p.setLevel(timerTime);
+                }
+                switch (timerTime) {
+                    case 10:
+                    case 5:
+                    case 4:
+                    case 3:
+                    case 2:
+                    case 1:
+                        for (Player p : players) {
+                            p.sendMessage(Main.c("HotPotato","The TNT will spawn in &a" + timerTime + " &rsecond" + (timerTime>1?"s":"") + "."));
+                            p.playSound(p.getLocation(), Sound.NOTE_PLING,100,1);
+                        }
+                        break;
+                    case 0:
+                        timer.cancel();
+                        spawnTNT();
+                }
+
+
+
+            }
+        }.runTaskTimer(Main.getInstance(),0, 20);
+    }
+
+    public void endGame() {
+        PlayerInteractEvent.getHandlerList().unregister(this);
+        EntityChangeBlockEvent.getHandlerList().unregister(this);
+    }
+
+    @EventHandler
+    public void onEntityChange(EntityChangeBlockEvent e) {
+        if (e.getEntity().getLocation().getWorld().getName().equals(world.getName())) {
+            if (e.getEntity().getType() == EntityType.FALLING_BLOCK) {
+                inAir = false;
+                tntLocation = e.getBlock().getLocation();
+            }
+        }
+    }
+
+    @EventHandler
+    public void onPlayerClick(PlayerInteractEvent e) {
+        if (e.getClickedBlock().getLocation().getWorld().getName().equals(world.getName())) {
+            if (e.getClickedBlock().getType() == Material.TNT) {
+                e.getClickedBlock().setType(Material.AIR);
+                FallingBlock e2 = (FallingBlock) e.getClickedBlock().getLocation().getWorld().spawnFallingBlock(e.getClickedBlock().getLocation(), Material.TNT, (byte) 0);
+                e2.setVelocity(e.getPlayer().getLocation().getDirection().setY(0.5).normalize().multiply(1.3));
+                fallingBlock = e2;
+                inAir = true;
+            }
+        }
+    }
+
+
 }

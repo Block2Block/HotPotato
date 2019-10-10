@@ -183,4 +183,6 @@ public class Main extends JavaPlugin {
     public static QueueManager getQueueManager() {
         return queueManager;
     }
+
+    public static DatabaseManager getDbManager() {return dbManager;}
 }

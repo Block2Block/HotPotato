@@ -52,7 +52,7 @@ public class CacheManager {
 
     public static void addLocation(Location signLocation, String type) {signs.put(signLocation,type);}
 
-    public static String isSign(Location signLocation) {if (signs.containsKey(signLocation)) {return signs.get(signLocation);} return null;}
+    public static String isSign(Location signLocation) {if (signs.containsKey(signLocation)) {return signs.get(signLocation);} return "NONE";}
 
     public static void removeSign(Location location) {
         signs.remove(location);
