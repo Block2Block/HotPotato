@@ -31,6 +31,8 @@ public class DatabaseManager {
         db = new SQLite("maps.db");
         connection = db.openConnection();
         createTables();
+        loadMaps();
+        loadSigns();
     }
 
     private void createTables() {

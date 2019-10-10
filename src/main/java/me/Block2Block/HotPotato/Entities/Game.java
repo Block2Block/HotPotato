@@ -124,11 +124,21 @@ public class Game {
 
     public void startGame() {
         state = INPROGRESS;
-        List<List<Integer>> blue = map.getBlueSpawns();
-        List<List<Integer>> red = map.getRedSpawns();
-        //TODO: Teleport players, begin start timer.
-        for (Player p : players) {
+        List<List<Integer>> blueSpawns = map.getBlueSpawns();
+        List<List<Integer>> redSpawns = map.getRedSpawns();
+        //TODO: begin start timer.
 
+        //Teleporting Players
+        int counter = 0;
+        for (HotPotatoPlayer p : blue) {
+            List<Integer> location = blueSpawns.get(counter);
+            p.getPlayer().teleport(new Location(world, location.get(0),location.get(1),location.get(2),location.get(3),location.get(4)));
+            counter++;
+        }
+        for (HotPotatoPlayer p : red) {
+            List<Integer> location = redSpawns.get(counter);
+            p.getPlayer().teleport(new Location(world, location.get(0),location.get(1),location.get(2),location.get(3),location.get(4)));
+            counter++;
         }
     }
 

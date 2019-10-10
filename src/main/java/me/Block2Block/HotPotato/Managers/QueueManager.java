@@ -25,6 +25,12 @@ public class QueueManager {
     public boolean addToQueue(Player p) {
         int count = queue.enQueue(p);
         if (count == 2) {
+            if (CacheManager.getMaps().size() < 1) {
+                for (Player player : queue.deQueue()) {
+                    p.sendMessage(Main.c("Queue Manager","There are currently no maps set up. You have been removed from the queue."));
+                }
+                return false;
+            }
             int map = Main.chooseRan(0,CacheManager.getMaps().size() - 1);
             Game newGame = new Game(counter, CacheManager.getMaps().get(map));
             newGame.join(queue.deQueue());
