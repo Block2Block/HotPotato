@@ -2,6 +2,7 @@ package me.Block2Block.HotPotato;
 
 import me.Block2Block.HotPotato.Managers.CacheManager;
 import me.Block2Block.HotPotato.Managers.QueueManager;
+import me.Block2Block.HotPotato.Managers.StorageManager.DatabaseManager;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.bukkit.Bukkit;
@@ -18,6 +19,7 @@ import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Random;
+import java.util.logging.Level;
 
 public class Main extends JavaPlugin {
 
@@ -27,6 +29,7 @@ public class Main extends JavaPlugin {
     private static FileConfiguration config;
 
     private static QueueManager queueManager;
+    private static DatabaseManager dbManager;
 
     @Override
     public void onEnable() {
@@ -51,7 +54,14 @@ public class Main extends JavaPlugin {
 
         queueManager = new QueueManager();
 
-        //TODO: Loading maps.
+        dbManager = new DatabaseManager();
+        try {
+            dbManager.setup();
+        } catch (Exception e) {
+            Bukkit.getLogger().log(Level.SEVERE, "There has been an error loading the Database. The plugin will be disabled. Stack Trace:");
+            e.printStackTrace();
+            Bukkit.getServer().getPluginManager().disablePlugin(this);
+        }
 
     }
 

@@ -3,6 +3,7 @@ package me.Block2Block.HotPotato.Managers;
 import me.Block2Block.HotPotato.Entities.Game;
 import me.Block2Block.HotPotato.Entities.HPMap;
 import me.Block2Block.HotPotato.Entities.HotPotatoPlayer;
+import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
 import java.util.*;
@@ -15,6 +16,7 @@ public class CacheManager {
     private static Map<UUID, HotPotatoPlayer> players = new HashMap<>();
     private static Map<Integer, Game> games = new HashMap<>();
     private static List<HPMap> maps = new ArrayList<>();
+    private static Map<Location, String> signs = new HashMap<>();
 
 
     public static Map<UUID, HotPotatoPlayer> getPlayers() {
@@ -43,4 +45,20 @@ public class CacheManager {
     }
 
     public static void setMaps(List<HPMap> mapsList){maps = mapsList;}
+
+    public static void addMap(HPMap map) {maps.add(map);}
+
+    public static void removeMap(int index) {maps.remove(index);}
+
+    public static void addLocation(Location signLocation, String type) {signs.put(signLocation,type);}
+
+    public static String isSign(Location signLocation) {if (signs.containsKey(signLocation)) {return signs.get(signLocation);} return null;}
+
+    public static void removeSign(Location location) {
+        signs.remove(location);
+    }
+
+    public static Map<Location, String> getSigns() {
+        return signs;
+    }
 }

@@ -39,4 +39,6 @@ public class Queue {
         return false;
     }
 
+    public int size() {return count;}
+
 }
