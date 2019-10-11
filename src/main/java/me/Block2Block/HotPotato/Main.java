@@ -1,5 +1,7 @@
 package me.Block2Block.HotPotato;
 
+import me.Block2Block.HotPotato.Commands.CommandHotPotato;
+import me.Block2Block.HotPotato.Listeners.*;
 import me.Block2Block.HotPotato.Managers.CacheManager;
 import me.Block2Block.HotPotato.Managers.QueueManager;
 import me.Block2Block.HotPotato.Managers.StorageManager.DatabaseManager;
@@ -62,6 +64,10 @@ public class Main extends JavaPlugin {
             e.printStackTrace();
             Bukkit.getServer().getPluginManager().disablePlugin(this);
         }
+
+        registerListeners(new BlockBreakListener(),new HealthListener(), new HungerListener(), new JoinListener(), new LeaveListener(),new SignClickListener(), new SignPlaceListener());
+
+        getCommand("hotpotato").setExecutor(new CommandHotPotato());
 
     }
 

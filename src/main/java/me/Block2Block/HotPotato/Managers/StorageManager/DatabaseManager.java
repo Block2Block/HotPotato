@@ -1,10 +1,12 @@
 package me.Block2Block.HotPotato.Managers.StorageManager;
 
 import me.Block2Block.HotPotato.Entities.HPMap;
+import me.Block2Block.HotPotato.Entities.PlayerData;
 import me.Block2Block.HotPotato.Main;
 import me.Block2Block.HotPotato.Managers.CacheManager;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.entity.Player;
 import sun.security.util.Cache;
 
 import java.io.File;
@@ -28,7 +30,12 @@ public class DatabaseManager {
     }
 
     public void setup() throws SQLException, ClassNotFoundException {
-        db = new SQLite("maps.db");
+        db = new SQLite("storage.db");
+        if (isMysql) {
+            db = new SQLite("storage.db");
+        } else {
+            db = new SQLite("storage.db");
+        }
         connection = db.openConnection();
         createTables();
         loadMaps();
@@ -41,6 +48,9 @@ public class DatabaseManager {
             boolean set = statement.execute();
 
             statement = connection.prepareStatement("CREATE TABLE IF NOT EXISTS hp_signs ( `id` INT NOT NULL AUTO_INCREMENT , `type` TEXT NOT NULL , `world` TEXT NOT NULL , `x` INT NOT NULL , `y` INT NOT NULL , `z` INT NOT NULL , PRIMARY KEY (`id`)) ENGINE = MyISAM");
+            set = statement.execute();
+
+            statement = connection.prepareStatement("CREATE TABLE IF NOT EXISTS hp_playerdata ( `uuid` VARCHAR(36) NOT NULL , `balance` BIGINT NOT NULL , `kits_unlocked` TEXT NOT NULL , `wins` BIGINT NOT NULL , `games_played` BIGINT NOT NULL , `winningPunch` BIGINT NOT NULL ) ENGINE = MyISAM");
             set = statement.execute();
         } catch (Exception e) {
             Bukkit.getLogger().log(Level.SEVERE, "There has been an error creating Database tables. The plugin will be disabled. Stack Trace:");
@@ -167,6 +177,60 @@ public class DatabaseManager {
             Bukkit.getLogger().info("Unable to remove Sign locations from database. Please try placing the sign again and restarting your server.");
             return false;
         }
+    }
+
+    public List<Integer> getKits(Player p) {
+        try {
+            PreparedStatement statement = connection.prepareStatement("SELECT kits_unlocked FROM hp_playerdata WHERE uuid = '" + p.getUniqueId().toString() + "'");
+            ResultSet set = statement.executeQuery();
+
+            if (set.next()) {
+                String s = set.getString(1);
+                List<String> strings = Arrays.asList(s.split(","));
+
+                List<Integer> kits = new ArrayList<>();
+                for (String s1 : strings) {
+                    kits.add(Integer.parseInt(s1));
+                }
+                return kits;
+            } else {
+                statement = connection.prepareStatement("INSERT INTO hp_playerdata(uuid, balance, kits_unlocked, wins, games_played, winningPunch) VALUES ('" + p.getUniqueId().toString() + "',0,'0',0,0,0)");
+                boolean execute = statement.execute();
+                List<Integer> kits = new ArrayList<>();
+                kits.add(0);
+                return kits;
+            }
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    public void addKit(int id, Player p) {
+        try {
+            PreparedStatement statement = connection.prepareStatement("");
+        } catch (Exception e) {
+
+        }
+    }
+
+    public List<Integer> getStats() {
+        return null;
+    }
+
+    public void removeFromBalance(Player p, int balance) {
+
+    }
+
+     public void addWin(Player p) {
+
+     }
+
+    public void addWinningPunch(Player p) {
+
+    }
+
+    public void addLoss(Player p) {
+
     }
 
 }

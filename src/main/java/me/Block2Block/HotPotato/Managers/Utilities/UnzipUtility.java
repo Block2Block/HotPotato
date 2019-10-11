@@ -1,4 +1,4 @@
-package me.Block2Block.HotPotato.Managers;
+package me.Block2Block.HotPotato.Managers.Utilities;
 
 import java.io.*;
 import java.util.zip.ZipEntry;

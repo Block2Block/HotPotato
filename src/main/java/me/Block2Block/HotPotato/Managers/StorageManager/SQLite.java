@@ -33,7 +33,7 @@ public class SQLite extends Database {
             return connection;
         }
 
-        File dataFolder = new File(Bukkit.getPluginManager().getPlugin("HubParkour").getDataFolder().getAbsolutePath()  + "/maps");
+        File dataFolder = new File(Bukkit.getPluginManager().getPlugin("HubParkour").getDataFolder().getAbsolutePath());
         if (!dataFolder.exists()) {
             dataFolder.mkdirs();
         }

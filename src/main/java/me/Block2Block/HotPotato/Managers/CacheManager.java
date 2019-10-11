@@ -17,6 +17,7 @@ public class CacheManager {
     private static Map<Integer, Game> games = new HashMap<>();
     private static List<HPMap> maps = new ArrayList<>();
     private static Map<Location, String> signs = new HashMap<>();
+    private static Location lobby;
 
 
     public static Map<UUID, HotPotatoPlayer> getPlayers() {
@@ -61,4 +62,8 @@ public class CacheManager {
     public static Map<Location, String> getSigns() {
         return signs;
     }
+
+    public static void setLobby(Location lobbyLocation) {lobby = lobbyLocation;}
+
+    public static Location getLobby() {return lobby;}
 }

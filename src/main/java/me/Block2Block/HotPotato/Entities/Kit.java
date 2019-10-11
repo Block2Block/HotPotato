@@ -1,34 +1,49 @@
 package me.Block2Block.HotPotato.Entities;
 
-public enum Kit {
+import org.bukkit.Material;
+import org.bukkit.inventory.ItemStack;
 
-    DEFAULT(0, "That's hot!",0, "Ouch! The potato is very hot, time for you to catch it!");
+public class Kit {
 
     private int id;
-    private String name;
     private int price;
-    private String description;
+    private String lore;
+    private String name;
+    private ItemStack helmet;
+    private ItemStack chestplate;
+    private ItemStack leggings;
+    private ItemStack boots;
+    private ItemStack[] hotbar = new ItemStack[8];
+    private ItemStack[] inventory = new ItemStack[26];
 
-    Kit(int id, String name, int price, String description) {
+    public Kit(int id, String name, String lore, int price, ItemStack helmet, ItemStack chestplate, ItemStack leggings, ItemStack boots, ItemStack[] hotbar, ItemStack[] inventory) {
         this.id = id;
         this.name = name;
+        this.lore = lore;
         this.price = price;
-        this.description = description;
+        this.helmet = helmet;
+        this.chestplate = chestplate;
+        this.leggings = leggings;
+        this.boots = boots;
+        this.hotbar = hotbar;
+        this.inventory = inventory;
     }
 
-    public String getName() {
-        return name;
-    }
+    public String lore() { return lore; }
 
-    public int getId() {
-        return id;
-    }
+    public String name() { return name; }
 
-    public int getPrice() {
-        return price;
-    }
+    public int price() { return price; }
 
-    public String getDescription() {
-        return description;
-    }
+    public ItemStack helmet() { return helmet; }
+
+    public ItemStack chestplate() { return chestplate; }
+
+    public ItemStack leggings() { return leggings; }
+
+    public ItemStack boots() { return boots; }
+
+    public ItemStack[] i(){ return inventory; }
+
+    public ItemStack[] hb() { return hotbar; }
 }

@@ -1,7 +1,12 @@
 package me.Block2Block.HotPotato.Entities;
 
 import me.Block2Block.HotPotato.Main;
+import me.Block2Block.HotPotato.Managers.CacheManager;
+import me.Block2Block.HotPotato.Managers.PlayerNameManager;
+import me.Block2Block.HotPotato.Managers.ScoreboardManager;
+import org.apache.commons.io.FileUtils;
 import org.bukkit.*;
+import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.FallingBlock;
@@ -13,7 +18,9 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
+import org.bukkit.scoreboard.Scoreboard;
 
+import java.io.File;
 import java.util.List;
 
 import static me.Block2Block.HotPotato.Entities.GameState.*;
@@ -77,7 +84,7 @@ public class Game implements Listener {
         if (this.players.size() == max) {
             Main.getQueueManager().noLongerRecruiting();
             startTimer(20);
-        } else if (this.players.size() == 2) {
+        } else if (this.players.size() >= 2) {
             startTimer(-1);
         }
         for (Player p : players) {
@@ -101,9 +108,24 @@ public class Game implements Listener {
                                 red.add(hp);
                                 hp.setTeam(true);
                                 onTeam = true;
-                                //TODO: Set player name in tab
+                                PlayerNameManager.onGameJoin(hp, gameID);
                                 teamJoined = "Red";
-                                //TODO: Set player's scoreboard
+                                ScoreboardManager.changeLine(p, 15, Main.c(null,"&3» &b&lGame"));
+                                ScoreboardManager.changeLine(p, 14, Main.c(null,"&rHotPotato"));
+                                ScoreboardManager.changeLine(p, 13, Main.c(null," "));
+                                ScoreboardManager.changeLine(p, 12, Main.c(null,"&3» &b&lPlayers"));
+                                ScoreboardManager.changeLineGame(gameID,11, Main.c(null,"&r" + players.size() + "/" + max));
+                                ScoreboardManager.changeLine(p, 10, Main.c(null,"  "));
+                                ScoreboardManager.changeLine(p, 9, Main.c(null,"&3» &b&lTeam"));
+                                ScoreboardManager.changeLine(p, 8, Main.c(null,"&cRed"));
+                                ScoreboardManager.changeLine(p, 7, Main.c(null,"  "));
+                                ScoreboardManager.changeLine(p, 6, Main.c(null,"&3» &b&lKit"));
+                                ScoreboardManager.changeLine(p, 5, Main.c(null,"&r" + kit));
+                                ScoreboardManager.changeLine(p, 4, Main.c(null,"  "));
+                                ScoreboardManager.changeLine(p, 3, Main.c(null,"&3» &b&lMap"));
+                                ScoreboardManager.changeLine(p, 2, Main.c(null,"&r" + map.getName()));
+
+
                                 break;
                             } else {
                                 choose = Main.chooseRan(1, 2);
@@ -119,9 +141,22 @@ public class Game implements Listener {
                                 blue.add(hp);
                                 hp.setTeam(false);
                                 onTeam = true;
-                                //TODO: Set player name in tab
+                                PlayerNameManager.onGameJoin(hp, gameID);
                                 teamJoined = "Blue";
-                                //TODO: Set player's scoreboard
+                                ScoreboardManager.changeLine(p, 15, Main.c(null,"&3» &b&lGame"));
+                                ScoreboardManager.changeLine(p, 14, Main.c(null,"&rHotPotato"));
+                                ScoreboardManager.changeLine(p, 13, Main.c(null," "));
+                                ScoreboardManager.changeLine(p, 12, Main.c(null,"&3» &b&lPlayers"));
+                                ScoreboardManager.changeLineGame(gameID,11, Main.c(null,"&r" + players.size() + "/" + max));
+                                ScoreboardManager.changeLine(p, 10, Main.c(null,"  "));
+                                ScoreboardManager.changeLine(p, 9, Main.c(null,"&3» &b&lTeam"));
+                                ScoreboardManager.changeLine(p, 8, Main.c(null,"&cRed"));
+                                ScoreboardManager.changeLine(p, 7, Main.c(null,"  "));
+                                ScoreboardManager.changeLine(p, 6, Main.c(null,"&3» &b&lKit"));
+                                ScoreboardManager.changeLine(p, 5, Main.c(null,"&r" + kit));
+                                ScoreboardManager.changeLine(p, 4, Main.c(null,"  "));
+                                ScoreboardManager.changeLine(p, 3, Main.c(null,"&3» &b&lMap"));
+                                ScoreboardManager.changeLine(p, 2, Main.c(null,"&r" + map.getName()));
                                 break;
                             } else {
                                 choose = Main.chooseRan(1, 2);
@@ -242,10 +277,40 @@ public class Game implements Listener {
                 location.getWorld().createExplosion(location, 3f, false);
                 location.getWorld().playEffect(location, Effect.EXPLOSION_HUGE, 1);
 
-                //TODO: Check which team it was over and deduct a life.
                 int y = location.getBlockY();
                 while (y >= 0) {
+                    Location blockLocation = new Location(world, location.getBlockX(), y, location.getBlockZ(), 0, 0);
+                    Block block = blockLocation.getBlock();
+                    if ((block.getState().getData().getItemTypeId() + "").split(":").length > 1) {
+                        if ((block.getState().getData().getItemTypeId() + "").split(":")[1].equals("14")) {
+                            //Red lost
+                            livesRed--;
+                            if (livesRed == 0) {
+                                for (Player p : players) {
+                                    p.sendMessage(Main.c("HotPotato","&3&lBlue Wins! &r&cRed &rhas lost all of their lives."));
+                                }
+                                endGame();
+                                return;
+                            }
+                            for (Player p : players) {
+                                p.sendMessage(Main.c("HotPotato","&cRed &rhas lost a life! They now have &a" + livesRed + " &rlives left!"));
+                            }
 
+                        } else if ((block.getState().getData().getItemTypeId() + "").split(":")[1].equals("11")) {
+                            //Blue lost
+                            livesBlue--;
+                            if (livesBlue == 0) {
+                                for (Player p : players) {
+                                    p.sendMessage(Main.c("HotPotato","&c&lRed Wins! &r&3Blue &rhas lost all of their lives."));
+                                }
+                                endGame();
+                                return;
+                            }
+                            for (Player p : players) {
+                                p.sendMessage(Main.c("HotPotato","&3Blue &rhas lost a life! They now have &a" + livesBlue + " &rlives left!"));
+                            }
+                        }
+                    }
                 }
 
 
@@ -288,6 +353,30 @@ public class Game implements Listener {
     }
 
     public void endGame() {
+        for (Player p : players) {
+            p.sendMessage(Main.c("Game Manager","This game has ended. You will be sent back to the lobby in 10 seconds."));
+        }
+        timer = new BukkitRunnable() {
+            @Override
+            public void run() {
+
+                //Teleporting players
+                for (Player p : players) {
+                    p.teleport(CacheManager.getLobby());
+                    p.sendMessage(Main.c("Game Manager","You have been sent back to the lobby."));
+                }
+
+                //Deleting world folder
+                Bukkit.getServer().unloadWorld(world, false);
+                File worldFolder = world.getWorldFolder();
+                try  {
+                    FileUtils.deleteDirectory(worldFolder);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }.runTaskLater(Main.getInstance(), 200);
+
         PlayerInteractEvent.getHandlerList().unregister(this);
         EntityChangeBlockEvent.getHandlerList().unregister(this);
     }

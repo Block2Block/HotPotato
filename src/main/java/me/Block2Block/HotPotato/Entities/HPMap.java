@@ -1,9 +1,8 @@
 package me.Block2Block.HotPotato.Entities;
 
 import me.Block2Block.HotPotato.Main;
-import me.Block2Block.HotPotato.Managers.UnzipUtility;
+import me.Block2Block.HotPotato.Managers.Utilities.UnzipUtility;
 import org.bukkit.Bukkit;
-import org.bukkit.Location;
 
 import java.io.File;
 import java.io.IOException;
