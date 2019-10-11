@@ -1,10 +1,12 @@
 package me.Block2Block.HotPotato.Entities;
 
 import me.Block2Block.HotPotato.Kits.KitLoader;
+import me.Block2Block.HotPotato.Kits.PlayerKit;
 import me.Block2Block.HotPotato.Main;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.scoreboard.*;
 
 import java.util.UUID;
@@ -22,13 +24,12 @@ public class HotPotatoPlayer {
     private PlayerData playerData;
 
 
-    public HotPotatoPlayer(Player player, int gameID, PlayerData pd) {
+    public HotPotatoPlayer(Player player, int gameID) {
         this.player = player;
         this.uuid = player.getUniqueId();
         this.name = player.getName();
         this.gameID = gameID;
         this.kit = KitLoader.get().Default();
-        this.playerData = pd;
         ScoreboardManager scoreboardManager = Bukkit.getScoreboardManager();
         Scoreboard scoreboard = scoreboardManager.getNewScoreboard();
         Team red = scoreboard.registerNewTeam("Red");
@@ -93,10 +94,35 @@ public class HotPotatoPlayer {
     }
 
     public void addKit(int id) {
-
+        playerData.addKit(id);
     }
 
     public PlayerData getPlayerData() {
         return playerData;
+    }
+
+    public void setPlayerData(PlayerData playerData) {
+        this.playerData = playerData;
+    }
+
+    public void applyKit() {
+        player.getInventory().clear();
+        player.getEquipment().setArmorContents(new ItemStack[]{kit.boots(), kit.leggings(), kit.chestplate(), kit.helmet()});
+        for (int i = 0; i<kit.hb().length; i++) {
+            ItemStack s = kit.hb()[i];
+            if (s != null) player.getInventory().setItem(i, s);
+        }
+        for (int i = 0; i<kit.i().length; i++) {
+            ItemStack s = kit.i()[i];
+            if (s != null) player.getInventory().setItem(i+9, s);
+        }
+    }
+
+    public void setKit(int id) {
+        for (PlayerKit pk : PlayerKit.values()) {
+            if (pk.getId() == id) {
+                this.kit = pk.getKit();
+            }
+        }
     }
 }

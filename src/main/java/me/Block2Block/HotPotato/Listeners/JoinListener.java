@@ -10,6 +10,7 @@ public class JoinListener implements Listener {
     @EventHandler
     public void onJoin(PlayerJoinEvent e) {
         PlayerNameManager.onServerJoin(e.getPlayer());
+
     }
 
 }

@@ -28,13 +28,7 @@ public class KitLoader {
                         "&7hot, so you better go;" +
                         "&7catch it!,"
         );
-        kit.helmet(IRON_HELMET, "&7" + kit.name()+"'s Helmet").chestplate(IRON_CHESTPLATE, "&7" + kit.name()+"'s Chestplate")
-                .leggings(IRON_LEGGINGS, "&7" + kit.name()+"'s Leggings").boots(DIAMOND_BOOTS, "&7" + kit.name()+"'s Boots", new Enchant(Enchantment.PROTECTION_FALL, 2));
-        kit.hb(1, IRON_SWORD, 1, "&7" + kit.name()+"'s Broadsword");
-        kit.potion(true, 2, "&c"+kit.name()+"'s Shield Potion", null, 1, new PotionEffect(PotionEffectType.ABSORPTION, 500, 2));
-        kit.hb(9, COOKED_BEEF, 12, "&7" + kit.name()+"'s Beef");
-        kit.hb(3, FISHING_ROD, 1, "&7" + kit.name()+"'s Fishing Rod", new Enchant(Enchantment.DURABILITY, 200));
-        kit.hb(4, COMPASS, 1, "&b&lTracking Compass");
+        kit.hb(0, BAKED_POTATO, 1, "&a&lHot Potato");
         return kit.create();
     }
 

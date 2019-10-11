@@ -19,7 +19,7 @@ public class PlayerData {
 
     public PlayerData(Player p) {
             this.unlockedKits = Main.getDbManager().getKits(p);
-            List<Integer> stats = Main.getDbManager().getStats();
+            List<Integer> stats = Main.getDbManager().getStats(p);
             this.balance = stats.get(0);
             this.wins = stats.get(1);
             this.gamesPlayed = stats.get(2);

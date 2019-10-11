@@ -207,30 +207,74 @@ public class DatabaseManager {
 
     public void addKit(int id, Player p) {
         try {
-            PreparedStatement statement = connection.prepareStatement("");
+            PreparedStatement statement = connection.prepareStatement("UPDATE hp_playerdata SET kits_unlocked = CONCAT(kits_unlocked, '," + id + "') WHERE uuid = '" + p.getUniqueId().toString() + "'");
+            boolean set = statement.execute();
         } catch (Exception e) {
-
+            Bukkit.getLogger().info("Unable to add kits to database. Please try restarting your server.");
         }
     }
 
-    public List<Integer> getStats() {
-        return null;
+    public List<Integer> getStats(Player p) {
+        try {
+            PreparedStatement statement = connection.prepareStatement("SELECT balance,wins,games_played,winning_punch FROM hp_playerdata WHERE uuid = '" + p.getUniqueId().toString() + "'");
+            ResultSet set = statement.executeQuery();
+
+            if (set.next()) {
+                List<Integer> kits = new ArrayList<>();
+                kits.add(set.getInt(1));
+                kits.add(set.getInt(2));
+                kits.add(set.getInt(3));
+                kits.add(set.getInt(4));
+                return kits;
+            } else {
+                statement = connection.prepareStatement("INSERT INTO hp_playerdata(uuid, balance, kits_unlocked, wins, games_played, winningPunch) VALUES ('" + p.getUniqueId().toString() + "',0,'0',0,0,0)");
+                boolean execute = statement.execute();
+                List<Integer> kits = new ArrayList<>();
+                kits.add(0);
+                kits.add(0);
+                kits.add(0);
+                kits.add(0);
+                return kits;
+            }
+        } catch (Exception e) {
+            return null;
+        }
     }
 
     public void removeFromBalance(Player p, int balance) {
-
+        try {
+            PreparedStatement statement = connection.prepareStatement("UPDATE hp_playerdata SET balance = (balance - " + balance + ") WHERE uuid = '" + p.getUniqueId().toString() + "'");
+            boolean set = statement.execute();
+        } catch (Exception e) {
+            Bukkit.getLogger().info("Unable update balances in the database. Please try restarting your server.");
+        }
     }
 
      public void addWin(Player p) {
-
+         try {
+             PreparedStatement statement = connection.prepareStatement("UPDATE hp_playerdata SET (wins = wins + 1), games_played = (games_played + 1) WHERE uuid = '" + p.getUniqueId().toString() + "'");
+             boolean set = statement.execute();
+         } catch (Exception e) {
+             Bukkit.getLogger().info("Unable to remove add kits to database. Please try restarting your server.");
+         }
      }
 
     public void addWinningPunch(Player p) {
-
+        try {
+            PreparedStatement statement = connection.prepareStatement("UPDATE hp_playerdata SET wins = (wins + 1), games_played = (games_played + 1), winning_punch = (winning_punch + 1) WHERE uuid = '" + p.getUniqueId().toString() + "'");
+            boolean set = statement.execute();
+        } catch (Exception e) {
+            Bukkit.getLogger().info("Unable to remove add kits to database. Please try restarting your server.");
+        }
     }
 
     public void addLoss(Player p) {
-
+        try {
+            PreparedStatement statement = connection.prepareStatement("UPDATE hp_playerdata SET games_played = (games_played + 1) WHERE uuid = '" + p.getUniqueId().toString() + "'");
+            boolean set = statement.execute();
+        } catch (Exception e) {
+            Bukkit.getLogger().info("Unable to remove add kits to database. Please try restarting your server.");
+        }
     }
 
 }

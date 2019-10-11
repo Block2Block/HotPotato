@@ -91,7 +91,7 @@ public class Game implements Listener {
             HotPotatoPlayer hp = new HotPotatoPlayer(p, this.gameID);
 
             p.teleport(new Location(world, waitingLobby.get(0), waitingLobby.get(1),waitingLobby.get(2),0,0), PlayerTeleportEvent.TeleportCause.PLUGIN);
-            p.sendMessage(Main.c("Hot Potato","You have joined a game, id: " + this.gameID));
+            p.sendMessage(Main.c("HotPotato","You have joined a game, id: " + this.gameID));
 
             //Assigning a team
             boolean kitChosen = false;
@@ -105,7 +105,6 @@ public class Game implements Listener {
                     case 1:
                         if (red.size() != map.getRedSpawns().size()) {
                             if (blue.size() >= red.size()) {
-                                red.add(hp);
                                 hp.setTeam(true);
                                 onTeam = true;
                                 PlayerNameManager.onGameJoin(hp, gameID);
@@ -138,7 +137,6 @@ public class Game implements Listener {
                     case 2:
                         if (blue.size() != map.getBlueSpawns().size()) {
                             if (red.size() >= blue.size()) {
-                                blue.add(hp);
                                 hp.setTeam(false);
                                 onTeam = true;
                                 PlayerNameManager.onGameJoin(hp, gameID);
@@ -168,7 +166,21 @@ public class Game implements Listener {
                         }
                 }
             }
+            p.sendMessage(Main.c("HotPotato","Loading Player Data..."));
 
+            new BukkitRunnable(){
+                @Override
+                public void run() {
+                    PlayerData pd = new PlayerData(p);
+                    hp.setPlayerData(pd);
+                    if (hp.isRed()) {
+                        red.add(hp);
+                    } else {
+                        blue.add(hp);
+                    }
+                    p.sendMessage(Main.c("HotPotato","Your data has been loaded."));
+                }
+            }.runTaskAsynchronously(Main.getInstance());
         }
 
 
