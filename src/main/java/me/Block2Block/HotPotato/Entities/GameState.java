@@ -4,7 +4,7 @@ public enum GameState {
 
     DEAD(1,"Dead",-1),
     WAITING(2, "Waiting",-1),
-    STARTING(3,"Starting",60),
+    STARTING(3,"Starting",61),
     INPROGRESS(4,"In Progress",-1),
     ENDING(5,"Ending",10);
 
