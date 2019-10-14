@@ -1,7 +1,6 @@
 package me.Block2Block.HotPotato.Entities;
 
 import me.Block2Block.HotPotato.Main;
-import me.Block2Block.HotPotato.Managers.StorageManager.Database;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 

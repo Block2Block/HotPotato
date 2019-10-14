@@ -2,9 +2,21 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="09b0fe40-8a05-433f-97d0-58d254690623" name="Default Changelist" comment="Did some work">
+      <change afterPath="$PROJECT_DIR$/src/main/java/me/Block2Block/HotPotato/Listeners/KitSelectionListener.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/me/Block2Block/HotPotato/Listeners/TeamSelectionListener.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/me/Block2Block/HotPotato/Managers/Utils/InventoryUtil.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/me/Block2Block/HotPotato/Commands/CommandHotPotato.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/Block2Block/HotPotato/Commands/CommandHotPotato.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/me/Block2Block/HotPotato/Entities/GameState.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/Block2Block/HotPotato/Entities/GameState.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/me/Block2Block/HotPotato/Entities/Game.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/Block2Block/HotPotato/Entities/Game.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/me/Block2Block/HotPotato/Entities/HPMap.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/Block2Block/HotPotato/Entities/HPMap.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/me/Block2Block/HotPotato/Entities/PlayerData.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/Block2Block/HotPotato/Entities/PlayerData.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/me/Block2Block/HotPotato/Kits/KitLoader.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/Block2Block/HotPotato/Kits/KitLoader.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/me/Block2Block/HotPotato/Kits/PlayerKit.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/Block2Block/HotPotato/Kits/PlayerKit.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/me/Block2Block/HotPotato/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/Block2Block/HotPotato/Main.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/me/Block2Block/HotPotato/Managers/CacheManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/Block2Block/HotPotato/Managers/CacheManager.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/me/Block2Block/HotPotato/Managers/KitCreator.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/Block2Block/HotPotato/Managers/KitCreator.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/me/Block2Block/HotPotato/Managers/Utilities/ItemUtility.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/Block2Block/HotPotato/Managers/Utils/ItemUtil.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/me/Block2Block/HotPotato/Managers/Utilities/UnzipUtility.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/Block2Block/HotPotato/Managers/Utils/UnzipUtil.java" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -88,6 +100,7 @@
       <workItem from="1570797013852" duration="1000000" />
       <workItem from="1570798042723" duration="4101000" />
       <workItem from="1570899414699" duration="590000" />
+      <workItem from="1571058204789" duration="3662000" />
     </task>
     <task id="LOCAL-00001" summary="Did some work">
       <created>1570748869740</created>

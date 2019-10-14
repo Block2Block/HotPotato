@@ -2,7 +2,7 @@ package me.Block2Block.HotPotato.Managers;
 
 import me.Block2Block.HotPotato.Entities.Enchant;
 import me.Block2Block.HotPotato.Entities.Kit;
-import me.Block2Block.HotPotato.Managers.Utilities.ItemUtility;
+import me.Block2Block.HotPotato.Managers.Utils.ItemUtil;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
@@ -40,7 +40,7 @@ public class KitCreator {
     }
 
     public KitCreator potion(boolean hotbar, int slot, String name, String lore, int amount, PotionEffect... effects) {
-        ItemStack p = ItemUtility.potion(name, amount, lore, effects);
+        ItemStack p = ItemUtil.potion(name, amount, lore, effects);
         if (hotbar) {
             this.hotbar[slot-1] = p;
         } else {
@@ -51,39 +51,39 @@ public class KitCreator {
 
 
     public KitCreator helmet(Material m, String name, String lore, Enchant... enchants) {
-        this.helmet = ItemUtility.ci(m, name, 1, lore, (short)0, enchants);
+        this.helmet = ItemUtil.ci(m, name, 1, lore, (short)0, enchants);
         return this;
     }
     public KitCreator helmet(Material m, String name, Enchant... enchants) {
-        this.helmet = ItemUtility.ci(m, name, 1, null, (short)0, enchants);
+        this.helmet = ItemUtil.ci(m, name, 1, null, (short)0, enchants);
         return this;
     }
     public KitCreator chestplate(Material m, String name, String lore, Enchant... enchants) {
-        this.chestplate = ItemUtility.ci(m, name, 1, lore, (short)0, enchants);
+        this.chestplate = ItemUtil.ci(m, name, 1, lore, (short)0, enchants);
         return this;
     }
     public KitCreator chestplate(Material m, String name, Enchant... enchants) {
-        this.chestplate = ItemUtility.ci(m, name, 1, null, (short)0, enchants);
+        this.chestplate = ItemUtil.ci(m, name, 1, null, (short)0, enchants);
         return this;
     }
     public KitCreator leggings(Material m, String name, String lore, Enchant... enchants) {
-        this.leggings = ItemUtility.ci(m, name, 1, lore, (short)0, enchants);
+        this.leggings = ItemUtil.ci(m, name, 1, lore, (short)0, enchants);
         return this;
     }
     public KitCreator leggings(Material m, String name, Enchant... enchants) {
-        this.leggings = ItemUtility.ci(m, name, 1, null, (short)0, enchants);
+        this.leggings = ItemUtil.ci(m, name, 1, null, (short)0, enchants);
         return this;
     }
     public KitCreator boots(Material m, String name, String lore, Enchant... enchants) {
-        this.boots = ItemUtility.ci(m, name, 1, lore, (short)0, enchants);
+        this.boots = ItemUtil.ci(m, name, 1, lore, (short)0, enchants);
         return this;
     }
     public KitCreator boots(Material m, String name, Enchant... enchants) {
-        this.boots = ItemUtility.ci(m, name, 1, null, (short)0, enchants);
+        this.boots = ItemUtil.ci(m, name, 1, null, (short)0, enchants);
         return this;
     }
     public KitCreator hb(int slot, Material m, int amount, String name, String lore, short data, Enchant... enchants) {
-        this.hotbar[slot-1] = ItemUtility.ci(m, name, amount, lore, data, enchants);
+        this.hotbar[slot-1] = ItemUtil.ci(m, name, amount, lore, data, enchants);
         return this;
     }
     public KitCreator hb(int slot, Material m, int amount, String name, String lore, Enchant... enchants) {
@@ -99,7 +99,7 @@ public class KitCreator {
         return hb(slot, m, 1, enchants);
     }
     public KitCreator i(int slot, Material m, int amount, String name, String lore, short data, Enchant... enchants) {
-        this.inventory[slot-1] = ItemUtility.ci(m, name, amount, lore, data, enchants);
+        this.inventory[slot-1] = ItemUtil.ci(m, name, amount, lore, data, enchants);
         return this;
     }
     public KitCreator i(int slot, Material m, int amount, String name, String lore, Enchant... enchants) {

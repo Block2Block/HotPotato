@@ -18,13 +18,14 @@ public class CacheManager {
     private static List<HPMap> maps = new ArrayList<>();
     private static Map<Location, String> signs = new HashMap<>();
     private static Location lobby;
+    private static List<Player> editMode = new ArrayList<>();
 
 
     public static Map<UUID, HotPotatoPlayer> getPlayers() {
         return players;
     }
 
-    public void addToCache(UUID uuid, HotPotatoPlayer player) {
+    public static void addToCache(UUID uuid, HotPotatoPlayer player) {
         players.put(uuid, player);
     }
 
@@ -66,4 +67,23 @@ public class CacheManager {
     public static void setLobby(Location lobbyLocation) {lobby = lobbyLocation;}
 
     public static Location getLobby() {return lobby;}
+
+    public static List<Player> getEditMode() {
+        return editMode;
+    }
+
+    public static void addEditor(Player p) {
+        editMode.add(p);
+    }
+
+    public static boolean isEditor(Player p) {
+        if (editMode.contains(players)) {
+            return true;
+        }
+        return false;
+    }
+
+    public static void removeEditor(Player p) {
+        editMode.remove(p);
+    }
 }

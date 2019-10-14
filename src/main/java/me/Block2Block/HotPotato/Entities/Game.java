@@ -7,7 +7,6 @@ import me.Block2Block.HotPotato.Managers.ScoreboardManager;
 import org.apache.commons.io.FileUtils;
 import org.bukkit.*;
 import org.bukkit.block.Block;
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.FallingBlock;
 import org.bukkit.entity.Player;
@@ -18,7 +17,6 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
-import org.bukkit.scoreboard.Scoreboard;
 
 import java.io.File;
 import java.util.List;
@@ -89,9 +87,13 @@ public class Game implements Listener {
         }
         for (Player p : players) {
             HotPotatoPlayer hp = new HotPotatoPlayer(p, this.gameID);
+            CacheManager.addToCache(p.getUniqueId(), hp);
 
             p.teleport(new Location(world, waitingLobby.get(0), waitingLobby.get(1),waitingLobby.get(2),0,0), PlayerTeleportEvent.TeleportCause.PLUGIN);
             p.sendMessage(Main.c("HotPotato","You have joined a game, id: " + this.gameID));
+            for (Player p2 : players) {
+                p2.sendMessage(Main.c("HotPotato","&a" + p.getName() + "&r has joined the game."));
+            }
 
             //Assigning a team
             boolean kitChosen = false;
@@ -186,7 +188,7 @@ public class Game implements Listener {
 
     }
 
-    public void startGame() {
+    private void startGame() {
         state = INPROGRESS;
         List<List<Integer>> blueSpawns = map.getBlueSpawns();
         List<List<Integer>> redSpawns = map.getRedSpawns();
@@ -331,7 +333,7 @@ public class Game implements Listener {
         }.runTaskLater(Main.getInstance(), delay);
     }
 
-    public void newTnt() {
+    private void newTnt() {
         timerTime = 10;
 
         timer = new BukkitRunnable() {
@@ -365,6 +367,7 @@ public class Game implements Listener {
     }
 
     public void endGame() {
+        state = ENDING;
         for (Player p : players) {
             p.sendMessage(Main.c("Game Manager","This game has ended. You will be sent back to the lobby in 10 seconds."));
         }

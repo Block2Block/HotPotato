@@ -65,7 +65,7 @@ public class Main extends JavaPlugin {
             Bukkit.getServer().getPluginManager().disablePlugin(this);
         }
 
-        registerListeners(new BlockBreakListener(),new HealthListener(), new HungerListener(), new JoinListener(), new LeaveListener(),new SignClickListener(), new SignPlaceListener());
+        registerListeners(new BlockBreakListener(),new HealthListener(), new HungerListener(), new JoinListener(), new LeaveListener(),new SignClickListener(), new SignPlaceListener(), new KitSelectionListener(), new TeamSelectionListener());
 
         getCommand("hotpotato").setExecutor(new CommandHotPotato());
 

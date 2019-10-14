@@ -1,18 +1,14 @@
 package me.Block2Block.HotPotato.Kits;
 
 import me.Block2Block.HotPotato.Entities.Kit;
-import me.Block2Block.HotPotato.Managers.Utilities.ItemUtility;
 import org.bukkit.Material;
-import org.bukkit.inventory.ItemStack;
-
-import java.util.Arrays;
-import java.util.List;
 
 import static org.bukkit.Material.*;
 
 public enum PlayerKit {
 
-    DEFAULT(0,"That's hot!", KitLoader.get().Default(), 20, BAKED_POTATO);
+    DEFAULT(0,"That's hot!", KitLoader.get().Default(), 20, BAKED_POTATO),
+    POTATOWHACKER(1,"Potato Whacker", KitLoader.get().PotatoWhacker(), 21, STICK);
 
     private int id;
     private String name;

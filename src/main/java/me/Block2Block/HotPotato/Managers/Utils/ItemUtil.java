@@ -1,4 +1,4 @@
-package me.Block2Block.HotPotato.Managers.Utilities;
+package me.Block2Block.HotPotato.Managers.Utils;
 
 import me.Block2Block.HotPotato.Entities.Enchant;
 import me.Block2Block.HotPotato.Main;
@@ -14,7 +14,7 @@ import java.util.Arrays;
 
 import static org.bukkit.Material.POTION;
 
-public class ItemUtility {
+public class ItemUtil {
 
 
     public static ItemStack ci(Material type, String name, int amount, String lore, short data, String skullName, Enchant... enchants) {

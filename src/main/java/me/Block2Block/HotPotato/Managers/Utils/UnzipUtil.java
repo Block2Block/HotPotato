@@ -1,4 +1,4 @@
-package me.Block2Block.HotPotato.Managers.Utilities;
+package me.Block2Block.HotPotato.Managers.Utils;
 
 import java.io.*;
 import java.util.zip.ZipEntry;
@@ -10,7 +10,7 @@ import java.util.zip.ZipInputStream;
  * @author www.codejava.net
  *
  */
-public class UnzipUtility {
+public class UnzipUtil {
 
     /**
      * Size of the buffer to read/write data
