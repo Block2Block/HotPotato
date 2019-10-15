@@ -7,6 +7,7 @@ import me.Block2Block.HotPotato.Main;
 import me.Block2Block.HotPotato.Managers.CacheManager;
 import me.Block2Block.HotPotato.Managers.ScoreboardManager;
 import me.Block2Block.HotPotato.Managers.Utils.InventoryUtil;
+import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -22,6 +23,12 @@ public class KitSelectionListener implements Listener {
     public void onClick(InventoryClickEvent e) {
         if (e.getWhoClicked() instanceof Player) {
             Player p = (Player) e.getWhoClicked();
+            if (e.getClickedInventory().getName() == null) {
+                return;
+            }
+            if (!e.getClickedInventory().getName().equals(InventoryUtil.kitSelection(p).getName()) && !ChatColor.stripColor(e.getClickedInventory().getName()).matches("Purchase [a-zA-Z]+\\?")) {
+                return;
+            }
             List<Integer> kits = CacheManager.getPlayers().get(p.getUniqueId()).getPlayerData().getUnlockedKits();
             if (e.getClickedInventory().getName().equals(InventoryUtil.kitSelection(p).getName())) {
                 e.setCancelled(true);

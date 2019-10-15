@@ -198,11 +198,13 @@ public class Game implements Listener {
         for (HotPotatoPlayer p : blue) {
             List<Integer> location = blueSpawns.get(counter);
             p.getPlayer().teleport(new Location(world, location.get(0),location.get(1),location.get(2),location.get(3),location.get(4)));
+            p.getPlayer().closeInventory();
             counter++;
         }
         for (HotPotatoPlayer p : red) {
             List<Integer> location = redSpawns.get(counter);
             p.getPlayer().teleport(new Location(world, location.get(0),location.get(1),location.get(2),location.get(3),location.get(4)));
+            p.getPlayer().closeInventory();
             counter++;
         }
 
