@@ -2,12 +2,15 @@ package me.Block2Block.HotPotato.Listeners;
 
 import me.Block2Block.HotPotato.Entities.HotPotatoPlayer;
 import me.Block2Block.HotPotato.Managers.CacheManager;
+import me.Block2Block.HotPotato.Managers.Utils.InventoryUtil;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.inventory.ItemStack;
 
 import javax.sql.rowset.CachedRowSet;
 
@@ -20,15 +23,50 @@ public class TeamSelectionListener implements Listener {
             if (e.getClickedInventory().getName() == null) {
                 return;
             }
+            if (e.getClickedInventory().getName() == "") {
+                return;
+            }
             if (!ChatColor.stripColor(e.getClickedInventory().getName()).equals("Team Selection")) {
                 return;
             }
-            e.setCancelled(true);
             HotPotatoPlayer player = CacheManager.getPlayers().get(p.getUniqueId());
-            if (e.getInventory().getItem(e.getSlot()).getItemMeta().getDisplayName() == null) {
+            if (e.getInventory().getItem(e.getSlot()) == null) {
                 return;
             }
             if (e.getInventory().getItem(e.getSlot()).getType() == Material.AIR) {
+                return;
+            }
+
+            if (e.getClickedInventory().getName().equals(ChatColor.stripColor(InventoryUtil.teamSelection((Player) e.getWhoClicked()).getName()))) {
+                ItemStack item = e.getInventory().getItem(e.getSlot());
+                String itemName = ChatColor.stripColor(item.getItemMeta().getDisplayName());
+
+                e.setCancelled(true);
+
+                if (itemName.equals("Red")) {
+                    if (!player.isRed()) {
+                        if (CacheManager.getGames().get(player.getGameID()).getRed().size() < CacheManager.getGames().get(player.getGameID()).getBlue().size()) {
+                            CacheManager.getGames().get(player.getGameID()).addToTeam(player);
+                        } else {
+                            CacheManager.getGames().get(player.getGameID()).queueForTeam(player);
+                        }
+                    } else {
+                        p.playSound(p.getLocation(), Sound.ITEM_BREAK, 100, 2);
+                    }
+                } else if (itemName.equals("Blue")) {
+                    if (player.isRed()) {
+                        if (CacheManager.getGames().get(player.getGameID()).getRed().size() > CacheManager.getGames().get(player.getGameID()).getBlue().size()) {
+                            CacheManager.getGames().get(player.getGameID()).addToTeam(player);
+                        } else {
+                            CacheManager.getGames().get(player.getGameID()).queueForTeam(player);
+                        }
+                    } else {
+                        p.playSound(p.getLocation(), Sound.ITEM_BREAK, 100, 2);
+                    }
+                } else {
+                    return;
+                }
+            } else {
                 return;
             }
 

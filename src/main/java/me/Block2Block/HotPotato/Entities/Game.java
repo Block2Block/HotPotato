@@ -1,5 +1,6 @@
 package me.Block2Block.HotPotato.Entities;
 
+import me.Block2Block.HotPotato.Kits.KitLoader;
 import me.Block2Block.HotPotato.Main;
 import me.Block2Block.HotPotato.Managers.CacheManager;
 import me.Block2Block.HotPotato.Managers.PlayerNameManager;
@@ -19,6 +20,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 
 import static me.Block2Block.HotPotato.Entities.GameState.*;
@@ -28,12 +30,12 @@ public class Game implements Listener {
     private int gameID;
     private GameState state;
     private World world;
-    private List<Player> players;
+    private List<Player> players = new ArrayList<>();
     private int timerTime;
     private BukkitTask timer;
     private HPMap map;
-    private List<HotPotatoPlayer> blue;
-    private List<HotPotatoPlayer> red;
+    private List<HotPotatoPlayer> blue = new ArrayList<>();
+    private List<HotPotatoPlayer> red = new ArrayList<>();
     private int max;
 
     private int livesBlue;
@@ -41,6 +43,9 @@ public class Game implements Listener {
     private Location tntLocation;
     private FallingBlock fallingBlock;
     private boolean inAir;
+
+    private List<Player> queueRed = new ArrayList<>();
+    private List<Player> queueBlue = new ArrayList<>();
 
 
     public Game(int gameID, HPMap map) {
@@ -96,36 +101,38 @@ public class Game implements Listener {
             }
 
             //Assigning a team
-            boolean kitChosen = false;
-            String kit = "None";
+            String kit = KitLoader.get().Default().name();
+            hp.setKit(KitLoader.get().Default());
             int choose = Main.chooseRan(1, 2);
             boolean onTeam = false;
-            String teamJoined = null;
 
             while (!onTeam) {
                 switch (choose) {
                     case 1:
                         if (red.size() != map.getRedSpawns().size()) {
                             if (blue.size() >= red.size()) {
+                                if (queueRed.size() > 0) {
+                                    //If there is a queued user, give them priority.
+                                    Player player = queueRed.remove(0);
+
+                                    HotPotatoPlayer hotplayer = CacheManager.getPlayers().get(player.getUniqueId());
+                                    hotplayer.setTeam(true);
+                                    ScoreboardManager.changeLine(player, 8, Main.c(null,"&cRed"));
+                                    player.sendMessage(Main.c("HotPotato","You have joined &cRed&r team."));
+                                    PlayerNameManager.changeTeam(hotplayer, gameID);
+
+                                    hp.setTeam(false);
+                                    onTeam = true;
+                                    PlayerNameManager.onGameJoin(hp, gameID);
+
+                                    ScoreboardManager.changeLine(p, 8, Main.c(null,"&3Blue"));
+                                    break;
+                                }
                                 hp.setTeam(true);
                                 onTeam = true;
                                 PlayerNameManager.onGameJoin(hp, gameID);
-                                teamJoined = "Red";
-                                ScoreboardManager.changeLine(p, 15, Main.c(null,"&3» &b&lGame"));
-                                ScoreboardManager.changeLine(p, 14, Main.c(null,"&rHotPotato"));
-                                ScoreboardManager.changeLine(p, 13, Main.c(null," "));
-                                ScoreboardManager.changeLine(p, 12, Main.c(null,"&3» &b&lPlayers"));
-                                ScoreboardManager.changeLineGame(gameID,11, Main.c(null,"&r" + players.size() + "/" + max));
-                                ScoreboardManager.changeLine(p, 10, Main.c(null,"  "));
-                                ScoreboardManager.changeLine(p, 9, Main.c(null,"&3» &b&lTeam"));
-                                ScoreboardManager.changeLine(p, 8, Main.c(null,"&cRed"));
-                                ScoreboardManager.changeLine(p, 7, Main.c(null,"  "));
-                                ScoreboardManager.changeLine(p, 6, Main.c(null,"&3» &b&lKit"));
-                                ScoreboardManager.changeLine(p, 5, Main.c(null,"&r" + kit));
-                                ScoreboardManager.changeLine(p, 4, Main.c(null,"  "));
-                                ScoreboardManager.changeLine(p, 3, Main.c(null,"&3» &b&lMap"));
-                                ScoreboardManager.changeLine(p, 2, Main.c(null,"&r" + map.getName()));
 
+                                ScoreboardManager.changeLine(p, 8, Main.c(null,"&cRed"));
 
                                 break;
                             } else {
@@ -139,24 +146,28 @@ public class Game implements Listener {
                     case 2:
                         if (blue.size() != map.getBlueSpawns().size()) {
                             if (red.size() >= blue.size()) {
+                                if (queueBlue.size() > 0) {
+                                    //If there is a queued user, give them priority.
+                                    Player player = queueRed.remove(0);
+
+                                    HotPotatoPlayer hotplayer = CacheManager.getPlayers().get(player.getUniqueId());
+                                    hotplayer.setTeam(false);
+                                    ScoreboardManager.changeLine(player, 8, Main.c(null,"&3Blue"));
+                                    player.sendMessage(Main.c("HotPotato","You have joined &3Blue&r team."));
+                                    PlayerNameManager.changeTeam(hotplayer, gameID);
+
+                                    hp.setTeam(true);
+                                    onTeam = true;
+                                    PlayerNameManager.onGameJoin(hp, gameID);
+
+                                    ScoreboardManager.changeLine(p, 8, Main.c(null,"&cRed"));
+                                    break;
+                                }
+
                                 hp.setTeam(false);
                                 onTeam = true;
                                 PlayerNameManager.onGameJoin(hp, gameID);
-                                teamJoined = "Blue";
-                                ScoreboardManager.changeLine(p, 15, Main.c(null,"&3» &b&lGame"));
-                                ScoreboardManager.changeLine(p, 14, Main.c(null,"&rHotPotato"));
-                                ScoreboardManager.changeLine(p, 13, Main.c(null," "));
-                                ScoreboardManager.changeLine(p, 12, Main.c(null,"&3» &b&lPlayers"));
-                                ScoreboardManager.changeLineGame(gameID,11, Main.c(null,"&r" + players.size() + "/" + max));
-                                ScoreboardManager.changeLine(p, 10, Main.c(null,"  "));
-                                ScoreboardManager.changeLine(p, 9, Main.c(null,"&3» &b&lTeam"));
                                 ScoreboardManager.changeLine(p, 8, Main.c(null,"&cRed"));
-                                ScoreboardManager.changeLine(p, 7, Main.c(null,"  "));
-                                ScoreboardManager.changeLine(p, 6, Main.c(null,"&3» &b&lKit"));
-                                ScoreboardManager.changeLine(p, 5, Main.c(null,"&r" + kit));
-                                ScoreboardManager.changeLine(p, 4, Main.c(null,"  "));
-                                ScoreboardManager.changeLine(p, 3, Main.c(null,"&3» &b&lMap"));
-                                ScoreboardManager.changeLine(p, 2, Main.c(null,"&r" + map.getName()));
                                 break;
                             } else {
                                 choose = Main.chooseRan(1, 2);
@@ -168,6 +179,19 @@ public class Game implements Listener {
                         }
                 }
             }
+            ScoreboardManager.changeLine(p, 15, Main.c(null,"&3» &b&lGame"));
+            ScoreboardManager.changeLine(p, 14, Main.c(null,"&rHotPotato"));
+            ScoreboardManager.changeLine(p, 13, Main.c(null," "));
+            ScoreboardManager.changeLine(p, 12, Main.c(null,"&3» &b&lPlayers"));
+            ScoreboardManager.changeLineGame(gameID,11, Main.c(null,"&r" + players.size() + "/" + max));
+            ScoreboardManager.changeLine(p, 10, Main.c(null,"  "));
+            ScoreboardManager.changeLine(p, 9, Main.c(null,"&3» &b&lTeam"));
+            ScoreboardManager.changeLine(p, 7, Main.c(null,"  "));
+            ScoreboardManager.changeLine(p, 6, Main.c(null,"&3» &b&lKit"));
+            ScoreboardManager.changeLine(p, 5, Main.c(null,"&r" + kit));
+            ScoreboardManager.changeLine(p, 4, Main.c(null,"  "));
+            ScoreboardManager.changeLine(p, 3, Main.c(null,"&3» &b&lMap"));
+            ScoreboardManager.changeLine(p, 2, Main.c(null,"&r" + map.getName()));
             p.sendMessage(Main.c("HotPotato","Loading Player Data..."));
 
             new BukkitRunnable(){
@@ -391,6 +415,8 @@ public class Game implements Listener {
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
+
+                state = DEAD;
             }
         }.runTaskLater(Main.getInstance(), 200);
 
@@ -418,6 +444,32 @@ public class Game implements Listener {
                 fallingBlock = e2;
                 inAir = true;
             }
+        }
+    }
+
+    public void queueForTeam(HotPotatoPlayer p) {
+        if (p.isRed()) {
+            queueBlue.add(p.getPlayer());
+            p.getPlayer().sendMessage(Main.c("HotPotato","You have queued for &3Blue &rteam."));
+        } else {
+            queueRed.add(p.getPlayer());
+            p.getPlayer().sendMessage(Main.c("HotPotato","You have queued for &cRed &rteam."));
+        }
+    }
+
+    public void addToTeam(HotPotatoPlayer p) {
+        if (p.isRed()) {
+            red.remove(p);
+            blue.add(p);
+            p.setTeam(false);
+            p.getPlayer().sendMessage(Main.c("HotPotato","You have joined &3Blue&r team."));
+            ScoreboardManager.changeLine(p.getPlayer(), 8, Main.c(null,"&3Blue"));
+        } else {
+            blue.remove(p);
+            red.add(p);
+            p.setTeam(true);
+            p.getPlayer().sendMessage(Main.c("HotPotato","You have joined &cRed&r team."));
+            ScoreboardManager.changeLine(p.getPlayer(), 8, Main.c(null,"&cRed"));
         }
     }
 

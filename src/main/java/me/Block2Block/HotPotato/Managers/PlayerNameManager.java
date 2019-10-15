@@ -13,28 +13,26 @@ public class PlayerNameManager {
         for (Player p : Bukkit.getOnlinePlayers()) {
             if (CacheManager.getGames().get(gameId).getPlayers().contains(p)) {
 
-                if (CacheManager.getPlayers().get(player.getUuid()).isRed()) {
-                    CacheManager.getPlayers().get(p.getUniqueId()).getScoreboard().getTeam("Red").addPlayer(CacheManager.getPlayers().get(player.getUuid()).getPlayer());
+                if (player.isRed()) {
+                    CacheManager.getPlayers().get(p.getUniqueId()).getScoreboard().getTeam("Red").addPlayer(player.getPlayer());
                 } else {
-                    CacheManager.getPlayers().get(p.getUniqueId()).getScoreboard().getTeam("Blue").addPlayer(CacheManager.getPlayers().get(player.getUuid()).getPlayer());
+                    CacheManager.getPlayers().get(p.getUniqueId()).getScoreboard().getTeam("Blue").addPlayer(player.getPlayer());
                 }
                 if (CacheManager.getPlayers().get(p.getUniqueId()).isRed()) {
-                    CacheManager.getPlayers().get(player.getUuid()).getScoreboard().getTeam("Red").addPlayer(CacheManager.getPlayers().get(p.getUniqueId()).getPlayer());
+                    player.getScoreboard().getTeam("Red").addPlayer(CacheManager.getPlayers().get(p.getUniqueId()).getPlayer());
                 } else {
-                    CacheManager.getPlayers().get(player.getUuid()).getScoreboard().getTeam("Blue").addPlayer(CacheManager.getPlayers().get(p.getUniqueId()).getPlayer());
+                    player.getScoreboard().getTeam("Blue").addPlayer(CacheManager.getPlayers().get(p.getUniqueId()).getPlayer());
                 }
 
-                CacheManager.getPlayers().get(player.getUuid()).getPlayer().setScoreboard(CacheManager.getPlayers().get(player.getUuid()).getScoreboard());
-                CacheManager.getPlayers().get(p.getUniqueId()).getPlayer().setScoreboard(CacheManager.getPlayers().get(p.getUniqueId()).getScoreboard());
             } else {
                 p.hidePlayer(player.getPlayer());
                 player.getPlayer().hidePlayer(p);
             }
         }
         if (CacheManager.getPlayers().get(player.getUuid()).isRed()) {
-            CacheManager.getPlayers().get(player.getUuid()).getScoreboard().getTeam("Red").addPlayer(CacheManager.getPlayers().get(player.getUuid()).getPlayer());
+            player.getScoreboard().getTeam("Red").addPlayer(CacheManager.getPlayers().get(player.getUuid()).getPlayer());
         } else {
-            CacheManager.getPlayers().get(player.getUuid()).getScoreboard().getTeam("Blue").addPlayer(CacheManager.getPlayers().get(player.getUuid()).getPlayer());
+            player.getScoreboard().getTeam("Blue").addPlayer(CacheManager.getPlayers().get(player.getUuid()).getPlayer());
         }
 
     }
@@ -44,6 +42,19 @@ public class PlayerNameManager {
             HotPotatoPlayer player = CacheManager.getPlayers().get(uuid);
             player.getPlayer().hidePlayer(p);
             p.hidePlayer(player.getPlayer());
+        }
+    }
+
+    public static void changeTeam(HotPotatoPlayer player, int gameId) {
+        for (Player p : CacheManager.getGames().get(gameId).getPlayers()) {
+            if (player.isRed()) {
+                CacheManager.getPlayers().get(p.getUniqueId()).getScoreboard().getTeam("Blue").removePlayer(player.getPlayer());
+                CacheManager.getPlayers().get(p.getUniqueId()).getScoreboard().getTeam("Red").addPlayer(player.getPlayer());
+            } else {
+                CacheManager.getPlayers().get(p.getUniqueId()).getScoreboard().getTeam("red").removePlayer(player.getPlayer());
+                CacheManager.getPlayers().get(p.getUniqueId()).getScoreboard().getTeam("Blue").addPlayer(player.getPlayer());
+            }
+
         }
     }
 
