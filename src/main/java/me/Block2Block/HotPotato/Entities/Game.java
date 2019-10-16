@@ -8,12 +8,14 @@ import me.Block2Block.HotPotato.Managers.ScoreboardManager;
 import org.apache.commons.io.FileUtils;
 import org.bukkit.*;
 import org.bukkit.block.Block;
-import org.bukkit.entity.EntityType;
-import org.bukkit.entity.FallingBlock;
-import org.bukkit.entity.Player;
+import org.bukkit.block.Sign;
+import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.Action;
 import org.bukkit.event.entity.EntityChangeBlockEvent;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -30,12 +32,14 @@ public class Game implements Listener {
     private int gameID;
     private GameState state;
     private World world;
-    private List<Player> players = new ArrayList<>();
+    private List<Player> players;
     private int timerTime;
     private BukkitTask timer;
+    private BukkitTask tnttimer;
+    private BukkitTask tntDestroy;
     private HPMap map;
-    private List<HotPotatoPlayer> blue = new ArrayList<>();
-    private List<HotPotatoPlayer> red = new ArrayList<>();
+    private List<HotPotatoPlayer> blue;
+    private List<HotPotatoPlayer> red;
     private int max;
 
     private int livesBlue;
@@ -43,14 +47,21 @@ public class Game implements Listener {
     private Location tntLocation;
     private FallingBlock fallingBlock;
     private boolean inAir;
+    private ArmorStand armorStand;
 
-    private List<Player> queueRed = new ArrayList<>();
-    private List<Player> queueBlue = new ArrayList<>();
+    private List<Player> queueRed;
+    private List<Player> queueBlue;
 
 
     public Game(int gameID, HPMap map) {
         state = GameState.WAITING;
         this.gameID = gameID;
+
+        players = new ArrayList<>();
+        blue = new ArrayList<>();
+        red = new ArrayList<>();
+        queueRed = new ArrayList<>();
+        queueBlue = new ArrayList<>();
 
         this.map = map;
         map.copy(gameID);
@@ -88,7 +99,9 @@ public class Game implements Listener {
             Main.getQueueManager().noLongerRecruiting();
             startTimer(20);
         } else if (this.players.size() >= 2) {
-            startTimer(-1);
+            if (timer == null) {
+                startTimer(-1);
+            }
         }
         for (Player p : players) {
             HotPotatoPlayer hp = new HotPotatoPlayer(p, this.gameID);
@@ -119,20 +132,22 @@ public class Game implements Listener {
                                     hotplayer.setTeam(true);
                                     ScoreboardManager.changeLine(player, 8, Main.c(null,"&cRed"));
                                     player.sendMessage(Main.c("HotPotato","You have joined &cRed&r team."));
-                                    PlayerNameManager.changeTeam(hotplayer, gameID);
+                                    PlayerNameManager.changeTeam(hotplayer, this.gameID);
+                                    blue.remove(hotplayer);
+                                    red.add(hotplayer);
 
                                     hp.setTeam(false);
                                     onTeam = true;
-                                    PlayerNameManager.onGameJoin(hp, gameID);
 
                                     ScoreboardManager.changeLine(p, 8, Main.c(null,"&3Blue"));
+                                    blue.add(hp);
                                     break;
                                 }
                                 hp.setTeam(true);
                                 onTeam = true;
-                                PlayerNameManager.onGameJoin(hp, gameID);
 
                                 ScoreboardManager.changeLine(p, 8, Main.c(null,"&cRed"));
+                                red.add(hp);
 
                                 break;
                             } else {
@@ -155,19 +170,22 @@ public class Game implements Listener {
                                     ScoreboardManager.changeLine(player, 8, Main.c(null,"&3Blue"));
                                     player.sendMessage(Main.c("HotPotato","You have joined &3Blue&r team."));
                                     PlayerNameManager.changeTeam(hotplayer, gameID);
+                                    red.remove(hotplayer);
+                                    blue.add(hotplayer);
+
 
                                     hp.setTeam(true);
                                     onTeam = true;
-                                    PlayerNameManager.onGameJoin(hp, gameID);
+                                    red.add(hp);
 
                                     ScoreboardManager.changeLine(p, 8, Main.c(null,"&cRed"));
                                     break;
                                 }
 
+                                blue.add(hp);
                                 hp.setTeam(false);
                                 onTeam = true;
-                                PlayerNameManager.onGameJoin(hp, gameID);
-                                ScoreboardManager.changeLine(p, 8, Main.c(null,"&cRed"));
+                                ScoreboardManager.changeLine(p, 8, Main.c(null,"&3Blue"));
                                 break;
                             } else {
                                 choose = Main.chooseRan(1, 2);
@@ -183,13 +201,12 @@ public class Game implements Listener {
             ScoreboardManager.changeLine(p, 14, Main.c(null,"&rHotPotato"));
             ScoreboardManager.changeLine(p, 13, Main.c(null," "));
             ScoreboardManager.changeLine(p, 12, Main.c(null,"&3» &b&lPlayers"));
-            ScoreboardManager.changeLineGame(gameID,11, Main.c(null,"&r" + players.size() + "/" + max));
             ScoreboardManager.changeLine(p, 10, Main.c(null,"  "));
             ScoreboardManager.changeLine(p, 9, Main.c(null,"&3» &b&lTeam"));
-            ScoreboardManager.changeLine(p, 7, Main.c(null,"  "));
+            ScoreboardManager.changeLine(p, 7, Main.c(null,"   "));
             ScoreboardManager.changeLine(p, 6, Main.c(null,"&3» &b&lKit"));
             ScoreboardManager.changeLine(p, 5, Main.c(null,"&r" + kit));
-            ScoreboardManager.changeLine(p, 4, Main.c(null,"  "));
+            ScoreboardManager.changeLine(p, 4, Main.c(null,"    "));
             ScoreboardManager.changeLine(p, 3, Main.c(null,"&3» &b&lMap"));
             ScoreboardManager.changeLine(p, 2, Main.c(null,"&r" + map.getName()));
             p.sendMessage(Main.c("HotPotato","Loading Player Data..."));
@@ -199,15 +216,17 @@ public class Game implements Listener {
                 public void run() {
                     PlayerData pd = new PlayerData(p);
                     hp.setPlayerData(pd);
-                    if (hp.isRed()) {
-                        red.add(hp);
-                    } else {
-                        blue.add(hp);
-                    }
                     p.sendMessage(Main.c("HotPotato","Your data has been loaded."));
                 }
             }.runTaskAsynchronously(Main.getInstance());
         }
+
+        ScoreboardManager.changeLineGame(gameID,11, Main.c(null,"&r" + this.players.size() + "/" + max));
+        for (Player p : players) {
+            PlayerNameManager.onGameJoin(CacheManager.getPlayers().get(p.getUniqueId()), this.gameID);
+        }
+
+
 
 
     }
@@ -217,17 +236,24 @@ public class Game implements Listener {
         List<List<Integer>> blueSpawns = map.getBlueSpawns();
         List<List<Integer>> redSpawns = map.getRedSpawns();
 
+        //Changing scoreboard.
+        ScoreboardManager.changeLineGame(gameID, 12, Main.c(null, "&3» &c&lRed Lives"));
+        ScoreboardManager.changeLineGame(gameID, 11, "3 ");
+
+        ScoreboardManager.changeLineGame(gameID, 9, Main.c(null, "&3» &3&lBlue Lives"));
+        ScoreboardManager.changeLineGame(gameID, 8, "3");
+
         //Teleporting Players
         int counter = 0;
         for (HotPotatoPlayer p : blue) {
             List<Integer> location = blueSpawns.get(counter);
-            p.getPlayer().teleport(new Location(world, location.get(0),location.get(1),location.get(2),location.get(3),location.get(4)));
+            p.getPlayer().teleport(new Location(world, location.get(0),location.get(1),location.get(2),0,0));
             p.getPlayer().closeInventory();
             counter++;
         }
         for (HotPotatoPlayer p : red) {
             List<Integer> location = redSpawns.get(counter);
-            p.getPlayer().teleport(new Location(world, location.get(0),location.get(1),location.get(2),location.get(3),location.get(4)));
+            p.getPlayer().teleport(new Location(world, location.get(0),location.get(1),location.get(2),0,0));
             p.getPlayer().closeInventory();
             counter++;
         }
@@ -268,7 +294,6 @@ public class Game implements Listener {
                             break;
                         case 0:
                             startGame();
-                            timer.cancel();
                     }
 
 
@@ -293,6 +318,20 @@ public class Game implements Listener {
         for (Player pl : players) {
             pl.sendMessage(Main.c("HotPotato","&a" + p.getName() + "&r has left the game."));
         }
+
+        if (red.size() == 0) {
+            for (Player p2 : players) {
+                p2.sendMessage(Main.c("HotPotato","&3&lBlue Wins! &rAll of &cRed &rleft."));
+            }
+            endGame();
+            return;
+        } else if (blue.size() == 0) {
+            for (Player p2 : players) {
+                p2.sendMessage(Main.c("HotPotato","&c&lRed Wins! &rAll of &3Blue &rleft."));
+            }
+            endGame();
+            return;
+        }
     }
 
     private void spawnTNT() {
@@ -302,9 +341,17 @@ public class Game implements Listener {
         Location l = new Location(world, new Double(map.getTntSpawns().get(spawn).get(0)),new Double(map.getTntSpawns().get(spawn).get(1)),new Double(map.getTntSpawns().get(spawn).get(2)),0,0);
         FallingBlock e = world.spawnFallingBlock(l, Material.TNT, (byte) 0);
 
-        timer = new BukkitRunnable() {
+        tntDestroy = new BukkitRunnable() {
             @Override
             public void run() {
+                if (timer != null) {
+                    timer.cancel();
+                    timer = null;
+                }
+                if (tnttimer != null) {
+                    tnttimer.cancel();
+                    tnttimer = null;
+                }
                 Location location;
                 if (inAir) {
                     fallingBlock.remove();
@@ -314,15 +361,13 @@ public class Game implements Listener {
                     location.getBlock().setType(Material.AIR);
                 }
 
-                location.getWorld().createExplosion(location, 3f, false);
                 location.getWorld().playEffect(location, Effect.EXPLOSION_HUGE, 1);
 
                 int y = location.getBlockY();
                 while (y >= 0) {
                     Location blockLocation = new Location(world, location.getBlockX(), y, location.getBlockZ(), 0, 0);
                     Block block = blockLocation.getBlock();
-                    if ((block.getState().getData().getItemTypeId() + "").split(":").length > 1) {
-                        if ((block.getState().getData().getItemTypeId() + "").split(":")[1].equals("14")) {
+                        if (block.getData() == (byte) 14) {
                             //Red lost
                             livesRed--;
                             if (livesRed == 0) {
@@ -335,8 +380,10 @@ public class Game implements Listener {
                             for (Player p : players) {
                                 p.sendMessage(Main.c("HotPotato","&cRed &rhas lost a life! They now have &a" + livesRed + " &rlives left!"));
                             }
+                            ScoreboardManager.changeLineGame(gameID, 11, livesRed + " ");
+                            break;
 
-                        } else if ((block.getState().getData().getItemTypeId() + "").split(":")[1].equals("11")) {
+                        } else if (block.getData() == (byte) 11) {
                             //Blue lost
                             livesBlue--;
                             if (livesBlue == 0) {
@@ -346,25 +393,34 @@ public class Game implements Listener {
                                 endGame();
                                 return;
                             }
+
+                            ScoreboardManager.changeLineGame(gameID, 8, livesBlue + "");
+
                             for (Player p : players) {
                                 p.sendMessage(Main.c("HotPotato","&3Blue &rhas lost a life! They now have &a" + livesBlue + " &rlives left!"));
                             }
+                            break;
                         }
-                    }
+                    y--;
                 }
 
-
-                newTnt();
+                if (state != ENDING) {
+                    newTnt();
+                }
             }
         }.runTaskLater(Main.getInstance(), delay);
     }
 
     private void newTnt() {
-        timerTime = 10;
+        timerTime = 11;
 
-        timer = new BukkitRunnable() {
+        tnttimer = new BukkitRunnable() {
             @Override
             public void run() {
+                if (timer != null) {
+                    timer.cancel();
+                    timer = null;
+                }
                 timerTime--;
                 for (Player p : players) {
                     p.setLevel(timerTime);
@@ -382,11 +438,8 @@ public class Game implements Listener {
                         }
                         break;
                     case 0:
-                        timer.cancel();
                         spawnTNT();
                 }
-
-
 
             }
         }.runTaskTimer(Main.getInstance(),0, 20);
@@ -397,6 +450,7 @@ public class Game implements Listener {
         for (Player p : players) {
             p.sendMessage(Main.c("Game Manager","This game has ended. You will be sent back to the lobby in 10 seconds."));
         }
+
         timer = new BukkitRunnable() {
             @Override
             public void run() {
@@ -405,6 +459,11 @@ public class Game implements Listener {
                 for (Player p : players) {
                     p.teleport(CacheManager.getLobby());
                     p.sendMessage(Main.c("Game Manager","You have been sent back to the lobby."));
+                }
+
+                //Clearing scoreboard
+                for (int i = 1;i < 16;i++) {
+                    ScoreboardManager.resetLineGame(gameID,i);
                 }
 
                 //Deleting world folder
@@ -416,12 +475,34 @@ public class Game implements Listener {
                     e.printStackTrace();
                 }
 
+                PlayerNameManager.onGameEnd(players);
+                CacheManager.onGameEnd(players, gameID);
+
+                players = new ArrayList<>();
+                blue = new ArrayList<>();
+                red = new ArrayList<>();
+
+                for (Location loc : CacheManager.getSigns().keySet()) {
+                    if (CacheManager.getSigns().get(loc).equals("stats")) {
+                        Sign sign = (Sign) loc.getBlock().getState();
+                        sign.setLine(1, Main.c(null, "Games Active: &a" + CacheManager.getGames().size()));
+                        sign.setLine(2, Main.c(null, "Players: &a" + CacheManager.getPlayers().size()));
+                        sign.setLine(3, Main.c(null, "Players Queued: &a" + Main.getQueueManager().playersQueued()));
+
+                        sign.update(true);
+                    }
+                }
+
+
+
                 state = DEAD;
             }
         }.runTaskLater(Main.getInstance(), 200);
 
         PlayerInteractEvent.getHandlerList().unregister(this);
         EntityChangeBlockEvent.getHandlerList().unregister(this);
+        EntityDamageByEntityEvent.getHandlerList().unregister(this);
+        PlayerInteractEntityEvent.getHandlerList().unregister(this);
     }
 
     @EventHandler
@@ -430,19 +511,61 @@ public class Game implements Listener {
             if (e.getEntity().getType() == EntityType.FALLING_BLOCK) {
                 inAir = false;
                 tntLocation = e.getBlock().getLocation();
+                armorStand.remove();
+                armorStand = null;
             }
         }
     }
 
     @EventHandler
     public void onPlayerClick(PlayerInteractEvent e) {
+        if (e.getClickedBlock() == null) {
+            return;
+        }
+        if (e.getAction() != Action.LEFT_CLICK_BLOCK && e.getAction() != Action.RIGHT_CLICK_BLOCK) {
+            return;
+        }
         if (e.getClickedBlock().getLocation().getWorld().getName().equals(world.getName())) {
+            if (tntLocation == null && fallingBlock == null) {
+                return;
+            } else if (tntLocation == null) {
+                if (!e.getClickedBlock().getLocation().getBlock().equals(fallingBlock.getLocation().getBlock())) {
+                    return;
+                }
+            } else {
+                if (!e.getClickedBlock().getLocation().getBlock().equals(tntLocation.getBlock())) {
+                    return;
+                }
+            }
             if (e.getClickedBlock().getType() == Material.TNT) {
                 e.getClickedBlock().setType(Material.AIR);
-                FallingBlock e2 = (FallingBlock) e.getClickedBlock().getLocation().getWorld().spawnFallingBlock(e.getClickedBlock().getLocation(), Material.TNT, (byte) 0);
-                e2.setVelocity(e.getPlayer().getLocation().getDirection().setY(0.5).normalize().multiply(1.3));
+                FallingBlock e2 = e.getClickedBlock().getLocation().getWorld().spawnFallingBlock(e.getClickedBlock().getLocation(), Material.TNT, (byte) 0);
+                e2.setVelocity(e.getPlayer().getLocation().getDirection().setY(0.3).normalize().multiply(1.15));
+                ArmorStand armorStand = (ArmorStand) e.getClickedBlock().getLocation().getWorld().spawnEntity(e.getClickedBlock().getLocation(), EntityType.ARMOR_STAND);
+                armorStand.setVisible(false);
+                e2.setPassenger(armorStand);
                 fallingBlock = e2;
                 inAir = true;
+                this.armorStand = armorStand;
+            }
+        }
+    }
+
+    @EventHandler
+    public void onClickMidairLeft(EntityDamageByEntityEvent e) {
+        if (e.getDamager() instanceof Player && e.getEntity() instanceof ArmorStand) {
+            if (e.getEntity().getWorld().getName().equals(fallingBlock.getWorld().getName())) {
+                fallingBlock.setVelocity(e.getDamager().getLocation().getDirection().setY(0.3).normalize().multiply(1.15));
+                e.setCancelled(true);
+            }
+        }
+    }
+
+    @EventHandler
+    public void onClickMidairRight(PlayerInteractEntityEvent e) {
+        if (e.getRightClicked() instanceof FallingBlock) {
+            if (e.getRightClicked().getWorld().getName().equals(fallingBlock.getWorld().getName())) {
+                fallingBlock.setVelocity(e.getPlayer().getLocation().getDirection().setY(0.3).normalize().multiply(1.15));
             }
         }
     }

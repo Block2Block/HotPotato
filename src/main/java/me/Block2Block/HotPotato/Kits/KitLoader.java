@@ -5,7 +5,8 @@ import me.Block2Block.HotPotato.Entities.Kit;
 import me.Block2Block.HotPotato.Managers.KitCreator;
 import org.bukkit.enchantments.Enchantment;
 
-import static org.bukkit.Material.*;
+import static org.bukkit.Material.BAKED_POTATO;
+import static org.bukkit.Material.STICK;
 
 public class KitLoader {
 
@@ -26,7 +27,7 @@ public class KitLoader {
                         "&7hot, so you better go;" +
                         "&7catch it!,"
         );
-        kit.hb(0, BAKED_POTATO, 1, "&a&lHot Potato");
+        kit.hb(1, BAKED_POTATO, 1, "&a&lHot Potato");
         return kit.create();
     }
 
@@ -37,7 +38,7 @@ public class KitLoader {
                         "&7hitting potatoes really far!;" +
                         "&7You can hit the potato further!,"
         );
-        kit.hb(0, STICK, 1, "&a&lHot Potato", new Enchant(Enchantment.KNOCKBACK, 1));
+        kit.hb(1, STICK, 1, "&a&lHot Potato", new Enchant(Enchantment.KNOCKBACK, 1));
         return kit.create();
     }
 

@@ -44,7 +44,7 @@ public class TitleManager {
     {
         try
         {
-            return Class.forName("net.minecraft.server" + Bukkit.getServer().getClass().getPackage().getName().split("\\.")[3] + "." + name);
+            return Class.forName("net.minecraft.server." + Bukkit.getServer().getClass().getPackage().getName().split("\\.")[3] + "." + name);
         }
         catch(ClassNotFoundException ex)
         {

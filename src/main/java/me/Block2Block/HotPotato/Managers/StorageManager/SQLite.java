@@ -1,7 +1,6 @@
 package me.Block2Block.HotPotato.Managers.StorageManager;
 
 import me.Block2Block.HotPotato.Main;
-import org.bukkit.Bukkit;
 
 import java.io.File;
 import java.io.IOException;
@@ -33,7 +32,7 @@ public class SQLite extends Database {
             return connection;
         }
 
-        File dataFolder = new File(Bukkit.getPluginManager().getPlugin("HubParkour").getDataFolder().getAbsolutePath());
+        File dataFolder = new File(Main.getInstance().getDataFolder().getAbsolutePath());
         if (!dataFolder.exists()) {
             dataFolder.mkdirs();
         }

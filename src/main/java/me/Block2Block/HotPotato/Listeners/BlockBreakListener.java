@@ -12,22 +12,22 @@ public class BlockBreakListener implements Listener {
 
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onBreak(BlockBreakEvent e) {
+        if (CacheManager.getPlayers().containsKey(e.getPlayer().getUniqueId())) {
+            e.setCancelled(true);
+        }
         if (e.getBlock().getType() == Material.SIGN_POST||e.getBlock().getType() == Material.WALL_SIGN) {
-            if (CacheManager.getPlayers().containsKey(e.getPlayer().getUniqueId())) {
-                e.setCancelled(true);
-            }
             String type = CacheManager.isSign(e.getBlock().getLocation());
             switch (type) {
                 case "queue":
                 case "stats":
-                    if (e.getPlayer().hasPermission("hotpotato.admin")) {
+                    if (!e.getPlayer().hasPermission("hotpotato.admin")) {
                         e.getPlayer().sendMessage(Main.c("HotPotato","You are not permitted to break HotPotato signs."));
                         e.setCancelled(true);
                         return;
                     }
                     Main.getDbManager().removeSign(e.getBlock().getLocation(),type);
                     CacheManager.removeSign(e.getBlock().getLocation());
-                    e.getPlayer().sendMessage(Main.c("HubParkour","The " + type + " sign has been deleted."));
+                    e.getPlayer().sendMessage(Main.c("HotPotato","The " + type + " sign has been deleted."));
                     break;
                 default:
                     return;

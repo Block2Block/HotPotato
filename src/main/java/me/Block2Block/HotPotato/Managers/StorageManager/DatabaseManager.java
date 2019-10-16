@@ -1,20 +1,20 @@
 package me.Block2Block.HotPotato.Managers.StorageManager;
 
 import me.Block2Block.HotPotato.Entities.HPMap;
-import me.Block2Block.HotPotato.Entities.PlayerData;
 import me.Block2Block.HotPotato.Main;
 import me.Block2Block.HotPotato.Managers.CacheManager;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
-import sun.security.util.Cache;
 
 import java.io.File;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.logging.Level;
 
 public class DatabaseManager {
@@ -44,13 +44,13 @@ public class DatabaseManager {
 
     private void createTables() {
         try {
-            PreparedStatement statement = connection.prepareStatement("CREATE TABLE IF NOT EXISTS hp_maps ( `id` INT NOT NULL AUTO_INCREMENT , `name` TEXT NOT NULL , `red_spawns` TEXT NOT NULL , `blue_spawns` TEXT NOT NULL , `tnt_spawns` TEXT NOT NULL , `zip_name` TEXT NOT NULL , `waiting_lobby` TEXT NOT NULL , `author` TEXT NOT NULL , PRIMARY KEY (`id`)) ENGINE = MyISAM");
+            PreparedStatement statement = connection.prepareStatement("CREATE TABLE IF NOT EXISTS hp_maps ( `id` INTEGER PRIMARY KEY AUTOINCREMENT , `name` TEXT NOT NULL , `red_spawns` TEXT NOT NULL , `blue_spawns` TEXT NOT NULL , `tnt_spawns` TEXT NOT NULL , `zip_name` TEXT NOT NULL , `waiting_lobby` TEXT NOT NULL , `author` TEXT NOT NULL)");
             boolean set = statement.execute();
 
-            statement = connection.prepareStatement("CREATE TABLE IF NOT EXISTS hp_signs ( `id` INT NOT NULL AUTO_INCREMENT , `type` TEXT NOT NULL , `world` TEXT NOT NULL , `x` INT NOT NULL , `y` INT NOT NULL , `z` INT NOT NULL , PRIMARY KEY (`id`)) ENGINE = MyISAM");
+            statement = connection.prepareStatement("CREATE TABLE IF NOT EXISTS hp_signs ( `id` INTEGER PRIMARY KEY AUTOINCREMENT, `type` TEXT NOT NULL , `world` TEXT NOT NULL , `x` INTEGER NOT NULL , `y` INTEGER NOT NULL , `z` INTEGER NOT NULL)");
             set = statement.execute();
 
-            statement = connection.prepareStatement("CREATE TABLE IF NOT EXISTS hp_playerdata ( `uuid` VARCHAR(36) NOT NULL , `balance` BIGINT NOT NULL , `kits_unlocked` TEXT NOT NULL , `wins` BIGINT NOT NULL , `games_played` BIGINT NOT NULL , `winningPunch` BIGINT NOT NULL ) ENGINE = MyISAM");
+            statement = connection.prepareStatement("CREATE TABLE IF NOT EXISTS hp_playerdata ( `uuid` VARCHAR(36) NOT NULL , `balance` INTEGER NOT NULL , `kits_unlocked` TEXT NOT NULL , `wins` INTEGER NOT NULL , `games_played` INTEGER NOT NULL , `winning_punch` INTEGER NOT NULL )");
             set = statement.execute();
         } catch (Exception e) {
             Bukkit.getLogger().log(Level.SEVERE, "There has been an error creating Database tables. The plugin will be disabled. Stack Trace:");
@@ -102,7 +102,7 @@ public class DatabaseManager {
                 List<String> tnt = Arrays.asList(results.getString(5).split(";"));
                 List<List<Integer>> tntSpawns = new ArrayList<>();
 
-                for (String s : blue) {
+                for (String s : tnt) {
                     List<Integer> location = new ArrayList<>();
                     List<String> strings = Arrays.asList(s.split(","));
                     for (String s1 : strings) {
@@ -115,10 +115,12 @@ public class DatabaseManager {
 
                 //Getting the world ZIP.
                 String zipName = results.getString(6);
-                File zip = new File(Bukkit.getPluginManager().getPlugin("HubParkour").getDataFolder().getAbsolutePath()  + "/maps", zipName + ".zip");
+                File dataFolder = new File(Main.getInstance().getDataFolder().getAbsolutePath() + "/maps");
+                File zip = new File(dataFolder, zipName + ".zip");
 
                 if (!zip.exists()) {
                     Bukkit.getLogger().info("The map " + results.getString(2) + "'s ZIP is missing. Please ZIP the world folder (with the world files in the root of the directory) and place it in this folder. This map will not be included in the map rotation until this is fixed.");
+                    continue;
                 }
 
                 //Getting the waiting lobby co-ordinates.
@@ -143,11 +145,12 @@ public class DatabaseManager {
 
     public boolean addSign(Location location, String type) {
         try {
-            PreparedStatement statement = connection.prepareStatement("INSERT INTO `hp_signs`(type, world, x, y, z) VALUES (" + type + ", "+ location.getWorld().getName() + ", " + location.getBlockX() + ", " + location.getBlockY() + ", + " + location.getBlockZ() + ")");
+            PreparedStatement statement = connection.prepareStatement("INSERT INTO `hp_signs`(type, world, x, y, z) VALUES ('" + type + "', '"+ location.getWorld().getName() + "', " + location.getBlockX() + ", " + location.getBlockY() + ", + " + location.getBlockZ() + ")");
             boolean set = statement.execute();
             return set;
         } catch (Exception e) {
-            Bukkit.getLogger().info("Unable to insert Sign locations into database. Please try placing your sign again.");
+            Bukkit.getLogger().info("Unable to insert Sign locations into database. Please try placing your sign again. Stack Trace:");
+            e.printStackTrace();
             return false;
         }
     }
@@ -194,13 +197,15 @@ public class DatabaseManager {
                 }
                 return kits;
             } else {
-                statement = connection.prepareStatement("INSERT INTO hp_playerdata(uuid, balance, kits_unlocked, wins, games_played, winningPunch) VALUES ('" + p.getUniqueId().toString() + "',0,'0',0,0,0)");
+                statement = connection.prepareStatement("INSERT INTO hp_playerdata(uuid, balance, kits_unlocked, wins, games_played, winning_punch) VALUES ('" + p.getUniqueId().toString() + "',0,'0',0,0,0)");
                 boolean execute = statement.execute();
                 List<Integer> kits = new ArrayList<>();
                 kits.add(0);
                 return kits;
             }
         } catch (Exception e) {
+            Main.getInstance().getLogger().info("There has been an error getting player statistics. Stack Trace:");
+            e.printStackTrace();
             return null;
         }
     }
@@ -227,7 +232,7 @@ public class DatabaseManager {
                 kits.add(set.getInt(4));
                 return kits;
             } else {
-                statement = connection.prepareStatement("INSERT INTO hp_playerdata(uuid, balance, kits_unlocked, wins, games_played, winningPunch) VALUES ('" + p.getUniqueId().toString() + "',0,'0',0,0,0)");
+                statement = connection.prepareStatement("INSERT INTO hp_playerdata(uuid, balance, kits_unlocked, wins, games_played, winning_punch) VALUES ('" + p.getUniqueId().toString() + "',0,'0',0,0,0)");
                 boolean execute = statement.execute();
                 List<Integer> kits = new ArrayList<>();
                 kits.add(0);
@@ -237,6 +242,8 @@ public class DatabaseManager {
                 return kits;
             }
         } catch (Exception e) {
+            Main.getInstance().getLogger().info("There has been an error getting player statistics. Stack Trace:");
+            e.printStackTrace();
             return null;
         }
     }

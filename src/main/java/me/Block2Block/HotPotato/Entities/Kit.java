@@ -1,6 +1,5 @@
 package me.Block2Block.HotPotato.Entities;
 
-import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
 public class Kit {

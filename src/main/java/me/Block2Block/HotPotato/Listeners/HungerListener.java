@@ -13,9 +13,7 @@ public class HungerListener implements Listener {
         if (e.getEntity() instanceof Player) {
             Player p = (Player) e.getEntity();
             if (CacheManager.getPlayers().containsKey(p.getUniqueId())) {
-                if (p.getFoodLevel() < 20) {
-                    p.setFoodLevel(25);
-                }
+                e.setFoodLevel(30);
             }
         }
     }

@@ -1,6 +1,5 @@
 package me.Block2Block.HotPotato.Entities;
 
-import me.Block2Block.HotPotato.Kits.KitLoader;
 import me.Block2Block.HotPotato.Kits.PlayerKit;
 import me.Block2Block.HotPotato.Main;
 import org.bukkit.Bukkit;
@@ -29,7 +28,7 @@ public class HotPotatoPlayer {
         this.uuid = player.getUniqueId();
         this.name = player.getName();
         this.gameID = gameID;
-        this.kit = KitLoader.get().Default();
+        this.kit = Main.getKitLoader().get().Default();
         ScoreboardManager scoreboardManager = Bukkit.getScoreboardManager();
         Scoreboard scoreboard = scoreboardManager.getNewScoreboard();
         Team red = scoreboard.registerNewTeam("Red");

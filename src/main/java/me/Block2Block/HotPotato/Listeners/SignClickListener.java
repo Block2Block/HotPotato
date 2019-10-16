@@ -2,6 +2,7 @@ package me.Block2Block.HotPotato.Listeners;
 
 import me.Block2Block.HotPotato.Main;
 import me.Block2Block.HotPotato.Managers.CacheManager;
+import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.block.Sign;
 import org.bukkit.event.EventHandler;
@@ -20,10 +21,14 @@ public class SignClickListener implements Listener {
                     String type = CacheManager.getSigns().get(sign.getLocation());
                     switch (type) {
                         case "queue":
+                            if (e.getPlayer().getGameMode() == GameMode.CREATIVE && e.getAction() == Action.LEFT_CLICK_BLOCK) {
+                                return;
+                            }
+
                             if (Main.getQueueManager().addToQueue(e.getPlayer())) {
-                                sign.setLine(3, Main.c(null, "Players in queue: &a0"));
+                                sign.setLine(3, Main.c(null, "Players Queued: &a" + Main.getQueueManager().playersQueued()));
                             } else {
-                                sign.setLine(3, Main.c(null, "Player in queue: &a1"));
+                                sign.setLine(3, Main.c(null, "Players Queued: &a" +  + Main.getQueueManager().playersQueued()));
                             }
                             sign.update(true);
                         case "stats":

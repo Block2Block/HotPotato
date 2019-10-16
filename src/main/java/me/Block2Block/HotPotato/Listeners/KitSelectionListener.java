@@ -1,7 +1,6 @@
 package me.Block2Block.HotPotato.Listeners;
 
 import me.Block2Block.HotPotato.Entities.HotPotatoPlayer;
-import me.Block2Block.HotPotato.Entities.PlayerData;
 import me.Block2Block.HotPotato.Kits.PlayerKit;
 import me.Block2Block.HotPotato.Main;
 import me.Block2Block.HotPotato.Managers.CacheManager;
@@ -13,7 +12,6 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
-import sun.awt.geom.AreaOp;
 
 import java.util.List;
 
@@ -26,7 +24,7 @@ public class KitSelectionListener implements Listener {
             if (e.getClickedInventory().getName() == null) {
                 return;
             }
-            if (!e.getClickedInventory().getName().equals(InventoryUtil.kitSelection(p).getName()) && !ChatColor.stripColor(e.getClickedInventory().getName()).matches("Purchase [a-zA-Z]+\\?")) {
+            if (!ChatColor.stripColor(e.getClickedInventory().getName()).equals("Kit Selection") && !ChatColor.stripColor(e.getClickedInventory().getName()).matches("Purchase [a-zA-Z]+\\?")) {
                 return;
             }
             List<Integer> kits = CacheManager.getPlayers().get(p.getUniqueId()).getPlayerData().getUnlockedKits();
@@ -51,7 +49,7 @@ public class KitSelectionListener implements Listener {
                 }
             } else {
                 for (PlayerKit kit : PlayerKit.values()) {
-                    if (e.getClickedInventory().getName().equals(InventoryUtil.confirm(kit).getName())) {
+                    if (ChatColor.stripColor(e.getClickedInventory().getName()).matches("Purchase [a-zA-Z]+\\?") && ChatColor.stripColor(e.getClickedInventory().getName()).contains(kit.getName())) {
                         e.setCancelled(true);
                         ItemStack clicked = e.getCurrentItem();
                         if (clicked.getItemMeta().getDisplayName().equals(Main.c(null, "&a&lYes"))) {

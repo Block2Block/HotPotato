@@ -3,7 +3,8 @@ package me.Block2Block.HotPotato.Kits;
 import me.Block2Block.HotPotato.Entities.Kit;
 import org.bukkit.Material;
 
-import static org.bukkit.Material.*;
+import static org.bukkit.Material.BAKED_POTATO;
+import static org.bukkit.Material.STICK;
 
 public enum PlayerKit {
 

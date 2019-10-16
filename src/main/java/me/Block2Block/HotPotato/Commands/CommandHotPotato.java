@@ -112,10 +112,10 @@ public class CommandHotPotato implements CommandExecutor {
                             if (args.length == 1) {
                                 if (CacheManager.getPlayers().containsKey(p.getUniqueId())) {
                                     Game game = CacheManager.getGames().get(CacheManager.getPlayers().get(p.getUniqueId()).getGameID());
-                                    game.endGame();
                                     for (Player player : game.getPlayers()) {
-                                        p.sendMessage(Main.c("HotPotato","Your game has been forced to end by an administrator."));
+                                        player.sendMessage(Main.c("HotPotato","Your game has been forced to end by an administrator."));
                                     }
+                                    game.endGame();
                                     p.sendMessage(Main.c("HotPotato","You have ended your game."));
                                 } else {
                                     p.sendMessage(Main.c("HotPotato","You must specify a game ID when not in a game."));
@@ -129,12 +129,16 @@ public class CommandHotPotato implements CommandExecutor {
                                     return true;
                                 }
 
-                                Game game = CacheManager.getGames().get(id);
-                                game.endGame();
-                                for (Player player : game.getPlayers()) {
-                                    p.sendMessage(Main.c("HotPotato","Your game has been forced to end by an administrator."));
+                                if (CacheManager.getGames().containsKey(id)) {
+                                    Game game = CacheManager.getGames().get(id);
+                                    game.endGame();
+                                    for (Player player : game.getPlayers()) {
+                                        p.sendMessage(Main.c("HotPotato","Your game has been forced to end by an administrator."));
+                                    }
+                                    p.sendMessage(Main.c("HotPotato","You have ended the game &a" + id + "&r."));
+                                } else {
+                                    p.sendMessage(Main.c("HotPotato","A game does not exist with that ID."));
                                 }
-                                p.sendMessage(Main.c("HotPotato","You have ended the game &a" + id + "&r."));
                             } else {
                                 p.sendMessage(Main.c("HotPotato","Invalid arguments. Correct arguments: &a/hotpotato end [game id]"));
                             }
@@ -150,7 +154,7 @@ public class CommandHotPotato implements CommandExecutor {
                         "&a/hotpotato leave&r - Leave your current game\n" +
                         "&a/hotpotato queue&r - Queue for a new game" +
                         ((p.hasPermission("hotpotato.game")?"\n&a/hotpotato forcestart [time] [game id]&r - Force start a game\n" +
-                                "&ahotpotato end [id]&r - Forces a game to end.":""))));
+                                "&a/hotpotato end [id]&r - Forces a game to end.":""))));
             }
         } else {
             sender.sendMessage("You cannot execute HotPotato commands from Console or a Command Block.");

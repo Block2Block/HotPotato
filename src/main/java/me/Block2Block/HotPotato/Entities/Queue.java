@@ -28,8 +28,14 @@ public class Queue {
         } else {
             List<Player> toReturn = data;
             data = new ArrayList<>();
+            count = 0;
             return  toReturn;
         }
+    }
+
+    public void removeFromQueue(Player p) {
+        data.remove(p);
+        count--;
     }
 
     public boolean isEmpty() {
@@ -37,6 +43,19 @@ public class Queue {
             return true;
         }
         return false;
+    }
+
+    public boolean contains(Player p) {
+        if (data.contains(p)) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public void clear() {
+        data.clear();
+        count = 0;
     }
 
     public int size() {return count;}

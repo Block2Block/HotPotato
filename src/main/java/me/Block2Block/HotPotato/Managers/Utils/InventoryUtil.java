@@ -1,6 +1,5 @@
 package me.Block2Block.HotPotato.Managers.Utils;
 
-import me.Block2Block.HotPotato.Entities.PlayerData;
 import me.Block2Block.HotPotato.Kits.PlayerKit;
 import me.Block2Block.HotPotato.Main;
 import me.Block2Block.HotPotato.Managers.CacheManager;

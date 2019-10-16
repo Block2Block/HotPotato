@@ -2,7 +2,6 @@ package me.Block2Block.HotPotato.Listeners;
 
 import me.Block2Block.HotPotato.Entities.HotPotatoPlayer;
 import me.Block2Block.HotPotato.Managers.CacheManager;
-import me.Block2Block.HotPotato.Managers.Utils.InventoryUtil;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -11,8 +10,6 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
-
-import javax.sql.rowset.CachedRowSet;
 
 public class TeamSelectionListener implements Listener {
 
@@ -37,7 +34,6 @@ public class TeamSelectionListener implements Listener {
                 return;
             }
 
-            if (e.getClickedInventory().getName().equals(ChatColor.stripColor(InventoryUtil.teamSelection((Player) e.getWhoClicked()).getName()))) {
                 ItemStack item = e.getInventory().getItem(e.getSlot());
                 String itemName = ChatColor.stripColor(item.getItemMeta().getDisplayName());
 
@@ -66,9 +62,6 @@ public class TeamSelectionListener implements Listener {
                 } else {
                     return;
                 }
-            } else {
-                return;
-            }
 
         }
     }

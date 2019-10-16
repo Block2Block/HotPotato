@@ -2,7 +2,6 @@ package me.Block2Block.HotPotato.Entities;
 
 import me.Block2Block.HotPotato.Main;
 import me.Block2Block.HotPotato.Managers.Utils.UnzipUtil;
-import org.bukkit.Bukkit;
 
 import java.io.File;
 import java.io.IOException;
@@ -51,7 +50,8 @@ public class HPMap {
     public void copy(int gameId) {
         try {
             UnzipUtil unzipUtil = new UnzipUtil();
-            unzipUtil.unzip(Main.getInstance().getDataFolder().getAbsolutePath() + "/maps/" + name + ".zip",Bukkit.getServer().getWorldContainer().getAbsolutePath() + "HP" + gameId);
+            Main.getInstance().getLogger().info(Main.getInstance().getServer().getWorldContainer().getAbsolutePath().substring(0, Main.getInstance().getServer().getWorldContainer().getAbsolutePath().length() - 1) + "HP" + gameId);
+            unzipUtil.unzip(Main.getInstance().getDataFolder().getAbsolutePath() + "/maps/" + name + ".zip",Main.getInstance().getServer().getWorldContainer().getAbsolutePath().substring(0, Main.getInstance().getServer().getWorldContainer().getAbsolutePath().length() - 1) + "HP" + gameId);
         } catch (IOException e) {
             Main.getInstance().getLogger().log(Level.SEVERE, "ERROR COPYING WORLD FILE. STACK TRACE:");
             e.printStackTrace();

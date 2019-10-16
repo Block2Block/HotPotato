@@ -3,6 +3,7 @@ package me.Block2Block.HotPotato.Managers;
 import me.Block2Block.HotPotato.Entities.Game;
 import me.Block2Block.HotPotato.Entities.HPMap;
 import me.Block2Block.HotPotato.Entities.HotPotatoPlayer;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
@@ -17,7 +18,7 @@ public class CacheManager {
     private static Map<Integer, Game> games = new HashMap<>();
     private static List<HPMap> maps = new ArrayList<>();
     private static Map<Location, String> signs = new HashMap<>();
-    private static Location lobby;
+    private static Location lobby = new Location(Bukkit.getWorld("world"), -17, 70.0, -163.0, 0, 0);
     private static List<Player> editMode = new ArrayList<>();
 
 
@@ -85,5 +86,12 @@ public class CacheManager {
 
     public static void removeEditor(Player p) {
         editMode.remove(p);
+    }
+
+    public static void onGameEnd(List<Player> gameplayers, int gameId) {
+        for (Player p : gameplayers) {
+            players.remove(p.getUniqueId());
+        }
+        games.remove(gameId);
     }
 }

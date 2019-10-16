@@ -1,6 +1,8 @@
 package me.Block2Block.HotPotato;
 
 import me.Block2Block.HotPotato.Commands.CommandHotPotato;
+import me.Block2Block.HotPotato.Entities.Game;
+import me.Block2Block.HotPotato.Kits.KitLoader;
 import me.Block2Block.HotPotato.Listeners.*;
 import me.Block2Block.HotPotato.Managers.CacheManager;
 import me.Block2Block.HotPotato.Managers.QueueManager;
@@ -12,6 +14,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.World;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -32,14 +35,18 @@ public class Main extends JavaPlugin {
 
     private static QueueManager queueManager;
     private static DatabaseManager dbManager;
+    private static KitLoader kl;
 
     @Override
     public void onEnable() {
 
         i = this;
 
+        kl = new KitLoader();
+
         //Generating/Loading Config File
         if (!getDataFolder().exists()) getDataFolder().mkdir();
+
         configFile = new File(getDataFolder(), "config.yml");
         if (!configFile.exists()) {
             configFile.getParentFile().mkdirs();
@@ -54,6 +61,11 @@ public class Main extends JavaPlugin {
         }
         config.options().copyHeader(true);
 
+        File dataFolder = new File(this.getDataFolder().getAbsolutePath() + "/maps");
+        if (!dataFolder.exists()) {
+            dataFolder.mkdirs();
+        }
+
         queueManager = new QueueManager();
 
         dbManager = new DatabaseManager();
@@ -63,6 +75,7 @@ public class Main extends JavaPlugin {
             Bukkit.getLogger().log(Level.SEVERE, "There has been an error loading the Database. The plugin will be disabled. Stack Trace:");
             e.printStackTrace();
             Bukkit.getServer().getPluginManager().disablePlugin(this);
+            return;
         }
 
         registerListeners(new BlockBreakListener(),new HealthListener(), new HungerListener(), new JoinListener(), new LeaveListener(),new SignClickListener(), new SignPlaceListener(), new KitSelectionListener(), new TeamSelectionListener());
@@ -89,7 +102,11 @@ public class Main extends JavaPlugin {
     @Override
     public void onDisable() {
         for (int m : CacheManager.getGames().keySet()) {
-            World w = CacheManager.getGames().get(m).getWorld();
+            Game game = CacheManager.getGames().get(m);
+            for (Player p : game.getPlayers()) {
+                p.teleport(CacheManager.getLobby());
+            }
+            World w = game.getWorld();
             Bukkit.getServer().unloadWorld(w, false);
             File worldFolder = w.getWorldFolder();
             try  {
@@ -191,4 +208,8 @@ public class Main extends JavaPlugin {
     }
 
     public static DatabaseManager getDbManager() {return dbManager;}
+
+    public static KitLoader getKitLoader() {
+        return kl;
+    }
 }
