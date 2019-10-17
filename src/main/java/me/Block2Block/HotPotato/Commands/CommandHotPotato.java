@@ -5,10 +5,17 @@ import me.Block2Block.HotPotato.Entities.GameState;
 import me.Block2Block.HotPotato.Main;
 import me.Block2Block.HotPotato.Managers.CacheManager;
 import me.Block2Block.HotPotato.Managers.Utils.InventoryUtil;
+import org.bukkit.Bukkit;
+import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
+import org.bukkit.entity.*;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
+import org.bukkit.scheduler.BukkitRunnable;
+
+import java.lang.reflect.Method;
 
 public class CommandHotPotato implements CommandExecutor {
 
@@ -162,5 +169,33 @@ public class CommandHotPotato implements CommandExecutor {
 
         return true;
     }
+
+    private Class<?> getNMSClass(String name)
+    {
+        try
+        {
+            return Class.forName("net.minecraft.server." + Bukkit.getServer().getClass().getPackage().getName().split("\\.")[3] + "." + name);
+        }
+        catch(ClassNotFoundException ex)
+        {
+            //Do something
+        }
+        return null;
+    }
+
+    private Class<?> getServerClass(String name)
+    {
+        try
+        {
+            return Class.forName("org.bukkit.craftbukkit." + Bukkit.getServer().getClass().getPackage().getName().split("\\.")[3] + "." + name);
+        }
+        catch(ClassNotFoundException ex)
+        {
+            //Do something
+        }
+        return null;
+    }
+
+
 
 }
