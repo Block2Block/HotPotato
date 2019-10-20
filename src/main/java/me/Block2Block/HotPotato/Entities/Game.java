@@ -18,6 +18,8 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
 
@@ -41,13 +43,15 @@ public class Game implements Listener {
     private List<HotPotatoPlayer> blue;
     private List<HotPotatoPlayer> red;
     private int max;
+    private Player lastHitBlue;
+    private Player lastHitRed;
 
     private int livesBlue;
     private int livesRed;
     private Location tntLocation;
     private FallingBlock fallingBlock;
     private boolean inAir;
-    private ArmorStand armorStand;
+    private Squid squid;
 
     private List<Player> queueRed;
     private List<Player> queueBlue;
@@ -308,6 +312,10 @@ public class Game implements Listener {
     }
 
     public void playerLeave(HotPotatoPlayer p) {
+        if (state==ENDING) {
+            return;
+        }
+        Main.getDbManager().addLoss(p.getPlayer());
         players.remove(p.getPlayer());
         if (red.contains(p)) {
             red.remove(p);
@@ -323,11 +331,31 @@ public class Game implements Listener {
             for (Player p2 : players) {
                 p2.sendMessage(Main.c("HotPotato","&3&lBlue Wins! &rAll of &cRed &rleft."));
             }
+            for (HotPotatoPlayer p2 : blue) {
+                if (p2.getPlayer().equals(lastHitBlue)) {
+                    Main.getDbManager().addWinningPunch(lastHitBlue);
+                } else {
+                    Main.getDbManager().addWin(p2.getPlayer());
+                }
+            }
+            for (HotPotatoPlayer p2 : red) {
+                Main.getDbManager().addLoss(p2.getPlayer());
+            }
             endGame();
             return;
         } else if (blue.size() == 0) {
             for (Player p2 : players) {
                 p2.sendMessage(Main.c("HotPotato","&c&lRed Wins! &rAll of &3Blue &rleft."));
+            }
+            for (HotPotatoPlayer p2 : red) {
+                if (p2.getPlayer().equals(lastHitRed)) {
+                    Main.getDbManager().addWinningPunch(lastHitRed);
+                } else {
+                    Main.getDbManager().addWin(p2.getPlayer());
+                }
+            }
+            for (HotPotatoPlayer p2 : blue) {
+                Main.getDbManager().addLoss(p2.getPlayer());
             }
             endGame();
             return;
@@ -373,6 +401,16 @@ public class Game implements Listener {
                             if (livesRed == 0) {
                                 for (Player p : players) {
                                     p.sendMessage(Main.c("HotPotato","&3&lBlue Wins! &r&cRed &rhas lost all of their lives."));
+                                    for (HotPotatoPlayer p2 : blue) {
+                                        if (p2.getPlayer().equals(lastHitBlue)) {
+                                            Main.getDbManager().addWinningPunch(lastHitBlue);
+                                        } else {
+                                            Main.getDbManager().addWin(p2.getPlayer());
+                                        }
+                                    }
+                                    for (HotPotatoPlayer p2 : red) {
+                                        Main.getDbManager().addLoss(p2.getPlayer());
+                                    }
                                 }
                                 endGame();
                                 return;
@@ -389,6 +427,16 @@ public class Game implements Listener {
                             if (livesBlue == 0) {
                                 for (Player p : players) {
                                     p.sendMessage(Main.c("HotPotato","&c&lRed Wins! &r&3Blue &rhas lost all of their lives."));
+                                }
+                                for (HotPotatoPlayer p2 : red) {
+                                    if (p2.getPlayer().equals(lastHitRed)) {
+                                        Main.getDbManager().addWinningPunch(lastHitRed);
+                                    } else {
+                                        Main.getDbManager().addWin(p2.getPlayer());
+                                    }
+                                }
+                                for (HotPotatoPlayer p2 : blue) {
+                                    Main.getDbManager().addLoss(p2.getPlayer());
                                 }
                                 endGame();
                                 return;
@@ -511,8 +559,10 @@ public class Game implements Listener {
             if (e.getEntity().getType() == EntityType.FALLING_BLOCK) {
                 inAir = false;
                 tntLocation = e.getBlock().getLocation();
-                armorStand.remove();
-                armorStand = null;
+                if (squid != null) {
+                    squid.remove();
+                    squid = null;
+                }
             }
         }
     }
@@ -538,23 +588,40 @@ public class Game implements Listener {
                 }
             }
             if (e.getClickedBlock().getType() == Material.TNT) {
+                if (CacheManager.getPlayers().get(e.getPlayer().getUniqueId()).isRed()) {
+                    lastHitRed = e.getPlayer();
+                } else {
+                    lastHitBlue = e.getPlayer();
+                }
                 e.getClickedBlock().setType(Material.AIR);
                 FallingBlock e2 = e.getClickedBlock().getLocation().getWorld().spawnFallingBlock(e.getClickedBlock().getLocation(), Material.TNT, (byte) 0);
                 e2.setVelocity(e.getPlayer().getLocation().getDirection().setY(0.3).normalize().multiply(1.15));
-                ArmorStand armorStand = (ArmorStand) e.getClickedBlock().getLocation().getWorld().spawnEntity(e.getClickedBlock().getLocation(), EntityType.ARMOR_STAND);
-                armorStand.setVisible(false);
-                e2.setPassenger(armorStand);
+
+                Squid squid = (Squid) e.getClickedBlock().getLocation().getWorld().spawnEntity(e.getClickedBlock().getLocation(), EntityType.SQUID);
+                squid.setVelocity(e.getPlayer().getLocation().getDirection().setY(0.3).normalize().multiply(1.15));
+
+                this.squid = squid;
+
+                e2.setPassenger(squid);
+
+                LivingEntity l = (LivingEntity) squid;
+                l.addPotionEffect(new PotionEffect(PotionEffectType.INVISIBILITY, 1000000, 2, true, false), true);
+
                 fallingBlock = e2;
                 inAir = true;
-                this.armorStand = armorStand;
             }
         }
     }
 
     @EventHandler
     public void onClickMidairLeft(EntityDamageByEntityEvent e) {
-        if (e.getDamager() instanceof Player && e.getEntity() instanceof ArmorStand) {
+        if (e.getDamager() instanceof Player && e.getEntity() instanceof Squid) {
             if (e.getEntity().getWorld().getName().equals(fallingBlock.getWorld().getName())) {
+                if (CacheManager.getPlayers().get(e.getDamager().getUniqueId()).isRed()) {
+                    lastHitRed = (Player) e.getDamager();
+                } else {
+                    lastHitBlue = (Player) e.getDamager();
+                }
                 fallingBlock.setVelocity(e.getDamager().getLocation().getDirection().setY(0.3).normalize().multiply(1.15));
                 e.setCancelled(true);
             }
@@ -565,6 +632,11 @@ public class Game implements Listener {
     public void onClickMidairRight(PlayerInteractEntityEvent e) {
         if (e.getRightClicked() instanceof FallingBlock) {
             if (e.getRightClicked().getWorld().getName().equals(fallingBlock.getWorld().getName())) {
+                if (CacheManager.getPlayers().get(e.getPlayer().getUniqueId()).isRed()) {
+                    lastHitRed = e.getPlayer();
+                } else {
+                    lastHitBlue = e.getPlayer();
+                }
                 fallingBlock.setVelocity(e.getPlayer().getLocation().getDirection().setY(0.3).normalize().multiply(1.15));
             }
         }
