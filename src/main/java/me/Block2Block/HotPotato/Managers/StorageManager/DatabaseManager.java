@@ -40,6 +40,7 @@ public class DatabaseManager {
         createTables();
         loadMaps();
         loadSigns();
+        loadLobby();
     }
 
     private void createTables() {
@@ -51,6 +52,9 @@ public class DatabaseManager {
             set = statement.execute();
 
             statement = connection.prepareStatement("CREATE TABLE IF NOT EXISTS hp_playerdata ( `uuid` VARCHAR(36) NOT NULL , `balance` INTEGER NOT NULL , `kits_unlocked` TEXT NOT NULL , `wins` INTEGER NOT NULL , `games_played` INTEGER NOT NULL , `winning_punch` INTEGER NOT NULL )");
+            set = statement.execute();
+
+            statement = connection.prepareStatement("CREATE TABLE IF NOT EXISTS hp_data ( `world` TEXT NOT NULL , `x` REAL NOT NULL , `y` REAL NOT NULL , `z` REAL NOT NULL)");
             set = statement.execute();
         } catch (Exception e) {
             Bukkit.getLogger().log(Level.SEVERE, "There has been an error creating Database tables. The plugin will be disabled. Stack Trace:");
@@ -70,13 +74,13 @@ public class DatabaseManager {
 
                 //Loading red spawns.
                 List<String> red = Arrays.asList(results.getString(3).split(";"));
-                List<List<Integer>> redSpawns = new ArrayList<>();
+                List<List<Double>> redSpawns = new ArrayList<>();
 
                 for (String s : red) {
-                    List<Integer> location = new ArrayList<>();
+                    List<Double> location = new ArrayList<>();
                     List<String> strings = Arrays.asList(s.split(","));
                     for (String s1 : strings) {
-                        location.add(Integer.parseInt(s1));
+                        location.add(Double.parseDouble(s1));
                     }
 
                     redSpawns.add(location);
@@ -85,13 +89,13 @@ public class DatabaseManager {
 
                 //Loading blue spawns.
                 List<String> blue = Arrays.asList(results.getString(4).split(";"));
-                List<List<Integer>> blueSpawns = new ArrayList<>();
+                List<List<Double>> blueSpawns = new ArrayList<>();
 
                 for (String s : blue) {
-                    List<Integer> location = new ArrayList<>();
+                    List<Double> location = new ArrayList<>();
                     List<String> strings = Arrays.asList(s.split(","));
                     for (String s1 : strings) {
-                        location.add(Integer.parseInt(s1));
+                        location.add(Double.parseDouble(s1));
                     }
 
                     blueSpawns.add(location);
@@ -100,13 +104,13 @@ public class DatabaseManager {
 
                 //Loading TNT spawns.
                 List<String> tnt = Arrays.asList(results.getString(5).split(";"));
-                List<List<Integer>> tntSpawns = new ArrayList<>();
+                List<List<Double>> tntSpawns = new ArrayList<>();
 
                 for (String s : tnt) {
-                    List<Integer> location = new ArrayList<>();
+                    List<Double> location = new ArrayList<>();
                     List<String> strings = Arrays.asList(s.split(","));
                     for (String s1 : strings) {
-                        location.add(Integer.parseInt(s1));
+                        location.add(Double.parseDouble(s1));
                     }
 
                     tntSpawns.add(location);
@@ -125,9 +129,9 @@ public class DatabaseManager {
 
                 //Getting the waiting lobby co-ordinates.
                 List<String> lobby = Arrays.asList(results.getString(7).split(","));
-                List<Integer> waitingLobby = new ArrayList<>();
+                List<Double> waitingLobby = new ArrayList<>();
                 for (String s : lobby) {
-                    waitingLobby.add(Integer.parseInt(s));
+                    waitingLobby.add(Double.parseDouble(s));
                 }
 
                 maps.add(new HPMap(results.getInt(1),results.getString(2),results.getString(8) ,redSpawns, blueSpawns, tntSpawns, zip, waitingLobby));
@@ -141,6 +145,28 @@ public class DatabaseManager {
             Bukkit.getServer().getPluginManager().disablePlugin(Main.getInstance());
         }
 
+    }
+
+    public void loadLobby() {
+        try {
+            PreparedStatement statement = connection.prepareStatement("SELECT * FROM hp_data");
+            ResultSet rs = statement.executeQuery();
+
+            if (rs.next()) {
+                if (Bukkit.getWorld(rs.getString(1))== null) {
+                    Bukkit.getLogger().info("The world your previous lobby location was in has been deleted. Please re-set your lobby location in order to play games. If the world still exists, please ensure that the world is loaded on server start.");
+                } else {
+                    Location l = new Location(Bukkit.getWorld(rs.getString(1)),rs.getDouble(2),rs.getDouble(3),rs.getDouble(4));
+                    CacheManager.setLobby(l);
+                }
+            } else {
+                Bukkit.getLogger().info("Your lobby has not yet been set. Execute /hotpotato setlobby to set your lobby. You will not be able to set up maps until you do.");
+            }
+        } catch (Exception e) {
+            Bukkit.getLogger().log(Level.SEVERE, "There has been an error loading Database tables. The plugin will be disabled. Stack Trace:");
+            e.printStackTrace();
+            Bukkit.getServer().getPluginManager().disablePlugin(Main.getInstance());
+        }
     }
 
     public boolean addSign(Location location, String type) {
@@ -212,7 +238,7 @@ public class DatabaseManager {
 
     public void addKit(int id, Player p) {
         try {
-            PreparedStatement statement = connection.prepareStatement("UPDATE hp_playerdata SET kits_unlocked = CONCAT(kits_unlocked, '," + id + "') WHERE uuid = '" + p.getUniqueId().toString() + "'");
+            PreparedStatement statement = connection.prepareStatement("UPDATE hp_playerdata SET kits_unlocked = (kits_unlocked || '," + id + "') WHERE uuid = '" + p.getUniqueId().toString() + "'");
             boolean set = statement.execute();
         } catch (Exception e) {
             Bukkit.getLogger().info("Unable to add kits to database. Please try restarting your server.");
@@ -282,6 +308,105 @@ public class DatabaseManager {
         } catch (Exception e) {
             Bukkit.getLogger().info("Unable to remove add kits to database. Please try restarting your server.");
         }
+    }
+
+    public void setLobby(Location l) {
+        try {
+            PreparedStatement statement = connection.prepareStatement("SELECT * FROM hp_data");
+            ResultSet rs = statement.executeQuery();
+
+            if (rs.next()) {
+                statement = connection.prepareStatement("UPDATE hp_data SET (world='" + l.getWorld().getName() + "'), (x = " + l.getX() +"), (y=" + l.getY() + "), (z=" + l.getZ() + ")");
+                boolean set = statement.execute();
+            } else {
+                statement = connection.prepareStatement("INSERT INTO hp_data(world, x, y, z) VALUES ('" + l.getWorld().getName() + "', " + l.getX() +", " + l.getY() + ", " + l.getZ() + ")");
+                boolean set = statement.execute();
+            }
+        } catch (Exception e) {
+            Bukkit.getLogger().info("Unable to set lobby location in Database, please retry the command or restart your server and try again.");
+        }
+    }
+
+    public void addMap(List<String> data) {
+
+        try {
+            PreparedStatement statement = connection.prepareStatement("INSERT INTO hp_maps(name, red_spawns, blue_spawns, tnt_spawns, zip_name, waiting_lobby, author) VALUES ('" + data.get(4) + "','" + data.get(0) + "', '" + data.get(1) + "', '" + data.get(2) + "','" + data.get(6) + "','" + data.get(3) + "','" + data.get(5) + "')");
+            boolean set = statement.execute();
+
+            statement = connection.prepareStatement("SELECT * from hp_maps WHERE zip_name = '" + data.get(4) + "'");
+            ResultSet results = statement.executeQuery();
+
+
+            //Loading red spawns.
+            List<String> red = Arrays.asList(results.getString(3).split(";"));
+            List<List<Double>> redSpawns = new ArrayList<>();
+
+            for (String s : red) {
+                List<Double> location = new ArrayList<>();
+                List<String> strings = Arrays.asList(s.split(","));
+                for (String s1 : strings) {
+                    location.add(Double.parseDouble(s1));
+                }
+
+                redSpawns.add(location);
+
+            }
+
+            //Loading blue spawns.
+            List<String> blue = Arrays.asList(results.getString(4).split(";"));
+            List<List<Double>> blueSpawns = new ArrayList<>();
+
+            for (String s : blue) {
+                List<Double> location = new ArrayList<>();
+                List<String> strings = Arrays.asList(s.split(","));
+                for (String s1 : strings) {
+                    location.add(Double.parseDouble(s1));
+                }
+
+                blueSpawns.add(location);
+
+            }
+
+            //Loading TNT spawns.
+            List<String> tnt = Arrays.asList(results.getString(5).split(";"));
+            List<List<Double>> tntSpawns = new ArrayList<>();
+
+            for (String s : tnt) {
+                List<Double> location = new ArrayList<>();
+                List<String> strings = Arrays.asList(s.split(","));
+                for (String s1 : strings) {
+                    location.add(Double.parseDouble(s1));
+                }
+
+                tntSpawns.add(location);
+
+            }
+
+            //Getting the world ZIP.
+            String zipName = results.getString(6);
+            File dataFolder = new File(Main.getInstance().getDataFolder().getAbsolutePath() + "/maps");
+            File zip = new File(dataFolder, zipName + ".zip");
+
+            if (!zip.exists()) {
+                Bukkit.getLogger().info("The map " + results.getString(2) + "'s ZIP is missing. Please ZIP the world folder (with the world files in the root of the directory) and place it in this folder. This map will not be included in the map rotation until this is fixed.");
+                return;
+            }
+
+            //Getting the waiting lobby co-ordinates.
+            List<String> lobby = Arrays.asList(results.getString(7).split(","));
+            List<Double> waitingLobby = new ArrayList<>();
+            for (String s : lobby) {
+                waitingLobby.add(Double.parseDouble(s));
+            }
+
+            CacheManager.addMap(new HPMap(results.getInt(1), results.getString(2), results.getString(8), redSpawns, blueSpawns, tntSpawns, zip, waitingLobby));
+
+        } catch (Exception e) {
+            Bukkit.getLogger().log(Level.SEVERE, "There has been an error loading Database tables. The plugin will be disabled. Stack Trace:");
+            e.printStackTrace();
+            Bukkit.getServer().getPluginManager().disablePlugin(Main.getInstance());
+        }
+
     }
 
 }

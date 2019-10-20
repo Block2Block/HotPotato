@@ -5,6 +5,7 @@ import me.Block2Block.HotPotato.Entities.HPMap;
 import me.Block2Block.HotPotato.Entities.HotPotatoPlayer;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.World;
 import org.bukkit.entity.Player;
 
 import java.util.*;
@@ -19,7 +20,10 @@ public class CacheManager {
     private static List<HPMap> maps = new ArrayList<>();
     private static Map<Location, String> signs = new HashMap<>();
     private static Location lobby = new Location(Bukkit.getWorld("world"), -17, 70.0, -163.0, 0, 0);
-    private static List<Player> editMode = new ArrayList<>();
+    private static Map<Player, World> editMode = new HashMap<>();
+    private static Player setupMode;
+    private static int setupStage = 0;
+    private static List<String> setupData = new ArrayList<>();
 
 
     public static Map<UUID, HotPotatoPlayer> getPlayers() {
@@ -69,16 +73,16 @@ public class CacheManager {
 
     public static Location getLobby() {return lobby;}
 
-    public static List<Player> getEditMode() {
+    public static Map<Player, World> getEditMode() {
         return editMode;
     }
 
-    public static void addEditor(Player p) {
-        editMode.add(p);
+    public static void addEditor(Player p, World map) {
+        editMode.put(p, map);
     }
 
     public static boolean isEditor(Player p) {
-        if (editMode.contains(players)) {
+        if (editMode.containsKey(players)) {
             return true;
         }
         return false;
@@ -94,4 +98,30 @@ public class CacheManager {
         }
         games.remove(gameId);
     }
+
+    public static void enterSetup (Player p) {
+        setupMode = p;
+    }
+
+    public static boolean isSetup(Player p) {
+        if (setupMode.equals(p)) {
+            return true;
+        }
+        return false;
+    }
+
+    public static void exitSetup() {
+        setupMode = null;
+    }
+
+    public static void setSetupStage(int i) {setupStage = i;}
+
+    public static int getSetupStage() {return setupStage;}
+
+    public static void addData(String data) {setupData.add(data);}
+
+    public static List<String> getData() {
+        return setupData;
+    }
+
 }

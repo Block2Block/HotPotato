@@ -4,8 +4,14 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.file.FileVisitResult;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.SimpleFileVisitor;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
+import java.util.zip.ZipOutputStream;
 
 /**
  * This utility extracts files and directories of a standard zip file to
@@ -13,7 +19,7 @@ import java.util.zip.ZipInputStream;
  * @author www.codejava.net
  *
  */
-public class UnzipUtil {
+public class ZipUtil {
 
     /**
      * Size of the buffer to read/write data
@@ -68,6 +74,19 @@ public class UnzipUtil {
         }
 
 
+    }
+
+    public void zipFile(Path sourceFolderPath, Path zipPath) throws IOException {
+        ZipOutputStream zos = new ZipOutputStream(new FileOutputStream(zipPath.toFile()));
+        Files.walkFileTree(sourceFolderPath, new SimpleFileVisitor<Path>() {
+            public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
+                zos.putNextEntry(new ZipEntry(sourceFolderPath.relativize(file).toString()));
+                Files.copy(file, zos);
+                zos.closeEntry();
+                return FileVisitResult.CONTINUE;
+            }
+        });
+        zos.close();
     }
 
 }

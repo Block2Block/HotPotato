@@ -1,7 +1,7 @@
 package me.Block2Block.HotPotato.Entities;
 
 import me.Block2Block.HotPotato.Main;
-import me.Block2Block.HotPotato.Managers.Utils.UnzipUtil;
+import me.Block2Block.HotPotato.Managers.Utils.ZipUtil;
 
 import java.io.File;
 import java.io.IOException;
@@ -14,15 +14,15 @@ public class HPMap {
     private String author;
     private int id;
 
-    private List<List<Integer>> redSpawns;
-    private List<List<Integer>> blueSpawns;
-    private List<List<Integer>> tntSpawns;
+    private List<List<Double>> redSpawns;
+    private List<List<Double>> blueSpawns;
+    private List<List<Double>> tntSpawns;
     private File zip;
 
-    private List<Integer> waitingLobby;
+    private List<Double> waitingLobby;
 
 
-    public HPMap(int id, String name, String author, List<List<Integer>> red, List<List<Integer>> blue, List<List<Integer>> tnt, File zip, List<Integer> waitingLobby) {
+    public HPMap(int id, String name, String author, List<List<Double>> red, List<List<Double>> blue, List<List<Double>> tnt, File zip, List<Double> waitingLobby) {
         this.id = id;
         this.name = name;
         this.redSpawns = red;
@@ -35,30 +35,30 @@ public class HPMap {
 
     public String getName() {return name;}
 
-    public List<List<Integer>> getRedSpawns() {
+    public List<List<Double>> getRedSpawns() {
         return redSpawns;
     }
 
-    public List<List<Integer>> getBlueSpawns() {
+    public List<List<Double>> getBlueSpawns() {
         return blueSpawns;
     }
 
-    public List<List<Integer>> getTntSpawns() {
+    public List<List<Double>> getTntSpawns() {
         return tntSpawns;
     }
 
     public void copy(int gameId) {
         try {
-            UnzipUtil unzipUtil = new UnzipUtil();
+            ZipUtil zipUtil = new ZipUtil();
             Main.getInstance().getLogger().info(Main.getInstance().getServer().getWorldContainer().getAbsolutePath().substring(0, Main.getInstance().getServer().getWorldContainer().getAbsolutePath().length() - 1) + "HP" + gameId);
-            unzipUtil.unzip(Main.getInstance().getDataFolder().getAbsolutePath() + "/maps/" + name + ".zip",Main.getInstance().getServer().getWorldContainer().getAbsolutePath().substring(0, Main.getInstance().getServer().getWorldContainer().getAbsolutePath().length() - 1) + "HP" + gameId);
+            zipUtil.unzip(Main.getInstance().getDataFolder().getAbsolutePath() + "/maps/" + name + ".zip",Main.getInstance().getServer().getWorldContainer().getAbsolutePath().substring(0, Main.getInstance().getServer().getWorldContainer().getAbsolutePath().length() - 1) + "HP" + gameId);
         } catch (IOException e) {
             Main.getInstance().getLogger().log(Level.SEVERE, "ERROR COPYING WORLD FILE. STACK TRACE:");
             e.printStackTrace();
         }
     }
 
-    public List<Integer> getWaitingLobby(){return waitingLobby;}
+    public List<Double> getWaitingLobby(){return waitingLobby;}
 
     public String getAuthor() {
         return author;

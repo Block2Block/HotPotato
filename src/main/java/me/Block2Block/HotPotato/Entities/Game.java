@@ -93,7 +93,7 @@ public class Game implements Listener {
     }
 
     public void join(List<Player> players) {
-        List<Integer> waitingLobby = map.getWaitingLobby();
+        List<Double> waitingLobby = map.getWaitingLobby();
         this.players.addAll(players);
         if (this.players.size() == max) {
             Main.getQueueManager().noLongerRecruiting();
@@ -107,7 +107,7 @@ public class Game implements Listener {
             HotPotatoPlayer hp = new HotPotatoPlayer(p, this.gameID);
             CacheManager.addToCache(p.getUniqueId(), hp);
 
-            p.teleport(new Location(world, waitingLobby.get(0), waitingLobby.get(1),waitingLobby.get(2),0,0), PlayerTeleportEvent.TeleportCause.PLUGIN);
+            p.teleport(new Location(world, waitingLobby.get(0), waitingLobby.get(1),waitingLobby.get(2),waitingLobby.get(3).floatValue(),waitingLobby.get(4).floatValue()), PlayerTeleportEvent.TeleportCause.PLUGIN);
             p.sendMessage(Main.c("HotPotato","You have joined a game, id: " + this.gameID));
             for (Player p2 : players) {
                 p2.sendMessage(Main.c("HotPotato","&a" + p.getName() + "&r has joined the game."));
@@ -163,7 +163,7 @@ public class Game implements Listener {
                             if (red.size() >= blue.size()) {
                                 if (queueBlue.size() > 0) {
                                     //If there is a queued user, give them priority.
-                                    Player player = queueRed.remove(0);
+                                    Player player = queueBlue.remove(0);
 
                                     HotPotatoPlayer hotplayer = CacheManager.getPlayers().get(player.getUniqueId());
                                     hotplayer.setTeam(false);
@@ -233,8 +233,8 @@ public class Game implements Listener {
 
     private void startGame() {
         state = INPROGRESS;
-        List<List<Integer>> blueSpawns = map.getBlueSpawns();
-        List<List<Integer>> redSpawns = map.getRedSpawns();
+        List<List<Double>> blueSpawns = map.getBlueSpawns();
+        List<List<Double>> redSpawns = map.getRedSpawns();
 
         //Changing scoreboard.
         ScoreboardManager.changeLineGame(gameID, 12, Main.c(null, "&3» &c&lRed Lives"));
@@ -246,14 +246,14 @@ public class Game implements Listener {
         //Teleporting Players
         int counter = 0;
         for (HotPotatoPlayer p : blue) {
-            List<Integer> location = blueSpawns.get(counter);
-            p.getPlayer().teleport(new Location(world, location.get(0),location.get(1),location.get(2),0,0));
+            List<Double> location = blueSpawns.get(counter);
+            p.getPlayer().teleport(new Location(world, location.get(0),location.get(1),location.get(2),location.get(3).floatValue(),location.get(3).floatValue()));
             p.getPlayer().closeInventory();
             counter++;
         }
         for (HotPotatoPlayer p : red) {
-            List<Integer> location = redSpawns.get(counter);
-            p.getPlayer().teleport(new Location(world, location.get(0),location.get(1),location.get(2),0,0));
+            List<Double> location = redSpawns.get(counter);
+            p.getPlayer().teleport(new Location(world, location.get(0),location.get(1),location.get(2),location.get(3).floatValue(),location.get(3).floatValue()));
             p.getPlayer().closeInventory();
             counter++;
         }
@@ -572,9 +572,41 @@ public class Game implements Listener {
 
     public void queueForTeam(HotPotatoPlayer p) {
         if (p.isRed()) {
+            if (queueRed.size() > 0) {
+                red.remove(p);
+                blue.add(p);
+                p.setTeam(false);
+                p.getPlayer().sendMessage(Main.c("HotPotato","You have joined &3Blue&r team."));
+                ScoreboardManager.changeLine(p.getPlayer(), 8, Main.c(null,"&3Blue"));
+
+                HotPotatoPlayer p2 = CacheManager.getPlayers().get(queueBlue.get(0).getUniqueId());
+                blue.remove(p2);
+                red.add(p2);
+                p2.setTeam(true);
+                p2.getPlayer().sendMessage(Main.c("HotPotato","You have joined &cRed&r team."));
+                ScoreboardManager.changeLine(p2.getPlayer(), 8, Main.c(null,"&cRed"));
+                queueRed.remove(0);
+                return;
+            }
             queueBlue.add(p.getPlayer());
             p.getPlayer().sendMessage(Main.c("HotPotato","You have queued for &3Blue &rteam."));
         } else {
+            if (queueBlue.size() > 0) {
+                blue.remove(p);
+                red.add(p);
+                p.setTeam(true);
+                p.getPlayer().sendMessage(Main.c("HotPotato","You have joined &cRed&r team."));
+                ScoreboardManager.changeLine(p.getPlayer(), 8, Main.c(null,"&cRed"));
+
+                HotPotatoPlayer p2 = CacheManager.getPlayers().get(queueBlue.get(0).getUniqueId());
+                red.remove(p2);
+                blue.add(p2);
+                p2.setTeam(false);
+                p2.getPlayer().sendMessage(Main.c("HotPotato","You have joined &3Blue&r team."));
+                ScoreboardManager.changeLine(p2.getPlayer(), 8, Main.c(null,"&3Blue"));
+                queueBlue.remove(0);
+                return;
+            }
             queueRed.add(p.getPlayer());
             p.getPlayer().sendMessage(Main.c("HotPotato","You have queued for &cRed &rteam."));
         }
