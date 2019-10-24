@@ -104,6 +104,9 @@ public class CacheManager {
     }
 
     public static boolean isSetup(Player p) {
+        if (setupMode == null) {
+            return false;
+        }
         if (setupMode.equals(p)) {
             return true;
         }

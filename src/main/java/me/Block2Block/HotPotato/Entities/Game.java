@@ -266,6 +266,8 @@ public class Game implements Listener {
         livesRed = 3;
 
         newTnt();
+
+        Main.getQueueManager().noLongerRecruiting();
     }
 
     public void startTimer(int time) {

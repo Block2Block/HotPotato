@@ -21,7 +21,7 @@ import java.util.List;
 
 public class EditModeListener implements Listener {
 
-    private String data = "";
+    private static String data = "";
 
     @EventHandler
     public void onChat(AsyncPlayerChatEvent e) {
@@ -82,6 +82,7 @@ public class EditModeListener implements Listener {
 
                         break;
                     case "cancel":
+                        e.setCancelled(true);
                         e.getPlayer().sendMessage(Main.c("HotPotato","You have stopped setting up the map. Any points setup have been deleted."));
                         CacheManager.setSetupStage(0);
                         CacheManager.getData().clear();
@@ -91,7 +92,7 @@ public class EditModeListener implements Listener {
 
                     default:
                         if (CacheManager.getSetupStage() == 5) {
-                            if (e.getMessage().equals("")) {
+                            if (!e.getMessage().equals("")) {
                                 e.getPlayer().sendMessage(Main.c("HotPotato","You have set the name of the map."));
                                 e.getPlayer().sendMessage(Main.c("HotPotato","Finally, please specify the authors of the map. Please enter the map author."));
                                 CacheManager.addData(e.getMessage());
@@ -100,7 +101,7 @@ public class EditModeListener implements Listener {
                                 e.getPlayer().sendMessage(Main.c("HotPotato","You must specify a map name. If you wish to cancel setup, please enter 'cancel'."));
                             }
                         } else if (CacheManager.getSetupStage() == 6) {
-                            if (e.getMessage().equals("")) {
+                            if (!e.getMessage().equals("")) {
                                 e.getPlayer().sendMessage(Main.c("HotPotato","You have set the map author. Map setup is complete!"));
                                 List<String> totalData = CacheManager.getData();
                                 totalData.add(e.getMessage());
@@ -148,6 +149,9 @@ public class EditModeListener implements Listener {
 
     @EventHandler
     public void onStickCLick(PlayerInteractEvent e) {
+        if (e.getItem() == null) {
+            return;
+        }
         if (e.getItem().getType() == Material.STICK) {
             if (CacheManager.isSetup(e.getPlayer()) && ChatColor.stripColor(e.getItem().getItemMeta().getDisplayName()).equals("HotPotato Setup Stick")) {
                 switch (CacheManager.getSetupStage()) {
@@ -193,6 +197,10 @@ public class EditModeListener implements Listener {
                 }
             }
         }
+    }
+
+    public static void onLeave() {
+        data = "";
     }
 
 }

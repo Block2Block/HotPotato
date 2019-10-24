@@ -10,6 +10,13 @@ public class LeaveListener implements Listener {
     @EventHandler
     public void onLeave(PlayerQuitEvent e) {
         CacheManager.playerLeave(e.getPlayer());
+        CacheManager.getEditMode().remove(e.getPlayer());
+        if (CacheManager.isSetup(e.getPlayer())) {
+            CacheManager.exitSetup();
+            CacheManager.getData().clear();
+            EditModeListener.onLeave();
+            CacheManager.setSetupStage(0);
+        }
     }
 
 }

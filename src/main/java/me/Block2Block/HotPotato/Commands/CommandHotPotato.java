@@ -5,6 +5,7 @@ import me.Block2Block.HotPotato.Entities.GameState;
 import me.Block2Block.HotPotato.Main;
 import me.Block2Block.HotPotato.Managers.CacheManager;
 import me.Block2Block.HotPotato.Managers.Utils.InventoryUtil;
+import org.apache.commons.io.FileUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -158,7 +159,34 @@ public class CommandHotPotato implements CommandExecutor {
                             if (!CacheManager.isEditor(p)) {
                                 if (CacheManager.getLobby() != null) {
                                     if (args.length == 2) {
+                                        if (args[1].toLowerCase().equals("plugins")||args[1].toLowerCase().equals("logs")||args[1].toLowerCase().contains(".")) {
+                                            p.sendMessage(Main.c("HotPotato","You cannot open the server folders as worlds or use a file as a world. Please try another name."));
+                                            return true;
+                                        }
+                                        if (CacheManager.getEditMode().size() > 0) {
+                                            p.sendMessage(Main.c("HotPotato","You cannot load another world into edit mode whilst there is still people in edit mode."));
+                                            return true;
+                                        }
+                                        File file = new File(Main.getInstance().getServer().getWorldContainer().getAbsolutePath().substring(0, Main.getInstance().getServer().getWorldContainer().getAbsolutePath().length() - 1) + args[1]);
+                                        if (file.exists()) {
+                                            File worldFolder = new File(Main.getInstance().getServer().getWorldContainer().getAbsolutePath().substring(0, Main.getInstance().getServer().getWorldContainer().getAbsolutePath().length() - 1) + "HPEdit");
+                                            try {
+                                                if (worldFolder.exists()) {
+                                                    FileUtils.deleteDirectory(worldFolder);
+                                                }
+                                                FileUtils.copyDirectory(file, worldFolder);
+                                            } catch (Exception e) {
+                                                p.sendMessage(Main.c("HotPotato","The server is unable to copy the directory of the specified world. Please try again."));
+                                                return true;
+                                            }
 
+                                            World w = Bukkit.getServer().createWorld(new WorldCreator("HPEdit"));
+                                            p.teleport(w.getSpawnLocation());
+                                            p.sendMessage(Main.c("HotPotato","You have entered edit mode."));
+                                            CacheManager.getEditMode().put(p, w);
+                                        } else {
+                                            p.sendMessage(Main.c("HotPotato","There is no world called " + args[1] + " in the servers directory."));
+                                        }
                                     } else if (args.length == 1) {
                                         if (Bukkit.getWorld("HPEdit") == null) {
                                             File worldFolder = new File(Main.getInstance().getServer().getWorldContainer().getAbsolutePath().substring(0, Main.getInstance().getServer().getWorldContainer().getAbsolutePath().length() - 1) + "HPEdit");
@@ -171,6 +199,7 @@ public class CommandHotPotato implements CommandExecutor {
                                             World w = Bukkit.getServer().createWorld(new WorldCreator("HPEdit"));
                                             p.teleport(w.getSpawnLocation());
                                             p.sendMessage(Main.c("HotPotato","You have entered edit mode."));
+                                            CacheManager.getEditMode().put(p, w);
                                         } else {
                                             World w = Bukkit.getWorld("HPEdit");
                                             p.teleport(w.getSpawnLocation());
@@ -225,7 +254,7 @@ public class CommandHotPotato implements CommandExecutor {
                         } else {
                             p.sendMessage(Main.c("HotPotato","You do not have permission to perform this command."));
                         }
-
+                        break;
                     case "finish":
                         if (p.hasPermission("hotpotato.edit")) {
                             if (CacheManager.isEditor(p)) {
@@ -247,7 +276,7 @@ public class CommandHotPotato implements CommandExecutor {
                         "&a/hotpotato queue&r - Queue for a new game" +
                         ((p.hasPermission("hotpotato.game")?"\n&a/hotpotato forcestart [time] [game id]&r - Force start a game\n" +
                                 "&a/hotpotato end [id]&r - Forces a game to end.":"")) + ((p.hasPermission("hotpotato.edit")?"\n&a/hotpotato edit [map]&r - Toggles edit mode\n" +
-                        "&a/hotpotato setup&r - Set up a map while in edit mode.\n&a/hotpotato setlobby&r - Sets your current location as the Lobby.\n&a/hotpotato finish&r - Marks the map in edit mode finished.":""))));
+                        "&a/hotpotato setup&r - Set up a map while in edit mode.\n&a/hotpotato setlobby&r - Sets your current location as the Lobby.\n&a/hotpotato finish&r - Marks the map in edit mode finished and deletes the worlds.":""))));
             }
         } else {
             sender.sendMessage("You cannot execute HotPotato commands from Console or a Command Block.");
