@@ -308,13 +308,33 @@ public class Game implements Listener {
             }.runTaskTimer(Main.getInstance(),0, 20);
         } else {
             if (time < timerTime) {
-                timerTime = time;
+                timerTime = time + 1;
             }
         }
     }
 
     public void playerLeave(HotPotatoPlayer p) {
         if (state==ENDING) {
+            return;
+        }
+        if (state!=INPROGRESS) {
+            players.remove(p.getPlayer());
+            if (red.contains(p)) {
+                red.remove(p);
+            } else {
+                blue.remove(p);
+            }
+            for (Player pl : players) {
+                pl.sendMessage(Main.c("HotPotato","&a" + p.getName() + "&r has left the game."));
+            }
+            p.getPlayer().sendMessage(Main.c("HotPotato","You left the game."));
+            if (players.size() < 2) {
+                timer.cancel();
+                for (Player pl : players) {
+                    pl.setLevel(0);
+                }
+            }
+            p.getPlayer().teleport(CacheManager.getLobby());
             return;
         }
         Main.getDbManager().addLoss(p.getPlayer());
@@ -328,6 +348,8 @@ public class Game implements Listener {
         for (Player pl : players) {
             pl.sendMessage(Main.c("HotPotato","&a" + p.getName() + "&r has left the game."));
         }
+
+        p.getPlayer().teleport(CacheManager.getLobby());
 
         if (red.size() == 0) {
             for (Player p2 : players) {
@@ -500,6 +522,10 @@ public class Game implements Listener {
         for (Player p : players) {
             p.sendMessage(Main.c("Game Manager","This game has ended. You will be sent back to the lobby in 10 seconds."));
         }
+
+        timer.cancel();
+        tnttimer.cancel();
+        tntDestroy.cancel();
 
         timer = new BukkitRunnable() {
             @Override

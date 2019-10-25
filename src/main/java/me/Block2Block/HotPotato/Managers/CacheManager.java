@@ -22,8 +22,9 @@ public class CacheManager {
     private static Location lobby = new Location(Bukkit.getWorld("world"), -17, 70.0, -163.0, 0, 0);
     private static Map<Player, World> editMode = new HashMap<>();
     private static Player setupMode;
-    private static int setupStage = 0;
+    private static int setupStage = -1;
     private static List<String> setupData = new ArrayList<>();
+    private static Player finishPlayer;
 
 
     public static Map<UUID, HotPotatoPlayer> getPlayers() {
@@ -82,7 +83,7 @@ public class CacheManager {
     }
 
     public static boolean isEditor(Player p) {
-        if (editMode.containsKey(players)) {
+        if (editMode.containsKey(p)) {
             return true;
         }
         return false;
@@ -115,6 +116,7 @@ public class CacheManager {
 
     public static void exitSetup() {
         setupMode = null;
+        setupStage = -1;
     }
 
     public static void setSetupStage(int i) {setupStage = i;}
@@ -127,4 +129,9 @@ public class CacheManager {
         return setupData;
     }
 
+    public static Player getFinishPlayer() {return finishPlayer;}
+
+    public static void setFinishPlayer(Player finishPlayer) {
+        CacheManager.finishPlayer = finishPlayer;
+    }
 }

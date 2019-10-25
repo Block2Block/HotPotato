@@ -17,10 +17,13 @@ public class TeamSelectionListener implements Listener {
     public void onInventoryClick(InventoryClickEvent e) {
         if (e.getWhoClicked() instanceof Player) {
             Player p = (Player) e.getWhoClicked();
+            if (e.getClickedInventory() == null) {
+                return;
+            }
             if (e.getClickedInventory().getName() == null) {
                 return;
             }
-            if (e.getClickedInventory().getName() == "") {
+            if (e.getClickedInventory().getName().equals("")) {
                 return;
             }
             if (!ChatColor.stripColor(e.getClickedInventory().getName()).equals("Team Selection")) {

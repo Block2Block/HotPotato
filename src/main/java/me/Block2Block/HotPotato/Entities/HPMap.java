@@ -51,7 +51,7 @@ public class HPMap {
         try {
             ZipUtil zipUtil = new ZipUtil();
             Main.getInstance().getLogger().info(Main.getInstance().getServer().getWorldContainer().getAbsolutePath().substring(0, Main.getInstance().getServer().getWorldContainer().getAbsolutePath().length() - 1) + "HP" + gameId);
-            zipUtil.unzip(Main.getInstance().getDataFolder().getAbsolutePath() + "/maps/" + name + ".zip",Main.getInstance().getServer().getWorldContainer().getAbsolutePath().substring(0, Main.getInstance().getServer().getWorldContainer().getAbsolutePath().length() - 1) + "HP" + gameId);
+            zipUtil.unzip(zip.getAbsolutePath(),Main.getInstance().getServer().getWorldContainer().getAbsolutePath().substring(0, Main.getInstance().getServer().getWorldContainer().getAbsolutePath().length() - 1) + "HP" + gameId);
         } catch (IOException e) {
             Main.getInstance().getLogger().log(Level.SEVERE, "ERROR COPYING WORLD FILE. STACK TRACE:");
             e.printStackTrace();

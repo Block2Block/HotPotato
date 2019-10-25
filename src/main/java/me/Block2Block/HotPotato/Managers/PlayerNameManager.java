@@ -76,6 +76,17 @@ public class PlayerNameManager {
         }
     }
 
+    public static void onGameLeave(Player p) {
+        CacheManager.getPlayers().get(p.getUniqueId()).getScoreboard().getTeam("Blue").unregister();
+        CacheManager.getPlayers().get(p.getUniqueId()).getScoreboard().getTeam("Red").unregister();
+        for (Player p2 : Bukkit.getOnlinePlayers()) {
+            if (!CacheManager.getPlayers().containsKey(p2.getUniqueId())) {
+                p2.showPlayer(p);
+                p.showPlayer(p2);
+            }
+        }
+    }
+
 
 
 }

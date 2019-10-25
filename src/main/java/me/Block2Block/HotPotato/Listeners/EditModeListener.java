@@ -1,11 +1,10 @@
 package me.Block2Block.HotPotato.Listeners;
 
-import me.Block2Block.HotPotato.Entities.HPMap;
 import me.Block2Block.HotPotato.Main;
 import me.Block2Block.HotPotato.Managers.CacheManager;
-import me.Block2Block.HotPotato.Managers.Utils.InventoryUtil;
 import me.Block2Block.HotPotato.Managers.Utils.ItemUtil;
 import me.Block2Block.HotPotato.Managers.Utils.ZipUtil;
+import org.apache.commons.io.FileUtils;
 import org.bukkit.*;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -79,15 +78,14 @@ public class EditModeListener implements Listener {
 
                             e.getPlayer().sendMessage(Main.c("HotPotato","To start off, please stand wherever you want RED team spawns and click on the stick. Please ensure you are looking in the direction you want them to spawn. When you are done, type 'done'."));
                         }
-
                         break;
                     case "cancel":
-                        e.setCancelled(true);
-                        e.getPlayer().sendMessage(Main.c("HotPotato","You have stopped setting up the map. Any points setup have been deleted."));
-                        CacheManager.setSetupStage(0);
-                        CacheManager.getData().clear();
-                        CacheManager.exitSetup();
-                        data = "";
+                            e.setCancelled(true);
+                            e.getPlayer().sendMessage(Main.c("HotPotato","You have stopped setting up the map. Any points setup have been deleted."));
+                            CacheManager.setSetupStage(0);
+                            CacheManager.getData().clear();
+                            CacheManager.exitSetup();
+                            data = "";
                         break;
 
                     default:
@@ -96,12 +94,14 @@ public class EditModeListener implements Listener {
                                 e.getPlayer().sendMessage(Main.c("HotPotato","You have set the name of the map."));
                                 e.getPlayer().sendMessage(Main.c("HotPotato","Finally, please specify the authors of the map. Please enter the map author."));
                                 CacheManager.addData(e.getMessage());
+                                e.setCancelled(true);
                                 CacheManager.setSetupStage(6);
                             } else {
                                 e.getPlayer().sendMessage(Main.c("HotPotato","You must specify a map name. If you wish to cancel setup, please enter 'cancel'."));
                             }
                         } else if (CacheManager.getSetupStage() == 6) {
                             if (!e.getMessage().equals("")) {
+                                e.setCancelled(true);
                                 e.getPlayer().sendMessage(Main.c("HotPotato","You have set the map author. Map setup is complete!"));
                                 List<String> totalData = CacheManager.getData();
                                 totalData.add(e.getMessage());
@@ -116,20 +116,32 @@ public class EditModeListener implements Listener {
                                     return;
                                 }
 
-                                World w = e.getPlayer().getWorld();
-                                for (Player p : w.getPlayers()) {
-                                    p.teleport(CacheManager.getLobby());
-                                    p.sendMessage(Main.c("HotPotato","You have been teleported to the lobby as the map you were on was just set up. You are no longer in edit mode."));
-                                    CacheManager.getEditMode().remove(p);
-                                }
-                                Bukkit.unloadWorld(w, true);
+                                new BukkitRunnable() {
+                                    @Override
+                                    public void run() {
+                                        World w = e.getPlayer().getWorld();
+                                        for (Player p : w.getPlayers()) {
+                                            p.teleport(CacheManager.getLobby());
+                                            p.sendMessage(Main.c("HotPotato", "You have been teleported to the lobby as the map you were on was just set up. You are no longer in edit mode."));
+                                            CacheManager.getEditMode().remove(p);
+                                        }
 
-                                ZipUtil zu = new ZipUtil();
-                                try {
-                                    zu.zipFile(w.getWorldFolder().toPath(), Paths.get(Main.getInstance().getDataFolder().getAbsolutePath() + "/maps/" + totalData.get(4).replace(" ", "").toLowerCase() + ".zip"));
-                                } catch (Exception exception) {
-                                    e.getPlayer().sendMessage(Main.c("HotPotato","Unable to generate ZIP folder. Please ZIP the folder yourself (with the world files in the root), name it " + totalData.get(4).replace(" ", "").toLowerCase() + ".zip, and put it in the 'Maps' folder in the plugins data folder."));
-                                }
+                                        Bukkit.unloadWorld(w, true);
+
+                                        ZipUtil zu = new ZipUtil();
+                                        try {
+                                            zu.zipFile(w.getWorldFolder().toPath(), Paths.get(Main.getInstance().getDataFolder().getAbsolutePath() + "/maps/" + totalData.get(4).replace(" ", "").toLowerCase() + ".zip"));
+                                        } catch (Exception exception) {
+                                            e.getPlayer().sendMessage(Main.c("HotPotato","Unable to generate ZIP folder. Please ZIP the folder yourself (with the world files in the root), name it " + totalData.get(4).replace(" ", "").toLowerCase() + ".zip, and put it in the 'Maps' folder in the plugins data folder."));
+                                        }
+
+                                        try {
+                                            FileUtils.deleteDirectory(w.getWorldFolder());
+                                        } catch (Exception e) {
+                                            e.printStackTrace();
+                                        }
+                                    }
+                                }.runTask(Main.getInstance());
 
                                 new BukkitRunnable(){
                                     @Override
@@ -143,6 +155,45 @@ public class EditModeListener implements Listener {
                             }
                         }
                 }
+            } else {
+                switch (e.getMessage().toLowerCase()) {
+                    case "confirm":
+                        if (CacheManager.getFinishPlayer() != null) {
+                            if (CacheManager.getFinishPlayer().equals(e.getPlayer())) {
+                                e.setCancelled(true);
+                                CacheManager.setFinishPlayer(null);
+
+                                new BukkitRunnable() {
+                                    @Override
+                                    public void run() {
+                                        World w = Bukkit.getWorld("HPEdit");
+                                        for (Player p : w.getPlayers()) {
+                                            p.teleport(CacheManager.getLobby());
+                                            p.sendMessage(Main.c("HotPotato","Your map was marked finished. It has now been deleted."));
+                                        }
+                                        Bukkit.getServer().unloadWorld(w, false);
+                                        File worldFolder = w.getWorldFolder();
+                                        try  {
+                                            FileUtils.deleteDirectory(worldFolder);
+                                        } catch (Exception e2) {
+                                            e2.printStackTrace();
+                                        }
+                                    }
+                                }.runTask(Main.getInstance());
+
+                            }
+                        }
+                        break;
+                    case "cancel":
+                        if (CacheManager.getFinishPlayer() != null) {
+                            if (CacheManager.getFinishPlayer().equals(e.getPlayer())) {
+                                CacheManager.setFinishPlayer(null);
+                                e.getPlayer().sendMessage(Main.c("HotPotato","You have cancelled finishing your map."));
+                                e.setCancelled(true);
+                            }
+                        }
+                }
+
             }
         }
     }

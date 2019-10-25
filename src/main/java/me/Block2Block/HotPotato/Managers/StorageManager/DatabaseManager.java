@@ -333,8 +333,13 @@ public class DatabaseManager {
             PreparedStatement statement = connection.prepareStatement("INSERT INTO hp_maps(name, red_spawns, blue_spawns, tnt_spawns, zip_name, waiting_lobby, author) VALUES ('" + data.get(4) + "','" + data.get(0) + "', '" + data.get(1) + "', '" + data.get(2) + "','" + data.get(6) + "','" + data.get(3) + "','" + data.get(5) + "')");
             boolean set = statement.execute();
 
-            statement = connection.prepareStatement("SELECT * from hp_maps WHERE zip_name = '" + data.get(4) + "'");
+            statement = connection.prepareStatement("SELECT * from hp_maps WHERE zip_name = '" + data.get(6) + "'");
             ResultSet results = statement.executeQuery();
+
+            if (!results.next()) {
+                Bukkit.getLogger().info("There has been an issue getting the info from the database. Please reload your server to load the map in properly.");
+                return;
+            }
 
 
             //Loading red spawns.

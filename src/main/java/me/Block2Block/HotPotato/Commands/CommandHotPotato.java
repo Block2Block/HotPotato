@@ -2,8 +2,10 @@ package me.Block2Block.HotPotato.Commands;
 
 import me.Block2Block.HotPotato.Entities.Game;
 import me.Block2Block.HotPotato.Entities.GameState;
+import me.Block2Block.HotPotato.Listeners.EditModeListener;
 import me.Block2Block.HotPotato.Main;
 import me.Block2Block.HotPotato.Managers.CacheManager;
+import me.Block2Block.HotPotato.Managers.PlayerNameManager;
 import me.Block2Block.HotPotato.Managers.Utils.InventoryUtil;
 import org.apache.commons.io.FileUtils;
 import org.bukkit.Bukkit;
@@ -53,6 +55,7 @@ public class CommandHotPotato implements CommandExecutor {
                         if (CacheManager.getPlayers().containsKey(p.getUniqueId())) {
                             CacheManager.getGames().get(CacheManager.getPlayers().get(p.getUniqueId()).getGameID()).playerLeave(CacheManager.getPlayers().get(p.getUniqueId()));
                             p.teleport(CacheManager.getLobby());
+                            PlayerNameManager.onGameLeave(p);
                             CacheManager.getPlayers().remove(p.getUniqueId());
 
                         } else {
@@ -181,9 +184,9 @@ public class CommandHotPotato implements CommandExecutor {
                                             }
 
                                             World w = Bukkit.getServer().createWorld(new WorldCreator("HPEdit"));
+                                            CacheManager.getEditMode().put(p, w);
                                             p.teleport(w.getSpawnLocation());
                                             p.sendMessage(Main.c("HotPotato","You have entered edit mode."));
-                                            CacheManager.getEditMode().put(p, w);
                                         } else {
                                             p.sendMessage(Main.c("HotPotato","There is no world called " + args[1] + " in the servers directory."));
                                         }
@@ -197,14 +200,14 @@ public class CommandHotPotato implements CommandExecutor {
                                             }
 
                                             World w = Bukkit.getServer().createWorld(new WorldCreator("HPEdit"));
+                                            CacheManager.getEditMode().put(p, w);
                                             p.teleport(w.getSpawnLocation());
                                             p.sendMessage(Main.c("HotPotato","You have entered edit mode."));
-                                            CacheManager.getEditMode().put(p, w);
                                         } else {
                                             World w = Bukkit.getWorld("HPEdit");
+                                            CacheManager.getEditMode().put(p, w);
                                             p.teleport(w.getSpawnLocation());
                                             p.sendMessage(Main.c("HotPotato","You have entered edit mode."));
-                                            CacheManager.getEditMode().put(p, w);
                                         }
                                     } else {
                                         p.sendMessage(Main.c("HotPotato","Invalid arguments. Correct arguments: &a/hotpotato edit [map]"));
@@ -213,13 +216,19 @@ public class CommandHotPotato implements CommandExecutor {
                                     p.sendMessage(Main.c("HotPotato","You must set your lobby point before you can set up a map."));
                                 }
                             } else {
-                                World w = CacheManager.getEditMode().get(p);
-                                for (Player pl : w.getPlayers()) {
-                                    pl.teleport(CacheManager.getLobby());
-                                }
-                                Bukkit.getServer().unloadWorld(w, true);
                                 CacheManager.getEditMode().remove(p);
-                                p.sendMessage(Main.c("HotPotato","You have left edit mode. Any setup you have done to the world has not been saved. If you load another map into edit mode, any terrain modifications to the current world will be erased."));
+                                p.sendMessage(Main.c("HotPotato","You have left edit mode. Any setup you have done has been erased."));
+                                p.teleport(CacheManager.getLobby());
+                                if (CacheManager.isSetup(p)) {
+                                    CacheManager.setSetupStage(-1);
+                                    CacheManager.getData().clear();
+                                    EditModeListener.onLeave();
+                                }
+                                if (CacheManager.getEditMode().size() == 0) {
+                                    World w = Bukkit.getWorld("HPEdit");
+                                    Bukkit.unloadWorld(w, true);
+                                    p.sendMessage(Main.c("HotPotato","Because there is no-one else left in edit mode, the world was unloaded."));
+                                }
                             }
                         } else {
                             p.sendMessage(Main.c("HotPotato","You do not have permission to perform this command."));
@@ -229,6 +238,8 @@ public class CommandHotPotato implements CommandExecutor {
                         if (p.hasPermission("hotpotato.edit")) {
                             if (CacheManager.isEditor(p)) {
                                 p.sendMessage(Main.c("HotPotato","You are about to setup the map, at the end of which this world files will be put into a ZIP and the world folder will be deleted. Please type 'confirm' to confirm you wish to do this. You can cancel at any time by typing 'cancel'."));
+                                CacheManager.setSetupStage(0);
+                                CacheManager.enterSetup(p);
                             } else {
                                 p.sendMessage(Main.c("HotPotato","You must be in edit mode in order to setup a map."));
                             }
@@ -258,7 +269,8 @@ public class CommandHotPotato implements CommandExecutor {
                     case "finish":
                         if (p.hasPermission("hotpotato.edit")) {
                             if (CacheManager.isEditor(p)) {
-
+                                p.sendMessage(Main.c("HotPotato","What you are about to do will delete the world from the server. Please type 'confirm' to confirm this is what you want to do. Type 'cancel' if you wish to cancel."));
+                                CacheManager.setFinishPlayer(p);
                             } else {
                                 p.sendMessage(Main.c("HotPotato","You must be in edit mode in order to mark a map as finished."));
                             }

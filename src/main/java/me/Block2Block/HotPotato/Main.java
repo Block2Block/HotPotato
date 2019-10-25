@@ -78,7 +78,7 @@ public class Main extends JavaPlugin {
             return;
         }
 
-        registerListeners(new BlockBreakListener(),new HealthListener(), new HungerListener(), new JoinListener(), new LeaveListener(),new SignClickListener(), new SignPlaceListener(), new KitSelectionListener(), new TeamSelectionListener(), new EditModeListener());
+        registerListeners(new BlockBreakListener(),new HealthListener(), new HungerListener(), new JoinListener(), new LeaveListener(),new SignClickListener(), new SignPlaceListener(), new KitSelectionListener(), new TeamSelectionListener(), new EditModeListener(), new TeleportListener());
 
         getCommand("hotpotato").setExecutor(new CommandHotPotato());
 
@@ -114,6 +114,13 @@ public class Main extends JavaPlugin {
             } catch (Exception e) {
                 e.printStackTrace();
             }
+        }
+
+        if (Bukkit.getWorld("HPEdit") != null) {
+            for (Player p : Bukkit.getWorld("HPEdit").getPlayers()) {
+                p.teleport(CacheManager.getLobby());
+            }
+            Bukkit.getServer().unloadWorld("HPEdit",true);
         }
     }
 

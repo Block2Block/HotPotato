@@ -2,15 +2,19 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="09b0fe40-8a05-433f-97d0-58d254690623" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/libraries/spigot.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/me/Block2Block/HotPotato/Listeners/TeleportListener.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/spigot.xml" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/me/Block2Block/HotPotato/Commands/CommandHotPotato.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/Block2Block/HotPotato/Commands/CommandHotPotato.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/me/Block2Block/HotPotato/Entities/Game.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/Block2Block/HotPotato/Entities/Game.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/me/Block2Block/HotPotato/Entities/HPMap.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/Block2Block/HotPotato/Entities/HPMap.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/me/Block2Block/HotPotato/Listeners/EditModeListener.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/Block2Block/HotPotato/Listeners/EditModeListener.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/me/Block2Block/HotPotato/Listeners/LeaveListener.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/Block2Block/HotPotato/Listeners/LeaveListener.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/me/Block2Block/HotPotato/Listeners/TeamSelectionListener.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/Block2Block/HotPotato/Listeners/TeamSelectionListener.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/me/Block2Block/HotPotato/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/Block2Block/HotPotato/Main.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/me/Block2Block/HotPotato/Managers/CacheManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/Block2Block/HotPotato/Managers/CacheManager.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/me/Block2Block/HotPotato/Managers/PlayerNameManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/Block2Block/HotPotato/Managers/PlayerNameManager.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/me/Block2Block/HotPotato/Managers/StorageManager/DatabaseManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/Block2Block/HotPotato/Managers/StorageManager/DatabaseManager.java" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
