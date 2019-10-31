@@ -32,7 +32,7 @@ public class KitLoader {
     }
 
     public Kit PotatoWhacker() {
-        KitCreator kit = new KitCreator(0, "That's Hot!", 0);
+        KitCreator kit = new KitCreator(1, "Potato Whacker", 1000);
         kit.description(
                 "&7You have learned the skill of;" +
                         "&7hitting potatoes really far!;" +

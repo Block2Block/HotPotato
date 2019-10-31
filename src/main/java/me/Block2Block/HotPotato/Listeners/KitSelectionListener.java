@@ -21,10 +21,13 @@ public class KitSelectionListener implements Listener {
     public void onClick(InventoryClickEvent e) {
         if (e.getWhoClicked() instanceof Player) {
             Player p = (Player) e.getWhoClicked();
+            if (e.getClickedInventory() == null) {
+                return;
+            }
             if (e.getClickedInventory().getName() == null) {
                 return;
             }
-            if (!ChatColor.stripColor(e.getClickedInventory().getName()).equals("Kit Selection") && !ChatColor.stripColor(e.getClickedInventory().getName()).matches("Purchase [a-zA-Z]+\\?")) {
+            if (!ChatColor.stripColor(e.getClickedInventory().getName()).equals("Kit Selection") && !ChatColor.stripColor(e.getClickedInventory().getName()).matches("Purchase [a-zA-Z ]+\\?")) {
                 return;
             }
             List<Integer> kits = CacheManager.getPlayers().get(p.getUniqueId()).getPlayerData().getUnlockedKits();
@@ -35,7 +38,7 @@ public class KitSelectionListener implements Listener {
                     if (slot == kit.getGUISlot()) {
                         if (kits.contains(kit.getId())) {
                             CacheManager.getPlayers().get(p.getUniqueId()).setKit(kit.getKit());
-                            ScoreboardManager.changeLine(p, 5, "&r" + kit.getName());
+                            ScoreboardManager.changeLine(p, 5, "" + kit.getName());
                             p.sendMessage(Main.c("Kits", "You equipped the &a" + kit.getName() + "&r kit."));
                             p.closeInventory();
                         } else {
@@ -49,7 +52,7 @@ public class KitSelectionListener implements Listener {
                 }
             } else {
                 for (PlayerKit kit : PlayerKit.values()) {
-                    if (ChatColor.stripColor(e.getClickedInventory().getName()).matches("Purchase [a-zA-Z]+\\?") && ChatColor.stripColor(e.getClickedInventory().getName()).contains(kit.getName())) {
+                    if (ChatColor.stripColor(e.getClickedInventory().getName()).matches("Purchase [a-zA-Z ]+\\?") && ChatColor.stripColor(e.getClickedInventory().getName()).contains(kit.getName())) {
                         e.setCancelled(true);
                         ItemStack clicked = e.getCurrentItem();
                         if (clicked.getItemMeta().getDisplayName().equals(Main.c(null, "&a&lYes"))) {

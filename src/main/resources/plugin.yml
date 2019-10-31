@@ -5,6 +5,7 @@ author: Block2Block
 website: http://forums.raptorpvp.net/
 prefix: Hot Potato
 load: POSTWORLD
+softdepend: [vault,featherboard,nametagedit]
 commands:
   hotpotato:
     description: The main Hot Potato command

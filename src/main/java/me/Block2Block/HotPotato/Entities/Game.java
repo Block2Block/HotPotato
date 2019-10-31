@@ -5,12 +5,14 @@ import me.Block2Block.HotPotato.Main;
 import me.Block2Block.HotPotato.Managers.CacheManager;
 import me.Block2Block.HotPotato.Managers.PlayerNameManager;
 import me.Block2Block.HotPotato.Managers.ScoreboardManager;
+import me.Block2Block.HotPotato.Managers.TitleManager;
 import org.apache.commons.io.FileUtils;
 import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.block.Sign;
 import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.entity.EntityChangeBlockEvent;
@@ -18,6 +20,7 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -108,6 +111,7 @@ public class Game implements Listener {
             }
         }
         for (Player p : players) {
+            p.getPlayer().getInventory().clear();
             HotPotatoPlayer hp = new HotPotatoPlayer(p, this.gameID);
             CacheManager.addToCache(p.getUniqueId(), hp);
 
@@ -265,6 +269,23 @@ public class Game implements Listener {
         livesBlue = 3;
         livesRed = 3;
 
+        //Applying kit.
+        for (Player p : players) {
+            Kit kit = CacheManager.getPlayers().get(p.getUniqueId()).getKit();
+
+            p.getInventory().clear();
+            p.getEquipment().setArmorContents(new ItemStack[]{kit.boots(), kit.leggings(), kit.chestplate(), kit.helmet()});
+            for (int i = 0; i<kit.hb().length; i++) {
+                ItemStack s = kit.hb()[i];
+                if (s != null) p.getInventory().setItem(i, s);
+            }
+            for (int i = 0; i<kit.i().length; i++) {
+                ItemStack s = kit.i()[i];
+                if (s != null) p.getInventory().setItem(i+9, s);
+            }
+
+        }
+
         newTnt();
 
         Main.getQueueManager().noLongerRecruiting();
@@ -296,6 +317,7 @@ public class Game implements Listener {
                             for (Player p : players) {
                                 p.sendMessage(Main.c("HotPotato","The game will start in &a" + timerTime + " &rsecond" + (timerTime>1?"s":"") + "."));
                                 p.playSound(p.getLocation(), Sound.NOTE_PLING,100,1);
+                                TitleManager.sendTitle(p, "" + timerTime,5,20,5, ChatColor.DARK_GREEN);
                             }
                             break;
                         case 0:
@@ -334,10 +356,12 @@ public class Game implements Listener {
                     pl.setLevel(0);
                 }
             }
+            p.getPlayer().getInventory().clear();
             p.getPlayer().teleport(CacheManager.getLobby());
             return;
         }
         Main.getDbManager().addLoss(p.getPlayer());
+        p.getPlayer().getInventory().clear();
         players.remove(p.getPlayer());
         if (red.contains(p)) {
             red.remove(p);
@@ -414,6 +438,9 @@ public class Game implements Listener {
                 }
 
                 location.getWorld().playEffect(location, Effect.EXPLOSION_HUGE, 1);
+                for (Player p : players) {
+                    p.playSound(p.getLocation(), Sound.EXPLODE, 100, 1);
+                }
 
                 int y = location.getBlockY();
                 while (y >= 0) {
@@ -521,11 +548,18 @@ public class Game implements Listener {
         state = ENDING;
         for (Player p : players) {
             p.sendMessage(Main.c("Game Manager","This game has ended. You will be sent back to the lobby in 10 seconds."));
+            p.getPlayer().getInventory().clear();
         }
 
-        timer.cancel();
-        tnttimer.cancel();
-        tntDestroy.cancel();
+        if (timer != null) {
+            timer.cancel();
+        }
+        if (tnttimer != null) {
+            tnttimer.cancel();
+        }
+        if (tntDestroy != null) {
+            tntDestroy.cancel();
+        }
 
         timer = new BukkitRunnable() {
             @Override
@@ -595,7 +629,7 @@ public class Game implements Listener {
         }
     }
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.HIGHEST)
     public void onPlayerClick(PlayerInteractEvent e) {
         if (e.getClickedBlock() == null) {
             return;
@@ -637,11 +671,12 @@ public class Game implements Listener {
 
                 fallingBlock = e2;
                 inAir = true;
+                Bukkit.getLogger().info("2");
             }
         }
     }
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.HIGHEST)
     public void onClickMidairLeft(EntityDamageByEntityEvent e) {
         if (e.getDamager() instanceof Player && e.getEntity() instanceof Squid) {
             if (e.getEntity().getWorld().getName().equals(fallingBlock.getWorld().getName())) {
@@ -652,11 +687,12 @@ public class Game implements Listener {
                 }
                 fallingBlock.setVelocity(e.getDamager().getLocation().getDirection().setY(0.3).normalize().multiply(1.15));
                 e.setCancelled(true);
+                Bukkit.getLogger().info("2");
             }
         }
     }
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.HIGHEST)
     public void onClickMidairRight(PlayerInteractEntityEvent e) {
         if (e.getRightClicked() instanceof FallingBlock) {
             if (e.getRightClicked().getWorld().getName().equals(fallingBlock.getWorld().getName())) {
@@ -666,6 +702,7 @@ public class Game implements Listener {
                     lastHitBlue = e.getPlayer();
                 }
                 fallingBlock.setVelocity(e.getPlayer().getLocation().getDirection().setY(0.3).normalize().multiply(1.15));
+                Bukkit.getLogger().info("2");
             }
         }
     }
@@ -728,5 +765,28 @@ public class Game implements Listener {
         }
     }
 
+    public FallingBlock getFallingBlock() {
+        return fallingBlock;
+    }
 
+    public Location getTntLocation() {
+        return tntLocation;
+    }
+
+    public void setSquid(Squid s) {
+        squid = s;
+        inAir = true;
+    }
+
+    public void setFallingBlock(FallingBlock fb) {
+        fallingBlock = fb;
+    }
+
+    public void setLastHit(Player p) {
+        if (CacheManager.getPlayers().get(p.getUniqueId()).isRed()) {
+            lastHitRed = p;
+        } else {
+            lastHitBlue = p;
+        }
+    }
 }

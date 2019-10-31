@@ -8,7 +8,7 @@ import java.lang.reflect.Constructor;
 
 public class TitleManager {
 
-    public void sendTitle(Player player, String text, String subtitle, int fadeInTime, int showTime, int fadeOutTime, ChatColor color)
+    public static void sendTitle(Player player, String text, int fadeInTime, int showTime, int fadeOutTime, ChatColor color)
     {
         try
         {
@@ -22,11 +22,11 @@ public class TitleManager {
 
         catch (Exception ex)
         {
-            //Do something
+            ex.printStackTrace();
         }
     }
 
-    private void sendPacket(Player player, Object packet)
+    private static void sendPacket(Player player, Object packet)
     {
         try
         {
@@ -36,11 +36,11 @@ public class TitleManager {
         }
         catch(Exception ex)
         {
-            //Do something
+            ex.printStackTrace();
         }
     }
 
-    private Class<?> getNMSClass(String name)
+    private static Class<?> getNMSClass(String name)
     {
         try
         {
@@ -48,7 +48,7 @@ public class TitleManager {
         }
         catch(ClassNotFoundException ex)
         {
-            //Do something
+            ex.printStackTrace();
         }
         return null;
     }

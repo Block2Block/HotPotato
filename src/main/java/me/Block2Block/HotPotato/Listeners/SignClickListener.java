@@ -9,6 +9,9 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.scheduler.BukkitRunnable;
+
+import java.util.List;
 
 public class SignClickListener implements Listener {
 
@@ -31,7 +34,26 @@ public class SignClickListener implements Listener {
                                 sign.setLine(3, Main.c(null, "Players Queued: &a" +  + Main.getQueueManager().playersQueued()));
                             }
                             sign.update(true);
+                            break;
                         case "stats":
+                            if (e.getPlayer().getGameMode() == GameMode.CREATIVE && e.getAction() == Action.LEFT_CLICK_BLOCK) {
+                                return;
+                            }
+
+                            e.getPlayer().sendMessage(Main.c("HotPotato","Loading statistics..."));
+
+                            new BukkitRunnable() {
+                                @Override
+                                public void run() {
+                                    List<Integer> stats = Main.getDbManager().getStats(e.getPlayer());
+                                    e.getPlayer().sendMessage(Main.c("HotPotato","Statistics for &a" + e.getPlayer().getName() + "&r:\n" +
+                                            "Balance: &a" + stats.get(0) + "&r\n" +
+                                            "Games Played: &a" + stats.get(2) + "&r\n" +
+                                            "Wins: &a" + stats.get(1) + "&r\n" +
+                                            "Winning Punch: &a" + stats.get(3)));
+
+                                }
+                            }.runTaskAsynchronously(Main.getInstance());
                             return;
                     }
                 }
