@@ -74,7 +74,7 @@ public class InventoryUtil {
         ItemMeta im = is.getItemMeta();
         im.setDisplayName(Main.c(null, name));
         if (lore != null) {
-            im.setLore(Arrays.asList(Main.c(null, lore).split(",")));
+            im.setLore(Arrays.asList(Main.c(null, lore).split(";")));
         }
         if (glowing) {
             im.addEnchant(Enchantment.DURABILITY, 1, true);

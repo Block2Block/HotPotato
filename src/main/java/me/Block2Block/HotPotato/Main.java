@@ -2,6 +2,7 @@ package me.Block2Block.HotPotato;
 
 import me.Block2Block.HotPotato.Commands.CommandHotPotato;
 import me.Block2Block.HotPotato.Entities.Game;
+import me.Block2Block.HotPotato.Kits.Abilities.PotatoWhacker;
 import me.Block2Block.HotPotato.Kits.KitLoader;
 import me.Block2Block.HotPotato.Listeners.*;
 import me.Block2Block.HotPotato.Managers.CacheManager;
@@ -11,7 +12,9 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.Location;
 import org.bukkit.World;
+import org.bukkit.block.Sign;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
@@ -78,7 +81,24 @@ public class Main extends JavaPlugin {
             return;
         }
 
-        registerListeners(new BlockBreakListener(),new HealthListener(), new HungerListener(), new JoinListener(), new LeaveListener(),new SignClickListener(), new SignPlaceListener(), new KitSelectionListener(), new TeamSelectionListener(), new EditModeListener(), new TeleportListener());
+
+        //Update signs.
+        for (Location loc : CacheManager.getSigns().keySet()) {
+            if (CacheManager.getSigns().get(loc).equals("queue")) {
+                Sign sign = (Sign) loc.getBlock().getState();
+                sign.setLine(3, Main.c(null, "Players Queued: &a" + Main.getQueueManager().playersQueued()));
+                sign.update(true);
+            } else if (CacheManager.getSigns().get(loc).equals("stats")) {
+                Sign sign = (Sign) loc.getBlock().getState();
+                sign.setLine(1, Main.c(null, "Games Active: &a" + CacheManager.getGames().size()));
+                sign.setLine(2, Main.c(null, "Players: &a" + CacheManager.getPlayers().size()));
+                sign.setLine(3, Main.c(null, "Players Queued: &a" + Main.getQueueManager().playersQueued()));
+
+                sign.update(true);
+            }
+        }
+
+        registerListeners(new BlockBreakListener(),new HealthListener(), new HungerListener(), new JoinListener(), new LeaveListener(),new SignClickListener(), new SignPlaceListener(), new KitSelectionListener(), new TeamSelectionListener(), new EditModeListener(), new TeleportListener(), new PotatoWhacker());
 
         getCommand("hotpotato").setExecutor(new CommandHotPotato());
 

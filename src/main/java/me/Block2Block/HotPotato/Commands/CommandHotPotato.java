@@ -7,6 +7,7 @@ import me.Block2Block.HotPotato.Main;
 import me.Block2Block.HotPotato.Managers.CacheManager;
 import me.Block2Block.HotPotato.Managers.PlayerNameManager;
 import me.Block2Block.HotPotato.Managers.Utils.InventoryUtil;
+import me.Block2Block.HotPotato.Managers.Utils.UUIDUtil;
 import org.apache.commons.io.FileUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -157,6 +158,7 @@ public class CommandHotPotato implements CommandExecutor {
                         } else {
                             p.sendMessage(Main.c("HotPotato","You do not have permission to perform this command."));
                         }
+                        break;
                     case "edit":
                         if (p.hasPermission("hotpotato.edit")) {
                             if (!CacheManager.isEditor(p)) {
@@ -278,6 +280,39 @@ public class CommandHotPotato implements CommandExecutor {
                             p.sendMessage(Main.c("HotPotato","You do not have permission to perform this command."));
                         }
                         break;
+                    case "addbalance":
+                        if (p.hasPermission("hotpotato.edit")) {
+                            if (args.length == 4) {
+                                int amount;
+                                try {
+                                    amount = Integer.parseInt(args[3]);
+                                } catch (NumberFormatException e) {
+                                    p.sendMessage(Main.c("HotPotato","Invalid arguments. Correct syntax: &a/hotpotato addbalance <player> <amount>"));
+                                    return true;
+                                }
+
+                                new BukkitRunnable() {
+                                    @Override
+                                    public void run() {
+                                        String uuid = UUIDUtil.getUUID(args[2]).toString();
+                                        if (uuid == null) {
+                                            p.sendMessage(Main.c("HotPotato","There is no user by that name."));
+                                            return;
+                                        }
+                                        if (!Main.getDbManager().addBalance(amount, uuid)) {
+                                            p.sendMessage(Main.c("HotPotato","That player has not played a game yet. They must play a game in order to receive money."));
+                                            return;
+                                        }
+                                        p.sendMessage(Main.c("HotPotato","You have added &a" + amount + " &rto &a" + args[2] + "'s &rbalance."));
+                                    }
+                                }.runTaskAsynchronously(Main.getInstance());
+                            } else {
+                                p.sendMessage(Main.c("HotPotato","Invalid arguments. Correct syntax: &a/hotpotato addbalance <player> <amount>"));
+                            }
+                        } else {
+                            p.sendMessage(Main.c("HotPotato","You do not have permission to perform this command."));
+                        }
+                        break;
                 }
             } else {
                 p.sendMessage(Main.c("HotPotato", "Available commands: \n" +
@@ -288,7 +323,8 @@ public class CommandHotPotato implements CommandExecutor {
                         "&a/hotpotato queue&r - Queue for a new game" +
                         ((p.hasPermission("hotpotato.game")?"\n&a/hotpotato forcestart [time] [game id]&r - Force start a game\n" +
                                 "&a/hotpotato end [id]&r - Forces a game to end.":"")) + ((p.hasPermission("hotpotato.edit")?"\n&a/hotpotato edit [map]&r - Toggles edit mode\n" +
-                        "&a/hotpotato setup&r - Set up a map while in edit mode.\n&a/hotpotato setlobby&r - Sets your current location as the Lobby.\n&a/hotpotato finish&r - Marks the map in edit mode finished and deletes the worlds.":""))));
+                        "&a/hotpotato setup&r - Set up a map while in edit mode.\n&a/hotpotato setlobby&r - Sets your current location as the Lobby.\n&a/hotpotato finish&r - Marks the map in edit mode finished and deletes the worlds.\n" +
+                        "&a/hotpotato addbalance <player> <amount>":""))));
             }
         } else {
             sender.sendMessage("You cannot execute HotPotato commands from Console or a Command Block.");
