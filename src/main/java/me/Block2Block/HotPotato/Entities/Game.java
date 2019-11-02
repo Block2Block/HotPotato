@@ -1,5 +1,6 @@
 package me.Block2Block.HotPotato.Entities;
 
+import com.sun.org.apache.bcel.internal.generic.BIPUSH;
 import me.Block2Block.HotPotato.Kits.KitLoader;
 import me.Block2Block.HotPotato.Main;
 import me.Block2Block.HotPotato.Managers.CacheManager;
@@ -284,11 +285,27 @@ public class Game implements Listener {
                 if (s != null) p.getInventory().setItem(i+9, s);
             }
 
+            if (kit.name().equals("Leaper")) {
+                p.setAllowFlight(true);
+                p.setFlying(false);
+            }
+
+            //Map Info
+            p.sendMessage(Main.c(null,"" +
+                    "&2=-=-=-=-=-=-=-{ &a&lHot Potato &r&2}-=-=-=-=-=-=-=\n" +
+                    "&rPunch or click the TNT to hit the potato.\n" +
+                    "Don't let the potato explode on your team's side.\n" +
+                    "Be the last team with lives.\n \n" +
+                    "Map: &a" + map.getName() + "&r by &a" + map.getAuthor() + "&r.\n" +
+                    "&2=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-="));
+
         }
 
         newTnt();
 
         Main.getQueueManager().noLongerRecruiting();
+
+
     }
 
     public void startTimer(int time) {
@@ -472,7 +489,7 @@ public class Game implements Listener {
                             ScoreboardManager.changeLineGame(gameID, 11, livesRed + " ");
                             break;
 
-                        } else if (block.getData() == (byte) 11) {
+                        } else if (block.getData() == (byte) 11 ||block.getData() == (byte) 3) {
                             //Blue lost
                             livesBlue--;
                             if (livesBlue == 0) {
@@ -671,12 +688,11 @@ public class Game implements Listener {
 
                 fallingBlock = e2;
                 inAir = true;
-                Bukkit.getLogger().info("2");
             }
         }
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST)
+    @EventHandler
     public void onClickMidairLeft(EntityDamageByEntityEvent e) {
         if (e.getDamager() instanceof Player && e.getEntity() instanceof Squid) {
             if (e.getEntity().getWorld().getName().equals(fallingBlock.getWorld().getName())) {
@@ -685,9 +701,11 @@ public class Game implements Listener {
                 } else {
                     lastHitBlue = (Player) e.getDamager();
                 }
+                if (e.isCancelled()) {
+                    return;
+                }
                 fallingBlock.setVelocity(e.getDamager().getLocation().getDirection().setY(0.3).normalize().multiply(1.15));
                 e.setCancelled(true);
-                Bukkit.getLogger().info("2");
             }
         }
     }
@@ -702,7 +720,6 @@ public class Game implements Listener {
                     lastHitBlue = e.getPlayer();
                 }
                 fallingBlock.setVelocity(e.getPlayer().getLocation().getDirection().setY(0.3).normalize().multiply(1.15));
-                Bukkit.getLogger().info("2");
             }
         }
     }

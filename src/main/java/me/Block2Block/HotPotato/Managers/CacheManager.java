@@ -134,4 +134,13 @@ public class CacheManager {
     public static void setFinishPlayer(Player finishPlayer) {
         CacheManager.finishPlayer = finishPlayer;
     }
+
+    public static HPMap getMap(int id) {
+        for (HPMap map : maps) {
+            if (map.getId() == id) {
+                return map;
+            }
+        }
+        return null;
+    }
 }

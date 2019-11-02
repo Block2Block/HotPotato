@@ -27,7 +27,6 @@ public class KitLoader {
                         "&7hot, so you better go;" +
                         "&7catch it!,"
         );
-        kit.hb(1, BAKED_POTATO, 1, "&a&lHot Potato");
         return kit.create();
     }
 
@@ -38,7 +37,16 @@ public class KitLoader {
                         "&7hitting potatoes really far!;" +
                         "&7You can hit the potato further!,"
         );
-        kit.hb(1, STICK, 1, "&a&lHot Potato", new Enchant(Enchantment.KNOCKBACK, 1));
+        return kit.create();
+    }
+
+    public Kit Leaper() {
+        KitCreator kit = new KitCreator(1, "Leaper", 1500);
+        kit.description(
+                "&7You are able to jump really;" +
+                        "&7far to catch those hot hot;" +
+                        "&7potatoes!,"
+        );
         return kit.create();
     }
 

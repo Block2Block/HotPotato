@@ -17,7 +17,7 @@ import org.bukkit.potion.PotionEffectType;
 
 public class PotatoWhacker implements Listener {
 
-    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onPlayerClick(PlayerInteractEvent e) {
         if (e.getClickedBlock() == null) {
             return;
@@ -44,7 +44,6 @@ public class PotatoWhacker implements Listener {
             }
             if (e.getClickedBlock().getType() == Material.TNT) {
                 if (!CacheManager.getPlayers().get(e.getPlayer().getUniqueId()).getKit().name().equals("Potato Whacker")) {
-                    Bukkit.getLogger().info("fail1");
                     return;
                 }
                 CacheManager.getGames().get(CacheManager.getPlayers().get(e.getPlayer().getUniqueId()).getGameID()).setLastHit(e.getPlayer());
@@ -63,12 +62,11 @@ public class PotatoWhacker implements Listener {
                 l.addPotionEffect(new PotionEffect(PotionEffectType.INVISIBILITY, 1000000, 2, true, false), true);
 
                 CacheManager.getGames().get(CacheManager.getPlayers().get(e.getPlayer().getUniqueId()).getGameID()).setFallingBlock(e2);
-                Bukkit.getLogger().info("1");
             }
         }
     }
 
-    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.HIGHEST)
     public void onClickMidairLeft(EntityDamageByEntityEvent e) {
         if (e.getDamager() instanceof Player && e.getEntity() instanceof Squid) {
             if (!CacheManager.getPlayers().containsKey(e.getDamager().getUniqueId())) {
@@ -78,14 +76,11 @@ public class PotatoWhacker implements Listener {
             FallingBlock fallingBlock = CacheManager.getGames().get(CacheManager.getPlayers().get(p.getUniqueId()).getGameID()).getFallingBlock();
             if (e.getEntity().getWorld().getName().equals(fallingBlock.getWorld().getName())) {
                 if (!CacheManager.getPlayers().get(p.getUniqueId()).getKit().name().equals("Potato Whacker")) {
-                    Bukkit.getLogger().info("fail2");
                     return;
                 }
-
-                CacheManager.getGames().get(CacheManager.getPlayers().get(p.getUniqueId()).getGameID()).setLastHit((Player) e.getEntity());
-                fallingBlock.setVelocity(e.getDamager().getLocation().getDirection().setY(0.3).normalize().multiply(1.25));
                 e.setCancelled(true);
-                Bukkit.getLogger().info("1");
+                CacheManager.getGames().get(CacheManager.getPlayers().get(p.getUniqueId()).getGameID()).setLastHit((Player) e.getDamager());
+                fallingBlock.setVelocity(e.getDamager().getLocation().getDirection().setY(0.3).normalize().multiply(1.25));
             }
         }
     }
@@ -99,12 +94,10 @@ public class PotatoWhacker implements Listener {
             FallingBlock fallingBlock = CacheManager.getGames().get(CacheManager.getPlayers().get(e.getPlayer().getUniqueId()).getGameID()).getFallingBlock();
             if (e.getRightClicked().getWorld().getName().equals(fallingBlock.getWorld().getName())) {
                 if (!CacheManager.getPlayers().get(e.getPlayer().getUniqueId()).getKit().name().equals("Potato Whacker")) {
-                    Bukkit.getLogger().info("fail3");
                     return;
                 }
                 CacheManager.getGames().get(CacheManager.getPlayers().get(e.getPlayer().getUniqueId()).getGameID()).setLastHit(e.getPlayer());
                 fallingBlock.setVelocity(e.getPlayer().getLocation().getDirection().setY(0.3).normalize().multiply(1.25));
-                Bukkit.getLogger().info("1");
             }
         }
     }

@@ -111,4 +111,6 @@ public class QueueManager {
         return queue.size();
     }
 
+    public int getRecruiting() {return recruiting;}
+
 }

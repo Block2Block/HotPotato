@@ -25,14 +25,14 @@ public class InventoryUtil {
         List<Integer> kits = CacheManager.getPlayers().get(p.getUniqueId()).getPlayerData().getUnlockedKits();
         i(inv);
         for (PlayerKit kit : PlayerKit.values()) {
-            if (kits.contains(kit)) {
-                i(inv, kit.getGUISlot(), kit.getIcon(), "&a&l" + kit.getName(), 1, kit.getKit().lore(),
-                        (short)0, true);
+            if (kits.contains(kit.getId())) {
+                i(inv, kit.getGUISlot(), kit.getIcon(), "&a&l" + kit.getName(), 1, kit.getKit().lore() + ";;&a&lClick to equip!",
+                        (short)0, CacheManager.getPlayers().get(p.getUniqueId()).getKit().name().equals(kit.getKit().name()));
             } else {
                 i(inv, kit.getGUISlot(), kit.getIcon(), "&c&l" + kit.getName(), 1,
-                        "&ePrice: &7;&a" +
-                                kit.getKit().price() + ";" +
-                                kit.getKit().lore() + ";&a&lClick to purchase!");
+                        "&7Price: &a" +
+                                kit.getKit().price() + ";&7" +
+                                kit.getKit().lore() + ";;&a&lClick to purchase!");
             }
         }
         return inv;

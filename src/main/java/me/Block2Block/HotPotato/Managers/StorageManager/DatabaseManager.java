@@ -279,7 +279,7 @@ public class DatabaseManager {
             PreparedStatement statement = connection.prepareStatement("UPDATE hp_playerdata SET balance = (balance - " + balance + ") WHERE uuid = '" + p.getUniqueId().toString() + "'");
             boolean set = statement.execute();
         } catch (Exception e) {
-            Bukkit.getLogger().info("Unable update balances in the database. Please try restarting your server.");
+            Bukkit.getLogger().info("Unable to update balances in the database. Please try restarting your server.");
         }
     }
 
@@ -407,9 +407,8 @@ public class DatabaseManager {
             CacheManager.addMap(new HPMap(results.getInt(1), results.getString(2), results.getString(8), redSpawns, blueSpawns, tntSpawns, zip, waitingLobby));
 
         } catch (Exception e) {
-            Bukkit.getLogger().log(Level.SEVERE, "There has been an error loading Database tables. The plugin will be disabled. Stack Trace:");
+            Bukkit.getLogger().log(Level.SEVERE, "There has been an error adding maps to the database. Stack Trace:");
             e.printStackTrace();
-            Bukkit.getServer().getPluginManager().disablePlugin(Main.getInstance());
         }
 
     }
@@ -428,8 +427,18 @@ public class DatabaseManager {
 
             return true;
         } catch (Exception e) {
-            Bukkit.getLogger().info("Unable update balances in the database. Please try restarting your server.");
+            Bukkit.getLogger().info("Unable to update balances in the database. Please try restarting your server.");
             return false;
+        }
+    }
+
+    public void removeMap(HPMap map) {
+        try {
+            PreparedStatement statement = connection.prepareStatement("DELETE FROM `hp_maps` WHERE id = " + map.getId() + "");
+            boolean set = statement.execute();
+        } catch (Exception e) {
+            Bukkit.getLogger().info("Unable update balances in the database. Please try restarting your server.");
+            return;
         }
     }
 

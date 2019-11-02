@@ -2,6 +2,7 @@ package me.Block2Block.HotPotato.Commands;
 
 import me.Block2Block.HotPotato.Entities.Game;
 import me.Block2Block.HotPotato.Entities.GameState;
+import me.Block2Block.HotPotato.Entities.HPMap;
 import me.Block2Block.HotPotato.Listeners.EditModeListener;
 import me.Block2Block.HotPotato.Main;
 import me.Block2Block.HotPotato.Managers.CacheManager;
@@ -21,6 +22,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.io.File;
+import java.security.DomainCombiner;
 
 public class CommandHotPotato implements CommandExecutor {
 
@@ -74,6 +76,10 @@ public class CommandHotPotato implements CommandExecutor {
                         if (p.hasPermission("hotpotato.game")) {
                             if (args.length == 1) {
                                 if (CacheManager.getPlayers().containsKey(p.getUniqueId())) {
+                                    if (Main.getQueueManager().getRecruiting() != CacheManager.getPlayers().get(p.getUniqueId()).getGameID()) {
+                                        p.sendMessage(Main.c("HotPotato","The game you are in has already started."));
+                                        return true;
+                                    }
                                     CacheManager.getGames().get(CacheManager.getPlayers().get(p.getUniqueId()).getGameID()).startTimer(-1);
                                     p.sendMessage(Main.c("HotPotato", "You have force started your game."));
                                 } else {
@@ -90,6 +96,10 @@ public class CommandHotPotato implements CommandExecutor {
                                 }
 
                                 if (CacheManager.getPlayers().containsKey(p.getUniqueId())) {
+                                    if (Main.getQueueManager().getRecruiting() != CacheManager.getPlayers().get(p.getUniqueId()).getGameID()) {
+                                        p.sendMessage(Main.c("HotPotato","The game you are in has already started."));
+                                        return true;
+                                    }
                                     CacheManager.getGames().get(CacheManager.getPlayers().get(p.getUniqueId()).getGameID()).startTimer(time);
                                     p.sendMessage(Main.c("HotPotato", "You have force started your game with &a" + time + "s &rcountdown."));
                                 } else {
@@ -107,6 +117,10 @@ public class CommandHotPotato implements CommandExecutor {
                                     return true;
                                 }
                                 if (CacheManager.getGames().containsKey(id)) {
+                                    if (Main.getQueueManager().getRecruiting() != id) {
+                                        p.sendMessage(Main.c("HotPotato","That game has already started."));
+                                        return true;
+                                    }
                                     CacheManager.getGames().get(id).startTimer(time);
                                     p.sendMessage(Main.c("HotPotato", "You have force started game &a" + id + " &7with &a" + time + "s &rcountdown."));
                                 } else {
@@ -282,10 +296,10 @@ public class CommandHotPotato implements CommandExecutor {
                         break;
                     case "addbalance":
                         if (p.hasPermission("hotpotato.edit")) {
-                            if (args.length == 4) {
+                            if (args.length == 3) {
                                 int amount;
                                 try {
-                                    amount = Integer.parseInt(args[3]);
+                                    amount = Integer.parseInt(args[2]);
                                 } catch (NumberFormatException e) {
                                     p.sendMessage(Main.c("HotPotato","Invalid arguments. Correct syntax: &a/hotpotato addbalance <player> <amount>"));
                                     return true;
@@ -294,7 +308,7 @@ public class CommandHotPotato implements CommandExecutor {
                                 new BukkitRunnable() {
                                     @Override
                                     public void run() {
-                                        String uuid = UUIDUtil.getUUID(args[2]).toString();
+                                        String uuid = UUIDUtil.getUUID(args[1]).toString();
                                         if (uuid == null) {
                                             p.sendMessage(Main.c("HotPotato","There is no user by that name."));
                                             return;
@@ -303,7 +317,7 @@ public class CommandHotPotato implements CommandExecutor {
                                             p.sendMessage(Main.c("HotPotato","That player has not played a game yet. They must play a game in order to receive money."));
                                             return;
                                         }
-                                        p.sendMessage(Main.c("HotPotato","You have added &a" + amount + " &rto &a" + args[2] + "'s &rbalance."));
+                                        p.sendMessage(Main.c("HotPotato","You have added &a" + amount + " &rto &a" + args[1] + "'s &rbalance."));
                                     }
                                 }.runTaskAsynchronously(Main.getInstance());
                             } else {
@@ -313,6 +327,69 @@ public class CommandHotPotato implements CommandExecutor {
                             p.sendMessage(Main.c("HotPotato","You do not have permission to perform this command."));
                         }
                         break;
+                    case "map":
+                        if (p.hasPermission("hotpotato.edit")) {
+                            if (args.length == 1) {
+                                p.sendMessage(Main.c("HotPotato","Available sub-commands:\n" +
+                                        "&a/hotpotato map list &r- Lists all current active maps.\n" +
+                                        "&a/hotpotato map remove <id> &r- Remove a map from rotation."));
+                            } else if (args.length == 2 || args.length == 3) {
+                                switch (args[1].toLowerCase()) {
+                                    case "list":
+                                        String mapList = Main.c("HotPotato","Available maps:");
+                                        for (HPMap map : CacheManager.getMaps()) {
+                                            mapList += Main.c(null, "\nID: &a" + map.getId() + " &r- Name: &a" + map.getName() + "&r - Author: &a" + map.getAuthor());
+                                        }
+                                        p.sendMessage(mapList);
+                                        break;
+                                    case "remove":
+                                        if (args.length == 3) {
+                                            int id;
+                                            try {
+                                                id = Integer.parseInt(args[2]);
+                                            } catch (NumberFormatException e) {
+                                                p.sendMessage(Main.c("HotPotato","Invalid arguments. Correct arguments: &a/hotpotato map rmove <id>"));
+                                                return true;
+                                            }
+
+                                            HPMap map = CacheManager.getMap(id);
+                                            if (map == null) {
+                                                p.sendMessage(Main.c("HotPotato","There is no map by that ID. If you need to see which maps you have active, please do &a/hotpotato map list&r."));
+                                            }
+
+                                            map.getZip().delete();
+                                            CacheManager.getMaps().remove(map);
+                                            Main.getDbManager().removeMap(map);
+                                            p.sendMessage(Main.c("HotPotato","The map &a" + map.getName() + "&r was deleted."));
+                                        } else {
+                                            p.sendMessage(Main.c("HotPotato","Invalid arguments. Correct arguments: &a/hotpotato map rmove <id>"));
+                                        }
+                                        break;
+                                    default:
+                                        p.sendMessage(Main.c("HotPotato","Available sub-commands:\n" +
+                                                "&a/hotpotato map list &r- Lists all current active maps.\n" +
+                                                "&a/hotpotato map remove <id> &r- Remove a map from rotation."));
+                                        break;
+                                }
+                            }
+                        } else {
+                            p.sendMessage(Main.c("HotPotato","You do not have permission to perform this command."));
+                        }
+                        break;
+                    default:
+                        p.sendMessage(Main.c("HotPotato", "Available commands: \n" +
+                                "&a/hotpotato&r - HotPotato Sub-Command List\n" +
+                                "&a/hotpotato kit&r - Set your kit\n" +
+                                "&a/hotpotato team&r - Queue for a different team\n" +
+                                "&a/hotpotato leave&r - Leave your current game\n" +
+                                "&a/hotpotato queue&r - Queue for a new game" +
+                                ((p.hasPermission("hotpotato.game")?"\n&a/hotpotato forcestart [time] [game id]&r - Force start a game\n" +
+                                        "&a/hotpotato end [id]&r - Forces a game to end.":"")) + ((p.hasPermission("hotpotato.edit")?"\n&a/hotpotato edit [map]&r - Toggles edit mode\n" +
+                                "&a/hotpotato setup&r - Set up a map while in edit mode.\n&a/hotpotato setlobby&r - Sets your current location as the Lobby.\n&a/hotpotato finish&r - Marks the map in edit mode finished and deletes the worlds.\n" +
+                                "&a/hotpotato addbalance <player> <amount>\n" +
+                                "&a/hotpotato map list &r- Lists all current active maps.\n" +
+                                "&a/hotpotato map remove <id> &r- Remove a map from rotation.":""))));
+
                 }
             } else {
                 p.sendMessage(Main.c("HotPotato", "Available commands: \n" +
@@ -324,7 +401,9 @@ public class CommandHotPotato implements CommandExecutor {
                         ((p.hasPermission("hotpotato.game")?"\n&a/hotpotato forcestart [time] [game id]&r - Force start a game\n" +
                                 "&a/hotpotato end [id]&r - Forces a game to end.":"")) + ((p.hasPermission("hotpotato.edit")?"\n&a/hotpotato edit [map]&r - Toggles edit mode\n" +
                         "&a/hotpotato setup&r - Set up a map while in edit mode.\n&a/hotpotato setlobby&r - Sets your current location as the Lobby.\n&a/hotpotato finish&r - Marks the map in edit mode finished and deletes the worlds.\n" +
-                        "&a/hotpotato addbalance <player> <amount>":""))));
+                        "&a/hotpotato addbalance <player> <amount>\n" +
+                        "&a/hotpotato map list &r- Lists all current active maps.\n" +
+                        "&a/hotpotato map remove <id> &r- Remove a map from rotation.":""))));
             }
         } else {
             sender.sendMessage("You cannot execute HotPotato commands from Console or a Command Block.");

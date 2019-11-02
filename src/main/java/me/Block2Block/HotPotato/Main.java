@@ -2,6 +2,7 @@ package me.Block2Block.HotPotato;
 
 import me.Block2Block.HotPotato.Commands.CommandHotPotato;
 import me.Block2Block.HotPotato.Entities.Game;
+import me.Block2Block.HotPotato.Kits.Abilities.Leaper;
 import me.Block2Block.HotPotato.Kits.Abilities.PotatoWhacker;
 import me.Block2Block.HotPotato.Kits.KitLoader;
 import me.Block2Block.HotPotato.Listeners.*;
@@ -25,7 +26,9 @@ import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Random;
 import java.util.logging.Level;
 
@@ -81,9 +84,16 @@ public class Main extends JavaPlugin {
             return;
         }
 
+        List<Location> signsToRemove = new ArrayList<>();
 
         //Update signs.
         for (Location loc : CacheManager.getSigns().keySet()) {
+            if (!(loc.getBlock().getState() instanceof Sign)) {
+                Bukkit.getLogger().info("One of your signs has been deleted from the world. This sign will now be deleted from the database.");
+                getDbManager().removeSign(loc, CacheManager.getSigns().get(loc));
+                signsToRemove.add(loc);
+                continue;
+            }
             if (CacheManager.getSigns().get(loc).equals("queue")) {
                 Sign sign = (Sign) loc.getBlock().getState();
                 sign.setLine(3, Main.c(null, "Players Queued: &a" + Main.getQueueManager().playersQueued()));
@@ -98,7 +108,11 @@ public class Main extends JavaPlugin {
             }
         }
 
-        registerListeners(new BlockBreakListener(),new HealthListener(), new HungerListener(), new JoinListener(), new LeaveListener(),new SignClickListener(), new SignPlaceListener(), new KitSelectionListener(), new TeamSelectionListener(), new EditModeListener(), new TeleportListener(), new PotatoWhacker());
+        for (Location l : signsToRemove) {
+            CacheManager.getSigns().remove(l);
+        }
+
+        registerListeners(new BlockBreakListener(),new HealthListener(), new HungerListener(), new JoinListener(), new LeaveListener(),new SignClickListener(), new SignPlaceListener(), new KitSelectionListener(), new TeamSelectionListener(), new EditModeListener(), new TeleportListener(), new PotatoWhacker(), new Leaper());
 
         getCommand("hotpotato").setExecutor(new CommandHotPotato());
 
