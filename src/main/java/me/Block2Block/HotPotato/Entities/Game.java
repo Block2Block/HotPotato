@@ -1,6 +1,5 @@
 package me.Block2Block.HotPotato.Entities;
 
-import com.sun.org.apache.bcel.internal.generic.BIPUSH;
 import me.Block2Block.HotPotato.Kits.KitLoader;
 import me.Block2Block.HotPotato.Main;
 import me.Block2Block.HotPotato.Managers.CacheManager;
@@ -26,7 +25,6 @@ import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
-import org.bukkit.scoreboard.Score;
 
 import java.io.File;
 import java.util.ArrayList;

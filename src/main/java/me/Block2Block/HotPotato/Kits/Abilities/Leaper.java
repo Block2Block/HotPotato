@@ -3,10 +3,8 @@ package me.Block2Block.HotPotato.Kits.Abilities;
 import me.Block2Block.HotPotato.Main;
 import me.Block2Block.HotPotato.Managers.CacheManager;
 import org.bukkit.Sound;
-import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.player.PlayerToggleFlightEvent;
 import org.bukkit.scheduler.BukkitRunnable;
 

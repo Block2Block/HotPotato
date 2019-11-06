@@ -5,7 +5,6 @@ import me.Block2Block.HotPotato.Main;
 import me.Block2Block.HotPotato.Managers.CacheManager;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 
 import java.io.File;

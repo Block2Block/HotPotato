@@ -2,7 +2,6 @@ package me.Block2Block.HotPotato.Entities;
 
 import com.nametagedit.plugin.NametagEdit;
 import com.nametagedit.plugin.api.data.FakeTeam;
-import me.Block2Block.HotPotato.Kits.PlayerKit;
 import me.Block2Block.HotPotato.Main;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
