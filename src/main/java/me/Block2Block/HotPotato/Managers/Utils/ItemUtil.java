@@ -20,9 +20,9 @@ public class ItemUtil {
     public static ItemStack ci(Material type, String name, int amount, String lore, short data, String skullName, Enchant... enchants) {
         ItemStack is = new ItemStack(type, amount, data);
         ItemMeta im = is.getItemMeta();
-        im.setDisplayName(Main.c(null, name));
+        im.setDisplayName(Main.c(false, name));
         if (lore != null) {
-            im.setLore(Arrays.asList(Main.c(null, lore).split(";")));
+            im.setLore(Arrays.asList(Main.c(false, lore).split(";")));
         }
         if (skullName != null) {
             SkullMeta sm = (SkullMeta) im;

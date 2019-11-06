@@ -21,7 +21,7 @@ import static org.bukkit.Material.*;
 public class InventoryUtil {
 
     public static Inventory kitSelection(Player p) {
-        Inventory inv = Bukkit.createInventory(null, 54, Main.c(null, "&a&lKit Selection"));
+        Inventory inv = Bukkit.createInventory(null, 54, Main.c(false, "&a&lKit Selection"));
         List<Integer> kits = CacheManager.getPlayers().get(p.getUniqueId()).getPlayerData().getUnlockedKits();
         i(inv);
         for (PlayerKit kit : PlayerKit.values()) {
@@ -39,7 +39,7 @@ public class InventoryUtil {
     }
 
     public static Inventory confirm(PlayerKit kit) {
-        Inventory inv = Bukkit.createInventory(null, 36, Main.c(null, "&c&lPurchase " + kit.getName() + "&c&l?"));
+        Inventory inv = Bukkit.createInventory(null, 36, Main.c(false, "&c&lPurchase " + kit.getName() + "&c&l?"));
         for (int i = inv.getSize()-1; i>-1; i--) {
             i(inv, i, STAINED_GLASS_PANE, "Are you sure?", 1, null, (short)7);
         }
@@ -60,7 +60,7 @@ public class InventoryUtil {
     }
 
     public static Inventory teamSelection(Player p) {
-        Inventory inv = Bukkit.createInventory(null, 27, Main.c(null, "&a&lTeam Selection"));
+        Inventory inv = Bukkit.createInventory(null, 27, Main.c(false, "&a&lTeam Selection"));
 
         i(inv, 11, WOOL, "&cRed",1,"&rQueue for Red team",(short) 14, CacheManager.getPlayers().get(p.getUniqueId()).isRed());
         i(inv, 15, WOOL, "&3Blue",1,"&rQueue for Blue team",(short) 9, !CacheManager.getPlayers().get(p.getUniqueId()).isRed());
@@ -72,9 +72,9 @@ public class InventoryUtil {
     static void i(Inventory inv, int slot, Material type, String name, int amount, String lore, short data, boolean glowing, String skullName) {
         ItemStack is = new ItemStack(type, amount, data);
         ItemMeta im = is.getItemMeta();
-        im.setDisplayName(Main.c(null, name));
+        im.setDisplayName(Main.c(false, name));
         if (lore != null) {
-            im.setLore(Arrays.asList(Main.c(null, lore).split(";")));
+            im.setLore(Arrays.asList(Main.c(false, lore).split(";")));
         }
         if (glowing) {
             im.addEnchant(Enchantment.DURABILITY, 1, true);

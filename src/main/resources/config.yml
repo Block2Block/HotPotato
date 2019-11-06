@@ -9,9 +9,10 @@
 #
 # Do not remove any of the different values. They cannot be disabled, however
 # I may introduce a system for them to be disabled in the near future if there
-# is enough demand. If you do remove values, the plugin will just load them in
-# again with their default values. The same occurs when there is an invalid value
-# used.
+# is enough demand. If you do remove values, the plugin may not work.
+#
+# This config file is VERY comprehensive. Every message is customisable, with
+# the exception of GUI, kit and phrase names.
 #
 # I have worked quite hard on the plugin to make it as configurable as possible. Please
 # rate it on the Spigot page! Every review helps!
@@ -20,6 +21,317 @@
 # issue on the GitHub.
 #
 # Most of the settings/messages are self explanatory, but I have explained the less obvious ones.
-Version: 0.1
+
+Messages:
+  Prefix: "&2HotPotato>> &r"
+  Commands:
+    No-Permission: "You do not have permission to execute this command."
+    Must-Be-In-Game: "You must be in a game to execute this command."
+    Must-Not-Be-In-Game: "You must not be in a game to execute this command."
+
+    #This is the command list that everyone sees when they execute /hotpotato.
+    Default-Command-List: "Available commands: \n&a/hotpotato&r - HotPotato Sub-Command List.\n&a/hotpotato kit&r - Set your kit.\n&a/hotpotato team&r - Queue for a different team.\n&a/hotpotato leave&r - Leave your current game.\n&a/hotpotato queue&r - Queue for a new game."
+
+    #This is added to the above command list when users with the permission node hotpotato.game execute /hotpotato.
+    Game-Command-List: "\n&a/hotpotato forcestart [time] [game id]&r - Force start a game.\n&a/hotpotato end [id]&r - Forces a game to end."
+
+    #This is added to the above command lists when users with the permission node hotpotato.edit execute /hotpotato.
+    Edit-Command-List: "\n&a/hotpotato edit [map]&r - Toggles edit mode.\n&a/hotpotato setup&r - Set up a map while in edit mode.\n&a/hotpotato setlobby&r - Sets your current location as the Lobby.\n&a/hotpotato finish&r - Marks the map in edit mode finished and deletes the world.\n&a/hotpotato addbalance <player> <amount> &r- Adds the specific balance to the user (only works if the Use-Custom-Economy setting is true).\n&a/hotpotato map list &r- Lists all current active maps.\n&a/hotpotato map remove <id> &r- Remove a map from rotation."
+
+    Kit:
+      Only-Execute-Before-Game: "You can only set your kit before the game starts."
+
+    Team:
+      Only-Execute-Before-Game: "You can only queue for a team before the game starts."
+
+    Force-Start:
+      Invalid-Arguments: "Invalid syntax. Correct syntax: &a/hotpotato forcestart [time] [game id]"
+      Current-Game-Already-Started: "The game you are in has already started."
+      Other-Game-Already-Started: "That game has already started."
+      You-Forcestarted: "You have force started your game."
+
+      #{time} represents the time specified in the command.
+      You-Forcestarted-Time: "You have force started your game with a &a{time}s &rcountdown."
+
+      #{id} represents the game ID and {time} represents the time specified in the command.
+      You-Forcestarted-Other-Game: "You have force started game &a{id} &rwith a &a{time}s &rcountdown"
+
+      Must-Specify-Time-ID: "You must specify a time and game ID when not in a game."
+      No-Game-With-ID: "A game with that ID does not exist."
+
+    End:
+      Invalid-Arguments: "Invalid syntax. Correct syntax: &a/hotpotato end [game id]"
+      Must-Specify-ID: "You must specify a game ID when not in a game."
+      You-Ended: "You have ended your game."
+
+      #{id} represents the game ID.
+      You-Ended-ID: "You have ended the game with ID &a{id}&r."
+
+      Your-Game-Ended: "Your game has been forced to end by an administrator."
+      No-Game-With-ID: "A game with that ID does not exist."
+
+    Edit:
+      Invalid-Arguments: "Invalid syntax. Correct syntax: &a/hotpotato edit [map]"
+      Cannot-Open-Server-Files: "You cannot open the server folders as worlds or use a file as a world. Please try another name."
+      People-In-Edit-Mode: "You cannot load another world into edit mode whilst there is still people in edit mode."
+      World-Copy-Fail: "The server is unable to copy the directory of the specified world. Please try again."
+
+      Entered-Edit-Mode: "You have entered Edit mode."
+      Left-Edit-Mode: "You have left edit mode. Any setup you have done has been erased."
+      Unloaded-World: "No-one else was left in edit mode, so the world was unloaded."
+
+      #{world} represents the world the user tried to load.
+      No-World: "There is no world called {world} in the servers directory."
+
+      Map-Loaded: "There is currently a map loaded into Edit mode, this map will be loaded back into memory. If you wanted to start a new map, please either specify a map when loading into Edit mode or use /hotpotato finish to mark the map as finished."
+      Map-Not-Loaded: "There is currently no map loaded into Edit mode, creating a new world."
+
+      Must-Set-Lobby: "You must set the lobby point before you can enter Edit mode."
+
+      Teleport-Not-In-Edit-Node: "You must be in edit mode in order to teleport to players also in edit mode."
+
+    Setup:
+      Must-Be-In-Edit-Mode: "You must be in edit mode to setup a map."
+      Already-In-Setup: "Someone is already setting up the map."
+      Map-Name-Exists: "A map with that name already exists. Please rename your map and try again."
+      Teleported-Setup-Complete: "You have been teleported to the lobby as the map you were in was set up. You are no longer in edit mode."
+      #{zip-name} represents the ZIP name.
+      ZIP-Generation-Fail: "Unable to generate ZIP folder. Please ZIP the folder yourself (with the world files in the root), name it {zip-name}.zip, and put it in the 'Maps' folder in the plugins data folder."
+
+      Setup-Warning: "You are about to setup the map, at the end of which this worlds files will be put into a ZIP and the world folder will be deleted. Please type 'confirm' to confirm you wish to do this. You can cancel at any time by typing 'cancel'."
+      Setup-Cancelled: "You have stopped setting up the map. Any points setup have been deleted."
+
+      Given-Stick: "You have been given the HotPotato Setup Stick."
+      Please-Set-Red: "To start off, please stand wherever you want RED team spawns and click on the stick. Please ensure you are looking in the direction you want them to spawn. When you are done, type 'done'."
+      Please-Set-Blue: "Now, please stand wherever you want BLUE team spawns and click the stick. Please ensure you look in the direction you want them to spawn. When you are done, type 'done'."
+      Please-Set-TNT: "Next, you need to specify where you want the TNT spawn. Please stand where you want them to spawn and click the stick. When you are done, type 'done'."
+      Please-Set-Waiting-Lobby: "Now you need to specify where you would like your Waiting Lobby. Please stand where you would like them to spawn and click the stick. Please look in the direction you would like them to spawn. Please note: This MUST be in the SAME WORLD as your map. The plugin will not make the waiting lobby disappear, so it is recommended to put it out of view of the map."
+      Please-Set-Name: "Now you need to specify a name for your map. Please enter a name for your map."
+      Please-Set-Author: "Finally, please specify the authors of the map. Please enter the map author."
+
+      Red-Spawn-Added: "Red spawn point added."
+      Blue-Spawn-Added: "Blue spawn point added."
+      TNT-Spawn-Added: "TNT spawn point added."
+      Waiting-Lobby-Set: "Waiting Lobby location set."
+      Name-Set: "You have set the name of your map."
+      Author-Set: "You have set the author of your map. Map setup complete!"
+
+      Must-Specify-Red: "You must specify at least 1 Red spawn."
+      Must-Specify-Blue: "You must specify at least 1 Blue spawn."
+      Must-Specify-TNT: "You must specify at least 1 TNT spawn."
+      Must-Specify-Name: "You must specify a map name. If you wish to cancel, enter 'cancel'."
+      Must-Specify-Author: "You must specify a map author. If you wish to cancel, enter 'cancel'."
+
+    Set-Lobby:
+      Cannot-Set-In-HotPotato-World: "You cannot set your lobby to a location in a HotPotato world. If you believe this to be a mistake, please rename your world."
+      Set-Lobby: "You have set your current location as the Lobby."
+
+    Finish:
+      Finish-Warning: "What you are about to do will delete the world from the server. Please type 'confirm' to confirm this is what you want to do. Type 'cancel' if you wish to cancel."
+      Must-Be-In-Edit-Mode: "You must be in edit mode in order to mark a map as finished."
+
+      Map-Marked-Finished: "You have been teleported to the lobby as the map was marked finished. It has now been deleted."
+      Finish-Cancelled: "You have cancelled finishing your map."
+
+    #These messages only apply if the Use-Custom-Economy setting is true.
+    Add-Balance:
+      Invalid-Arguments: "Invalid syntax. Correct syntax: &a/hotpotato addbalance <player> <amount>"
+      No-User: "There is no user by that name."
+      Not-Played-Game: "That user has not played a game yet. They must play a game in order to add currency to them."
+      #{amount} represents the amount added to the users balance and {player} represents the player who was given the balance.
+      Success: "You have added &a{amount} &rto &a{player}'s &rbalance."
+
+    Map:
+      Sub-command-List: "Available sub-commands:\n&a/hotpotato map list &r- Lists all current active maps.\n&a/hotpotato map remove <id> &r- Remove a map from rotation."
+
+      List:
+        Available-Maps: "Available Maps:\n"
+        #{id} represents the map ID, {name} represents the map name and {author} represents the map author.
+        Map-List-Format: "ID: &a{id}&r - Name: &a{name}&r - Author: &a{author}\n"
+
+      Remove:
+        Invalid-Arguments: "Invalid syntax. Correct syntax: &a/hotpotato map remove <id>"
+        No-Map: "There is no map by that ID. If you need to see which maps are active, please execute &a/hotpotato map list&r."
+        #{name} represents the map name.
+        Success: "The map &a{name} &rwas deleted."
+
+  Game:
+    Queue:
+      Join: "You have joined the game queue."
+      Leave: "You have left the game queue."
+      No-Maps: "There are currently no maps set up. You have been removed from the queue."
+    Join:
+      User-Message: "You have joined game &a{id}&r."
+      Game-Message: "&a{player} &rhas joined the game."
+      Join-Red: "You have joined &cRed&r team."
+      Join-Blue: "You have joined &9Blue&r team."
+      Loading-Data: "Loading your player data..."
+      Data-Loaded: "Your player data has been loaded."
+
+    Leave:
+      User-Message: "You left the game."
+      Game-Message: "&a{player} &rhas left the game."
+      Blue-Win: "&9&lBlue Wins! &rAll of &cRed &rleft."
+      Red-Win: "&c&lRed Wins! &rAll of &9Blue &rleft."
+
+    Start-Timer:
+      #{time} represents the time till the game starts.
+      Title-Format: "&2&l{time}"
+      #{time} represents the time till the game starts and {s} represents the s suffix on second when it is plural.
+      Message: "The game will start in &a{time} &rsecond{s}."
+
+    TNT-Timer-Message: "The TNT will spawn in &a{time} &rsecond{s}."
+
+    #{map-name} represents the map name and {map-author} represents
+    Game-Start: "&2=-=-=-=-=-=-=-{ &a&lHot Potato &r&2}-=-=-=-=-=-=-=\n&rPunch or click the TNT to hit the potato.\nDon't let the potato explode on your team's side.\nBe the last team with lives.\n \nMap: &a{map-name}&r by &a{map-author}&r.\n&2=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-="
+
+    Red-Lost-Life: "&cRed &rhas lost a life! They now have &a{red-lives} &rlives left!"
+    Blue-Lost-Life: "&9Blue &rhas lost a life! They now have &a{blue-lives} &rlives left!"
+    Red-Win: "&c&lRed Wins! &r&9Blue &rhas lost all of their lives."
+    Blue-Win: "&9&lBlue Wins! &r&cRed &rhas lost all of their lives."
+
+    Queue-Red: "You have queued for &cRed &rteam."
+    Queue-Blue: "You have queued for &9Blue &rteam."
+
+    End-Game:
+      Game-Has-Ended: "This game has ended. You will be sent back to the lobby in 10 seconds."
+      Sent-To-Lobby: "You have been sent back to the lobby."
+
+  Signs:
+    #{type} represents the type of sign that was deleted.
+    Sign-Deleted: "The {type} sign has been deleted."
+    No-Permission: "You do not have permission to delete HotPotato signs."
+
+    Stats:
+      Loading-Stats: "Loading your statistics..."
+      Stats: "Statistics for &a{player-name}&r:\nBalance: &a{balance}\n&rGames Played: &a{games-played}&r\nWins: &a{wins}\n&rWinning Punch: &a{winning-punch}"
+
+  Kits:
+    #{kit-name} represents the kit name.
+    Kit-Equipped: "You equipped the &a{kit-name}&r kit."
+    Kit-Purchased: "You purchased the &a{kit-name}&r kit."
+    Insufficient-Funds: "You have insufficient funds to purchase that kit."
+
+  Scoreboard:
+    Team:
+      Red-Format: "&cRed"
+      Blue-Format: "&9Blue"
 
 
+
+
+Settings:
+
+  Game:
+    #The minimum amount of players in the queue for the Queue Manager to create a new game.
+    Queue-Min-New-Game: 2
+    #How full should the game be in order to start the countdown timer.
+    Percent-To-Start: 50
+    #How full should the game be to shorted the countdown timer.
+    Percent-To-Shorten: 100
+    #The amount of seconds the plugin should start the timer at when the percentage players has been reached.
+    Default-Countdown-Time: 60
+    #The amount of seconds the countdown timer should be shortened to when the shorten percentage has been reached.
+    Shorten-Countdown-Time: 10
+    #The amount of seconds the countdown timer for TNT spawns counts down from.
+    TNT-Countdown-Time: 10
+    #The amount of seconds the game will wait before teleporting players to the lobby at the end of a game.
+    Ending-Countdown-Time: 10
+
+    #The minimum amount of time, in ticks, before the TNT can explode.
+    TNT-Explode-Min-Time: 200
+    #The maximum amount of time, in ticks, where the TNT will explode.
+    TNT-Explode-Max-Time: 800
+
+  Database:
+    #There are 2 options, MySQL and SQLite. If you put anything other than those 2 values, it will automatically assume you want to use SQLite.
+    #This plugin does not support file storage.
+    Type: "SQLite"
+    MySQL:
+      Hostname: "localhost"
+      Port: "3306"
+      Database: "HotPotato"
+      Username: "root"
+      Password: ""
+
+  Economy:
+    #If you wish to use the plugins built-in Economy, set this to true. When this is false, the plugin will use Vault to manage your economy.
+    Use-Custom-Economy: true
+
+    #These values will apply to any economy used. Only one of applied each game (so for instance if a user has the winning punch, they only get 150, not 250)
+    Money-On-Loss: 50
+    Money-On-Win: 100
+    Money-On-Winning-Punch: 150
+
+  Scoreboard:
+    Enabled: true
+
+    #If you wish to use the plugins built-in Scoreboard Manager, set this to true. This may not work correctly if you have another plugin already dealing with Scoreboards.
+    #Setting this to false will result in the plugin using the PlaceHolderAPI (if you have the plugin) for compatibility with other plugins.
+    Use-Custom-Scoreboard: true
+    Title: "&9&m----&b&l HOTPOTATO &9&m----"
+    #Each duplicate line (such as multiple blank lines) must be unique so it is advised to add a space for each duplicate.
+    #E.g. "" cannot be on 2 lines, it must be "" and " "
+    #{game-id} - the current game's id.
+    #{players} - players in the current game.
+    #{max} - max number of players in the game.
+    #{team} - the users team.
+    #{kit} - the users kit.
+    #{map-name} - the maps name.
+    #{map-author} - the maps author.
+    #{red-lives} - amount of lives for red (will be 0 when the game has not started).
+    #{blue-lives} - amount of lives for blue (will be 0 when the game has not started).
+    Waiting-Layout:
+      - "&3» &b&lGame"
+      - "&rHotPotato"
+      - " "
+      - "&3» &b&lPlayers"
+      - "&r{players}/{max}"
+      - "  "
+      - "&3» &b&lTeam"
+      - "{team}"
+      - "   "
+      - "&3» &b&lKit"
+      - "{kit}"
+      - "    "
+      - "&3» &b&lMap"
+      - "{map-name}"
+    Game-Layout:
+      - "&3» &b&lGame"
+      - "&rHotPotato"
+      - " "
+      - "&3» &c&lRed Lives"
+      - "&r{red-lives}"
+      - "  "
+      - "&3» &9&lBlue Lives"
+      - "&r{blue-lives}"
+      - "   "
+      - "&3» &b&lKit"
+      - "{kit}"
+      - "    "
+      - "&3» &b&lMap"
+      - "{map-name}"
+
+  Player-Names:
+    Enabled: true
+    #If you wish to use the plugins built in Player Name Manager, set this to true. This may not work correctly if you have another plugin already dealing with player names.
+    #Setting this to false will result in the plugin using the NameTagEdit API (if you have the plugin).
+    Use-Custom-Playernames: true
+    #If you wish to hide players in other games/not in games from being visible (and vice versa), set this to true.
+    #This settings works regardless of whether player names are disabled.
+    Hide-Players-In-Games: true
+    Blue-Format: "&9"
+    Red-Format: "&c"
+
+  Signs:
+    Stats-Format:
+      - "&2&l[HotPotato]"
+      - "Games Active: &a{games-active}"
+      - "Players: &a{players}"
+      - "Players Queued: &a{queued}"
+
+    Queue-Format:
+      - "&2&l[HotPotato]"
+      - "Click to join"
+      - "the Queue!"
+      - "Players Queued: &a{queued}"

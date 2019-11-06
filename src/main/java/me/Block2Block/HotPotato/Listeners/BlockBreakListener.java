@@ -21,13 +21,13 @@ public class BlockBreakListener implements Listener {
                 case "queue":
                 case "stats":
                     if (!e.getPlayer().hasPermission("hotpotato.admin")) {
-                        e.getPlayer().sendMessage(Main.c("HotPotato","You are not permitted to break HotPotato signs."));
+                        e.getPlayer().sendMessage(Main.c(true,Main.getInstance().getConfig().getString("Messages.Signs.No-Permission")));
                         e.setCancelled(true);
                         return;
                     }
                     Main.getDbManager().removeSign(e.getBlock().getLocation(),type);
                     CacheManager.removeSign(e.getBlock().getLocation());
-                    e.getPlayer().sendMessage(Main.c("HotPotato","The " + type + " sign has been deleted."));
+                    e.getPlayer().sendMessage(Main.c(true,Main.getInstance().getConfig().getString("Messages.Signs.Sign-Deleted").replace("{type}",type)));
                     break;
                 default:
                     return;

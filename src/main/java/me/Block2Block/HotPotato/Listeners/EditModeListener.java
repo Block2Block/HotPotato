@@ -34,32 +34,32 @@ public class EditModeListener implements Listener {
                                 return;
                             case 1:
                                 if (data.equals("")) {
-                                    e.getPlayer().sendMessage(Main.c("HotPotato","You must specify at least 1 Red Spawn Point."));
+                                    e.getPlayer().sendMessage(Main.c(true,Main.getInstance().getConfig().getString("Messages.Commands.Setup.Must-Specify-Red")));
                                 } else {
                                     CacheManager.addData(data);
                                     data = "";
                                     CacheManager.setSetupStage(2);
-                                    e.getPlayer().sendMessage(Main.c("HotPotato","Now, please stand wherever you want BLUE team spawns and click the stick. Please ensure you look in the direction you want them to spawn. When you are done, type 'done'."));
+                                    e.getPlayer().sendMessage(Main.c(true,Main.getInstance().getConfig().getString("Messages.Commands.Setup.Please-Set-Blue")));
                                 }
                                 break;
                             case 2:
                                 if (data.equals("")) {
-                                    e.getPlayer().sendMessage(Main.c("HotPotato","You must specify at least 1 Blue Spawn Point."));
+                                    e.getPlayer().sendMessage(Main.c(true,Main.getInstance().getConfig().getString("Messages.Commands.Setup.Must-Specify-Blue")));
                                 } else {
                                     CacheManager.addData(data);
                                     data = "";
                                     CacheManager.setSetupStage(3);
-                                    e.getPlayer().sendMessage(Main.c("HotPotato","Next, you need to specify where you want the TNT spawn. Please stand where you want them to spawn and click the stick. When you are done, type 'done'."));
+                                    e.getPlayer().sendMessage(Main.c(true,Main.getInstance().getConfig().getString("Messages.Commands.Setup.Please-Set-TNT")));
                                 }
                                 break;
                             case 3:
                                 if (data.equals("")) {
-                                    e.getPlayer().sendMessage(Main.c("HotPotato","You must specify at least 1 TNT Spawn Point."));
+                                    e.getPlayer().sendMessage(Main.c(true,Main.getInstance().getConfig().getString("Messages.Commands.Setup.Must-Specify-TNT")));
                                 } else {
                                     CacheManager.addData(data);
                                     data = "";
                                     CacheManager.setSetupStage(4);
-                                    e.getPlayer().sendMessage(Main.c("HotPotato","Now you need to specify where you would like your Waiting Lobby. Please stand where you would like them to spawn and click the stick. Please look in the direction you would like them to spawn. Please note: This MUST be in the SAME WORLD as your map. The plugin will not make the waiting lobby disappear, so it is recommended to put it out of view of the map."));
+                                    e.getPlayer().sendMessage(Main.c(true,Main.getInstance().getConfig().getString("Messages.Commands.Setup.Please-Set-Waiting-Lobby")));
                                 }
                                 break;
                             default:
@@ -72,16 +72,16 @@ public class EditModeListener implements Listener {
                         if (CacheManager.getSetupStage() == 0) {
                             e.setCancelled(true);
                             CacheManager.setSetupStage(1);
-                            e.getPlayer().sendMessage(Main.c("HotPotato","You have been given the Setup Stick. Click this when you are in position."));
+                            e.getPlayer().sendMessage(Main.c(true,Main.getInstance().getConfig().getString("Messages.Commands.Setup.Given-Stick")));
                             ItemStack i = ItemUtil.ci(Material.STICK, "&2&lHotPotato Setup Stick", 1, "&rUse this item to;&rsetup your HotPotato;&rmap.");
                             e.getPlayer().getInventory().addItem(i);
 
-                            e.getPlayer().sendMessage(Main.c("HotPotato","To start off, please stand wherever you want RED team spawns and click on the stick. Please ensure you are looking in the direction you want them to spawn. When you are done, type 'done'."));
+                            e.getPlayer().sendMessage(Main.c(true,Main.getInstance().getConfig().getString("Messages.Commands.Setup.Please-Set-Red")));
                         }
                         break;
                     case "cancel":
                             e.setCancelled(true);
-                            e.getPlayer().sendMessage(Main.c("HotPotato","You have stopped setting up the map. Any points setup have been deleted."));
+                            e.getPlayer().sendMessage(Main.c(true,Main.getInstance().getConfig().getString("Messages.Commands.Setup.Setup-Cancelled")));
                             CacheManager.setSetupStage(0);
                             CacheManager.getData().clear();
                             CacheManager.exitSetup();
@@ -91,25 +91,25 @@ public class EditModeListener implements Listener {
                     default:
                         if (CacheManager.getSetupStage() == 5) {
                             if (!e.getMessage().equals("")) {
-                                e.getPlayer().sendMessage(Main.c("HotPotato","You have set the name of the map."));
-                                e.getPlayer().sendMessage(Main.c("HotPotato","Finally, please specify the authors of the map. Please enter the map author."));
+                                e.getPlayer().sendMessage(Main.c(true,Main.getInstance().getConfig().getString("Messages.Commands.Setup.Name-Set")));
+                                e.getPlayer().sendMessage(Main.c(true,Main.getInstance().getConfig().getString("Messages.Commands.Setup.Please-Set-Author")));
                                 CacheManager.addData(e.getMessage());
                                 e.setCancelled(true);
                                 CacheManager.setSetupStage(6);
                             } else {
-                                e.getPlayer().sendMessage(Main.c("HotPotato","You must specify a map name. If you wish to cancel setup, please enter 'cancel'."));
+                                e.getPlayer().sendMessage(Main.c(true,Main.getInstance().getConfig().getString("Messages.Commands.Setup.Must-Specify-Name")));
                             }
                         } else if (CacheManager.getSetupStage() == 6) {
                             if (!e.getMessage().equals("")) {
                                 e.setCancelled(true);
-                                e.getPlayer().sendMessage(Main.c("HotPotato","You have set the map author. Map setup is complete!"));
+                                e.getPlayer().sendMessage(Main.c(true,Main.getInstance().getConfig().getString("Messages.Commands.Setup.Author-Set")));
                                 List<String> totalData = CacheManager.getData();
                                 totalData.add(e.getMessage());
 
                                 totalData.add(totalData.get(4).replace(" ", "").toLowerCase());
 
                                 if ((new File(Main.getInstance().getDataFolder().getAbsolutePath() + "/maps", totalData.get(4).replace(" ", "").toLowerCase() + ".zip")).exists()) {
-                                    e.getPlayer().sendMessage(Main.c("HotPotato","You already have a map named " + totalData.get(4) + ". Please rename your map and try again."));
+                                    e.getPlayer().sendMessage(Main.c(true,Main.getInstance().getConfig().getString("Messages.Commands.Setup.Map-Name-Exists")));
                                     data = "";
                                     CacheManager.getData().clear();
                                     CacheManager.exitSetup();
@@ -122,7 +122,7 @@ public class EditModeListener implements Listener {
                                         World w = e.getPlayer().getWorld();
                                         for (Player p : w.getPlayers()) {
                                             p.teleport(CacheManager.getLobby());
-                                            p.sendMessage(Main.c("HotPotato", "You have been teleported to the lobby as the map you were on was just set up. You are no longer in edit mode."));
+                                            p.sendMessage(Main.c(true, Main.getInstance().getConfig().getString("Messages.Commands.Setup.Teleported-Setup-Complete")));
                                             CacheManager.getEditMode().remove(p);
                                         }
 
@@ -132,7 +132,7 @@ public class EditModeListener implements Listener {
                                         try {
                                             zu.zipFile(w.getWorldFolder().toPath(), Paths.get(Main.getInstance().getDataFolder().getAbsolutePath() + "/maps/" + totalData.get(4).replace(" ", "").toLowerCase() + ".zip"));
                                         } catch (Exception exception) {
-                                            e.getPlayer().sendMessage(Main.c("HotPotato","Unable to generate ZIP folder. Please ZIP the folder yourself (with the world files in the root), name it " + totalData.get(4).replace(" ", "").toLowerCase() + ".zip, and put it in the 'Maps' folder in the plugins data folder."));
+                                            e.getPlayer().sendMessage(Main.c(true,Main.getInstance().getConfig().getString("Messages.Commands.Setup.ZIP-Generation-Fail").replace("{zip-name}",totalData.get(4).replace(" ", "").toLowerCase())));
                                         }
 
                                         try {
@@ -151,7 +151,7 @@ public class EditModeListener implements Listener {
                                 }.runTaskAsynchronously(Main.getInstance());
 
                             } else {
-                                e.getPlayer().sendMessage(Main.c("HotPotato","You must specify map authors. If you wish to cancel setup, please enter 'cancel'."));
+                                e.getPlayer().sendMessage(Main.c(true,Main.getInstance().getConfig().getString("Messages.Commands.Setup.Must-Specify-Author")));
                             }
                         }
                 }
@@ -169,7 +169,7 @@ public class EditModeListener implements Listener {
                                         World w = Bukkit.getWorld("HPEdit");
                                         for (Player p : w.getPlayers()) {
                                             p.teleport(CacheManager.getLobby());
-                                            p.sendMessage(Main.c("HotPotato","Your map was marked finished. It has now been deleted."));
+                                            p.sendMessage(Main.c(true,Main.getInstance().getConfig().getString("Messages.Commands.Finish.Map-Marked-Finished")));
                                         }
                                         Bukkit.getServer().unloadWorld(w, false);
                                         File worldFolder = w.getWorldFolder();
@@ -188,7 +188,7 @@ public class EditModeListener implements Listener {
                         if (CacheManager.getFinishPlayer() != null) {
                             if (CacheManager.getFinishPlayer().equals(e.getPlayer())) {
                                 CacheManager.setFinishPlayer(null);
-                                e.getPlayer().sendMessage(Main.c("HotPotato","You have cancelled finishing your map."));
+                                e.getPlayer().sendMessage(Main.c(true,Main.getInstance().getConfig().getString("Messages.Commands.Finish.Finish-Cancelled")));
                                 e.setCancelled(true);
                             }
                         }
@@ -216,7 +216,7 @@ public class EditModeListener implements Listener {
                             Location l = e.getPlayer().getLocation();
                             data += ";"  + l.getX() + "," + l.getY() + "," + l.getZ() + "," + l.getYaw() + "," + l.getPitch();
                         }
-                        e.getPlayer().sendMessage(Main.c("HotPotato","Red Spawn Point added!"));
+                        e.getPlayer().sendMessage(Main.c(true,Main.getInstance().getConfig().getString("Messages.Commands.Setup.Red-Spawn-Added")));
                         break;
                     case 2:
                         if (data.equals("")) {
@@ -226,7 +226,7 @@ public class EditModeListener implements Listener {
                             Location l = e.getPlayer().getLocation();
                             data += ";"  + l.getX() + "," + l.getY() + "," + l.getZ() + "," + l.getYaw() + "," + l.getPitch();
                         }
-                        e.getPlayer().sendMessage(Main.c("HotPotato","Blue Spawn Point added!"));
+                        e.getPlayer().sendMessage(Main.c(true,Main.getInstance().getConfig().getString("Messages.Commands.Setup.Blue-Spawn-Added")));
                         break;
                     case 3:
                         if (data.equals("")) {
@@ -236,13 +236,13 @@ public class EditModeListener implements Listener {
                             Location l = e.getPlayer().getLocation();
                             data += ";"  + l.getX() + "," + l.getY() + "," + l.getZ() + "," + l.getYaw() + "," + l.getPitch();
                         }
-                        e.getPlayer().sendMessage(Main.c("HotPotato","TNT Spawn Point added!"));
+                        e.getPlayer().sendMessage(Main.c(true,Main.getInstance().getConfig().getString("Messages.Commands.Setup.TNT-Spawn-Added")));
                         break;
                     case 4:
                         Location l = e.getPlayer().getLocation();
                         CacheManager.addData(l.getX() + "," + l.getY() + "," + l.getZ() + "," + l.getYaw() + "," + l.getPitch());
-                        e.getPlayer().sendMessage(Main.c("HotPotato","Waiting Lobby Location set!"));
-                        e.getPlayer().sendMessage(Main.c("HotPotato","Now you need to specify a name for your map. Please enter a name for your map."));
+                        e.getPlayer().sendMessage(Main.c(true,Main.getInstance().getConfig().getString("Messages.Commands.Setup.Waiting-Lobby-Set")));
+                        e.getPlayer().sendMessage(Main.c(true,Main.getInstance().getConfig().getString("Messages.Commands.Setup.Please-Set-Name")));
                         CacheManager.setSetupStage(5);
                         break;
                 }

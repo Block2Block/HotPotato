@@ -26,6 +26,7 @@ import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
+import org.bukkit.scoreboard.Score;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -46,7 +47,7 @@ public class Game implements Listener {
     private HPMap map;
     private List<HotPotatoPlayer> blue;
     private List<HotPotatoPlayer> red;
-    private int max;
+    final private int MAX;
     private Player lastHitBlue;
     private Player lastHitRed;
 
@@ -75,7 +76,7 @@ public class Game implements Listener {
         map.copy(gameID);
         world = Bukkit.getServer().createWorld(new WorldCreator("HP" + gameID));
 
-        max = map.getBlueSpawns().size() + map.getRedSpawns().size();
+        MAX = map.getBlueSpawns().size() + map.getRedSpawns().size();
 
         Bukkit.getServer().getPluginManager().registerEvents(this, Main.getInstance());
 
@@ -103,10 +104,10 @@ public class Game implements Listener {
     public void join(List<Player> players) {
         List<Double> waitingLobby = map.getWaitingLobby();
         this.players.addAll(players);
-        if (this.players.size() == max) {
+        if ((this.players.size()/(double) MAX) >= (Main.getInstance().getConfig().getInt("Settings.Game.Percent-To-Shorten")/100d)) {
             Main.getQueueManager().noLongerRecruiting();
-            startTimer(20);
-        } else if (this.players.size() >= 2) {
+            startTimer(Main.getInstance().getConfig().getInt("Settings.Game.Shorten-Countdown-Time"));
+        } else if ((this.players.size()/(double) MAX) >= (Main.getInstance().getConfig().getInt("Settings.Game.Percent-To-Start")/100d)) {
             if (timer == null) {
                 startTimer(-1);
             }
@@ -117,9 +118,9 @@ public class Game implements Listener {
             CacheManager.addToCache(p.getUniqueId(), hp);
 
             p.teleport(new Location(world, waitingLobby.get(0), waitingLobby.get(1),waitingLobby.get(2),waitingLobby.get(3).floatValue(),waitingLobby.get(4).floatValue()), PlayerTeleportEvent.TeleportCause.PLUGIN);
-            p.sendMessage(Main.c("HotPotato","You have joined a game, id: " + this.gameID));
-            for (Player p2 : players) {
-                p2.sendMessage(Main.c("HotPotato","&a" + p.getName() + "&r has joined the game."));
+            p.sendMessage(Main.c(true,Main.getInstance().getConfig().getString("Messages.Game.Join.User-Message").replace("{id}","" + this.gameID)));
+            for (Player p2 : this.players) {
+                p2.sendMessage(Main.c(true,Main.getInstance().getConfig().getString("Messages.Game.Join.Game-Message").replace("{player}",p.getName())));
             }
 
             //Assigning a team
@@ -139,8 +140,7 @@ public class Game implements Listener {
 
                                     HotPotatoPlayer hotplayer = CacheManager.getPlayers().get(player.getUniqueId());
                                     hotplayer.setTeam(true);
-                                    ScoreboardManager.changeLine(player, 8, Main.c(null,"&cRed"));
-                                    player.sendMessage(Main.c("HotPotato","You have joined &cRed&r team."));
+                                    player.sendMessage(Main.c(true,Main.getInstance().getConfig().getString("Messages.Game.Join.Join-Red")));
                                     PlayerNameManager.changeTeam(hotplayer, this.gameID);
                                     blue.remove(hotplayer);
                                     red.add(hotplayer);
@@ -148,14 +148,13 @@ public class Game implements Listener {
                                     hp.setTeam(false);
                                     onTeam = true;
 
-                                    ScoreboardManager.changeLine(p, 8, Main.c(null,"&3Blue"));
+                                    hp.getPlayer().sendMessage(Main.c(true,Main.getInstance().getConfig().getString("Messages.Game.Join.Join-Blue")));
                                     blue.add(hp);
                                     break;
                                 }
                                 hp.setTeam(true);
                                 onTeam = true;
 
-                                ScoreboardManager.changeLine(p, 8, Main.c(null,"&cRed"));
                                 red.add(hp);
 
                                 break;
@@ -176,8 +175,7 @@ public class Game implements Listener {
 
                                     HotPotatoPlayer hotplayer = CacheManager.getPlayers().get(player.getUniqueId());
                                     hotplayer.setTeam(false);
-                                    ScoreboardManager.changeLine(player, 8, Main.c(null,"&3Blue"));
-                                    player.sendMessage(Main.c("HotPotato","You have joined &3Blue&r team."));
+                                    player.sendMessage(Main.c(true,Main.getInstance().getConfig().getString("Messages.Game.Join.Join-Blue")));
                                     PlayerNameManager.changeTeam(hotplayer, gameID);
                                     red.remove(hotplayer);
                                     blue.add(hotplayer);
@@ -186,15 +184,14 @@ public class Game implements Listener {
                                     hp.setTeam(true);
                                     onTeam = true;
                                     red.add(hp);
+                                    hp.getPlayer().sendMessage(Main.c(true,Main.getInstance().getConfig().getString("Messages.Game.Join.Join-Red")));
 
-                                    ScoreboardManager.changeLine(p, 8, Main.c(null,"&cRed"));
                                     break;
                                 }
 
                                 blue.add(hp);
                                 hp.setTeam(false);
                                 onTeam = true;
-                                ScoreboardManager.changeLine(p, 8, Main.c(null,"&3Blue"));
                                 break;
                             } else {
                                 choose = Main.chooseRan(1, 2);
@@ -206,33 +203,36 @@ public class Game implements Listener {
                         }
                 }
             }
-            ScoreboardManager.changeLine(p, 15, Main.c(null,"&3» &b&lGame"));
-            ScoreboardManager.changeLine(p, 14, Main.c(null,"&rHotPotato"));
-            ScoreboardManager.changeLine(p, 13, Main.c(null," "));
-            ScoreboardManager.changeLine(p, 12, Main.c(null,"&3» &b&lPlayers"));
-            ScoreboardManager.changeLine(p, 10, Main.c(null,"  "));
-            ScoreboardManager.changeLine(p, 9, Main.c(null,"&3» &b&lTeam"));
-            ScoreboardManager.changeLine(p, 7, Main.c(null,"   "));
-            ScoreboardManager.changeLine(p, 6, Main.c(null,"&3» &b&lKit"));
-            ScoreboardManager.changeLine(p, 5, Main.c(null,"&r" + kit));
-            ScoreboardManager.changeLine(p, 4, Main.c(null,"    "));
-            ScoreboardManager.changeLine(p, 3, Main.c(null,"&3» &b&lMap"));
-            ScoreboardManager.changeLine(p, 2, Main.c(null,"&r" + map.getName()));
-            p.sendMessage(Main.c("HotPotato","Loading Player Data..."));
+
+
+            p.sendMessage(Main.c(true,Main.getInstance().getConfig().getString("Messages.Game.Join.Loading-Data")));
 
             new BukkitRunnable(){
                 @Override
                 public void run() {
                     PlayerData pd = new PlayerData(p);
                     hp.setPlayerData(pd);
-                    p.sendMessage(Main.c("HotPotato","Your data has been loaded."));
+                    p.sendMessage(Main.c(true,Main.getInstance().getConfig().getString("Messages.Game.Join.Data-Loaded")));
                 }
             }.runTaskAsynchronously(Main.getInstance());
         }
 
-        ScoreboardManager.changeLineGame(gameID,11, Main.c(null,"&r" + this.players.size() + "/" + max));
         for (Player p : players) {
             PlayerNameManager.onGameJoin(CacheManager.getPlayers().get(p.getUniqueId()), this.gameID);
+        }
+
+
+        List<String> scoreboardLayout = Main.getInstance().getConfig().getStringList("Settings.Scoreboard.Before-Layout");
+        for (Player p : this.players) {
+            HotPotatoPlayer hp = CacheManager.getPlayers().get(p.getUniqueId());
+            int counter = 15;
+            for (String line : scoreboardLayout) {
+                ScoreboardManager.changeLine(p, counter, line.replace("{team}",Main.getInstance().getConfig().getString("Messages.Scoreboard.Team." + ((hp.isRed())?"Red-Format":"Blue-Format"))).replace("{players}",players.size() + "").replace("{max}",MAX + "").replace("{map-name}",map.getName()).replace("{map-author}",map.getAuthor()).replace("{game-id}",this.gameID + "").replace("{kit}",hp.getKit().name()));
+                counter--;
+                if (counter == 0) {
+                    break;
+                }
+            }
         }
 
 
@@ -246,11 +246,20 @@ public class Game implements Listener {
         List<List<Double>> redSpawns = map.getRedSpawns();
 
         //Changing scoreboard.
-        ScoreboardManager.changeLineGame(gameID, 12, Main.c(null, "&3» &c&lRed Lives"));
-        ScoreboardManager.changeLineGame(gameID, 11, "3 ");
+        ScoreboardManager.resetBoardGame(this.gameID);
 
-        ScoreboardManager.changeLineGame(gameID, 9, Main.c(null, "&3» &3&lBlue Lives"));
-        ScoreboardManager.changeLineGame(gameID, 8, "3");
+        List<String> scoreboardLayout = Main.getInstance().getConfig().getStringList("Settings.Scoreboard.Game-Layout");
+        for (Player p : this.players) {
+            HotPotatoPlayer hp = CacheManager.getPlayers().get(p.getUniqueId());
+            int counter = 15;
+            for (String line : scoreboardLayout) {
+                ScoreboardManager.changeLine(p, counter, line.replace("{team}",Main.getInstance().getConfig().getString("Messages.Scoreboard.Team." + ((hp.isRed())?"Red-Format":"Blue-Format"))).replace("{players}",players.size() + "").replace("{max}",MAX + "").replace("{map-name}",map.getName()).replace("{map-author}",map.getAuthor()).replace("{game-id}",this.gameID + "").replace("{kit}",hp.getKit().name()).replace("{red-lives}",livesRed + "").replace("{blue-lives}",livesBlue + ""));
+                counter--;
+                if (counter == 0) {
+                    break;
+                }
+            }
+        }
 
         //Teleporting Players
         int counter = 0;
@@ -291,13 +300,7 @@ public class Game implements Listener {
             }
 
             //Map Info
-            p.sendMessage(Main.c(null,"" +
-                    "&2=-=-=-=-=-=-=-{ &a&lHot Potato &r&2}-=-=-=-=-=-=-=\n" +
-                    "&rPunch or click the TNT to hit the potato.\n" +
-                    "Don't let the potato explode on your team's side.\n" +
-                    "Be the last team with lives.\n \n" +
-                    "Map: &a" + map.getName() + "&r by &a" + map.getAuthor() + "&r.\n" +
-                    "&2=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-="));
+            p.sendMessage(Main.c(false,Main.getInstance().getConfig().getString("Messages.Game.Game-Start")));
 
         }
 
@@ -332,9 +335,9 @@ public class Game implements Listener {
                         case 2:
                         case 1:
                             for (Player p : players) {
-                                p.sendMessage(Main.c("HotPotato","The game will start in &a" + timerTime + " &rsecond" + (timerTime>1?"s":"") + "."));
+                                p.sendMessage(Main.c(true,Main.getInstance().getConfig().getString("Messages.Game.Start-Timer.Title-Format").replace("{time}","" + timerTime).replace("{s}",(timerTime>1?"s":""))));
                                 p.playSound(p.getLocation(), Sound.NOTE_PLING,100,1);
-                                TitleManager.sendTitle(p, "" + timerTime,5,20,5, ChatColor.DARK_GREEN);
+                                TitleManager.sendTitle(p, Main.c(false, Main.getInstance().getConfig().getString("Messages.Game.Start-Timer.Title-Format")).replace("{time}","" + timerTime),5,20,5, ChatColor.DARK_GREEN);
                             }
                             break;
                         case 0:
@@ -364,9 +367,9 @@ public class Game implements Listener {
                 blue.remove(p);
             }
             for (Player pl : players) {
-                pl.sendMessage(Main.c("HotPotato","&a" + p.getName() + "&r has left the game."));
+                pl.sendMessage(Main.c(true,Main.getInstance().getConfig().getString("Messages.Game.Leave.Game-Message").replace("{player}",p.getName())));
             }
-            p.getPlayer().sendMessage(Main.c("HotPotato","You left the game."));
+            p.getPlayer().sendMessage(Main.c(true,Main.getInstance().getConfig().getString("Messages.Game.Leave.User-Message")));
             if (players.size() < 2) {
                 timer.cancel();
                 for (Player pl : players) {
@@ -387,14 +390,14 @@ public class Game implements Listener {
         }
 
         for (Player pl : players) {
-            pl.sendMessage(Main.c("HotPotato","&a" + p.getName() + "&r has left the game."));
+            pl.sendMessage(Main.c(true,Main.getInstance().getConfig().getString("Messages.Game.Leave.Game-Message").replace("{player}",p.getName())));
         }
 
         p.getPlayer().teleport(CacheManager.getLobby());
 
         if (red.size() == 0) {
             for (Player p2 : players) {
-                p2.sendMessage(Main.c("HotPotato","&3&lBlue Wins! &rAll of &cRed &rleft."));
+                p2.sendMessage(Main.c(true,Main.getInstance().getConfig().getString("Messages.Game.Leave.Blue-Win")));
             }
             for (HotPotatoPlayer p2 : blue) {
                 if (p2.getPlayer().equals(lastHitBlue)) {
@@ -410,7 +413,7 @@ public class Game implements Listener {
             return;
         } else if (blue.size() == 0) {
             for (Player p2 : players) {
-                p2.sendMessage(Main.c("HotPotato","&c&lRed Wins! &rAll of &3Blue &rleft."));
+                p2.sendMessage(Main.c(true ,Main.getInstance().getConfig().getString("Messages.Game.Leave.Red-Win")));
             }
             for (HotPotatoPlayer p2 : red) {
                 if (p2.getPlayer().equals(lastHitRed)) {
@@ -428,7 +431,7 @@ public class Game implements Listener {
     }
 
     private void spawnTNT() {
-        long delay = Main.chooseRan(100,800);
+        long delay = Main.chooseRan(Main.getInstance().getConfig().getInt("Settings.Game.TNT-Explode-Min-Time"),Main.getInstance().getConfig().getInt("Settings.Game.TNT-Explode-Max-Time"));
         int spawn = Main.chooseRan(0, map.getTntSpawns().size()-1);
 
         Location l = new Location(world, new Double(map.getTntSpawns().get(spawn).get(0)),new Double(map.getTntSpawns().get(spawn).get(1)),new Double(map.getTntSpawns().get(spawn).get(2)),0,0);
@@ -466,9 +469,21 @@ public class Game implements Listener {
                         if (block.getData() == (byte) 14) {
                             //Red lost
                             livesRed--;
+                            List<String> scoreboardLayout = Main.getInstance().getConfig().getStringList("Settings.Scoreboard.Game-Layout");
+                            for (Player p : players) {
+                                HotPotatoPlayer hp = CacheManager.getPlayers().get(p.getUniqueId());
+                                int counter = 15;
+                                for (String line : scoreboardLayout) {
+                                    ScoreboardManager.changeLine(p, counter, line.replace("{team}",Main.getInstance().getConfig().getString("Messages.Scoreboard.Team." + ((hp.isRed())?"Red-Format":"Blue-Format"))).replace("{players}",players.size() + "").replace("{max}",MAX + "").replace("{map-name}",map.getName()).replace("{map-author}",map.getAuthor()).replace("{game-id}",gameID + "").replace("{kit}",hp.getKit().name()).replace("{red-lives}",livesRed + "").replace("{blue-lives}",livesBlue + ""));
+                                    counter--;
+                                    if (counter == 0) {
+                                        break;
+                                    }
+                                }
+                            }
                             if (livesRed == 0) {
                                 for (Player p : players) {
-                                    p.sendMessage(Main.c("HotPotato","&3&lBlue Wins! &r&cRed &rhas lost all of their lives."));
+                                    p.sendMessage(Main.c(true,Main.getInstance().getConfig().getString("Messages.Game.Blue-Won")));
                                     for (HotPotatoPlayer p2 : blue) {
                                         if (p2.getPlayer().equals(lastHitBlue)) {
                                             Main.getDbManager().addWinningPunch(lastHitBlue);
@@ -484,17 +499,29 @@ public class Game implements Listener {
                                 return;
                             }
                             for (Player p : players) {
-                                p.sendMessage(Main.c("HotPotato","&cRed &rhas lost a life! They now have &a" + livesRed + " &rlives left!"));
+                                p.sendMessage(Main.c(true,Main.getInstance().getConfig().getString("Messages.Game.Red-Lost-Life").replace("{red-lives}","" + livesRed)));
                             }
                             ScoreboardManager.changeLineGame(gameID, 11, livesRed + " ");
                             break;
 
                         } else if (block.getData() == (byte) 11 ||block.getData() == (byte) 3) {
-                            //Blue lost
+                            //Blue los
                             livesBlue--;
+                            List<String> scoreboardLayout = Main.getInstance().getConfig().getStringList("Settings.Scoreboard.Game-Layout");
+                            for (Player p : players) {
+                                HotPotatoPlayer hp = CacheManager.getPlayers().get(p.getUniqueId());
+                                int counter = 15;
+                                for (String line : scoreboardLayout) {
+                                    ScoreboardManager.changeLine(p, counter, line.replace("{team}",Main.getInstance().getConfig().getString("Messages.Scoreboard.Team." + ((hp.isRed())?"Red-Format":"Blue-Format"))).replace("{players}",players.size() + "").replace("{max}",MAX + "").replace("{map-name}",map.getName()).replace("{map-author}",map.getAuthor()).replace("{game-id}",gameID + "").replace("{kit}",hp.getKit().name()).replace("{red-lives}",livesRed + "").replace("{blue-lives}",livesBlue + ""));
+                                    counter--;
+                                    if (counter == 0) {
+                                        break;
+                                    }
+                                }
+                            }
                             if (livesBlue == 0) {
                                 for (Player p : players) {
-                                    p.sendMessage(Main.c("HotPotato","&c&lRed Wins! &r&3Blue &rhas lost all of their lives."));
+                                    p.sendMessage(Main.c(true,Main.getInstance().getConfig().getString("Messages.Game.Red-Won")));
                                 }
                                 for (HotPotatoPlayer p2 : red) {
                                     if (p2.getPlayer().equals(lastHitRed)) {
@@ -510,10 +537,8 @@ public class Game implements Listener {
                                 return;
                             }
 
-                            ScoreboardManager.changeLineGame(gameID, 8, livesBlue + "");
-
                             for (Player p : players) {
-                                p.sendMessage(Main.c("HotPotato","&3Blue &rhas lost a life! They now have &a" + livesBlue + " &rlives left!"));
+                                p.sendMessage(Main.c(true,Main.getInstance().getConfig().getString("Messages.Game.Blue-Lost-Life").replace("{blue-lives}","" + livesBlue)));
                             }
                             break;
                         }
@@ -528,7 +553,7 @@ public class Game implements Listener {
     }
 
     private void newTnt() {
-        timerTime = 11;
+        timerTime = Main.getInstance().getConfig().getInt("Settings.Game.TNT-Countdown-Time") + 1;
 
         tnttimer = new BukkitRunnable() {
             @Override
@@ -549,7 +574,7 @@ public class Game implements Listener {
                     case 2:
                     case 1:
                         for (Player p : players) {
-                            p.sendMessage(Main.c("HotPotato","The TNT will spawn in &a" + timerTime + " &rsecond" + (timerTime>1?"s":"") + "."));
+                            p.sendMessage(Main.c(true,Main.getInstance().getConfig().getString("Messages.Game.TNT-Timer-Message").replace("{time}","" + timerTime).replace("{s}",(timerTime>1?"s":""))));
                             p.playSound(p.getLocation(), Sound.NOTE_PLING,100,1);
                         }
                         break;
@@ -564,7 +589,7 @@ public class Game implements Listener {
     public void endGame() {
         state = ENDING;
         for (Player p : players) {
-            p.sendMessage(Main.c("Game Manager","This game has ended. You will be sent back to the lobby in 10 seconds."));
+            p.sendMessage(Main.c(true,Main.getInstance().getConfig().getString("Messages.Game.End-Game.Game-Has-Ended")));
             p.getPlayer().getInventory().clear();
         }
 
@@ -585,7 +610,7 @@ public class Game implements Listener {
                 //Teleporting players
                 for (Player p : players) {
                     p.teleport(CacheManager.getLobby());
-                    p.sendMessage(Main.c("Game Manager","You have been sent back to the lobby."));
+                    p.sendMessage(Main.c(true,Main.getInstance().getConfig().getString("Messages.Game.End-Game.Sent-To-Lobby")));
                 }
 
                 //Clearing scoreboard
@@ -612,9 +637,15 @@ public class Game implements Listener {
                 for (Location loc : CacheManager.getSigns().keySet()) {
                     if (CacheManager.getSigns().get(loc).equals("stats")) {
                         Sign sign = (Sign) loc.getBlock().getState();
-                        sign.setLine(1, Main.c(null, "Games Active: &a" + CacheManager.getGames().size()));
-                        sign.setLine(2, Main.c(null, "Players: &a" + CacheManager.getPlayers().size()));
-                        sign.setLine(3, Main.c(null, "Players Queued: &a" + Main.getQueueManager().playersQueued()));
+
+                        int counter = 0;
+                        for (String s : Main.getInstance().getConfig().getStringList("Settings.Signs.Stats-Format")) {
+                            sign.setLine(counter, Main.c(false, s.replace("{games-active}",CacheManager.getGames().size() + "").replace("{players}",CacheManager.getPlayers().size() + "").replace("{queued}",Main.getQueueManager().playersQueued() + "")));
+                            counter++;
+                            if (counter == 4) {
+                                break;
+                            }
+                        }
 
                         sign.update(true);
                     }
@@ -730,39 +761,35 @@ public class Game implements Listener {
                 red.remove(p);
                 blue.add(p);
                 p.setTeam(false);
-                p.getPlayer().sendMessage(Main.c("HotPotato","You have joined &3Blue&r team."));
-                ScoreboardManager.changeLine(p.getPlayer(), 8, Main.c(null,"&3Blue"));
+                p.getPlayer().sendMessage(Main.c(true,Main.getInstance().getConfig().getString("Messages.Game.Join.Join-Blue")));
 
                 HotPotatoPlayer p2 = CacheManager.getPlayers().get(queueBlue.get(0).getUniqueId());
                 blue.remove(p2);
                 red.add(p2);
                 p2.setTeam(true);
-                p2.getPlayer().sendMessage(Main.c("HotPotato","You have joined &cRed&r team."));
-                ScoreboardManager.changeLine(p2.getPlayer(), 8, Main.c(null,"&cRed"));
+                p2.getPlayer().sendMessage(Main.c(true,Main.getInstance().getConfig().getString("Messages.Game.Join.Join-Red")));
                 queueRed.remove(0);
                 return;
             }
             queueBlue.add(p.getPlayer());
-            p.getPlayer().sendMessage(Main.c("HotPotato","You have queued for &3Blue &rteam."));
+            p.getPlayer().sendMessage(Main.c(true,Main.getInstance().getConfig().getString("Messages.Game.Queue-Blue")));
         } else {
             if (queueBlue.size() > 0) {
                 blue.remove(p);
                 red.add(p);
                 p.setTeam(true);
-                p.getPlayer().sendMessage(Main.c("HotPotato","You have joined &cRed&r team."));
-                ScoreboardManager.changeLine(p.getPlayer(), 8, Main.c(null,"&cRed"));
+                p.getPlayer().sendMessage(Main.c(true,Main.getInstance().getConfig().getString("Messages.Game.Join.Join-Red")));
 
                 HotPotatoPlayer p2 = CacheManager.getPlayers().get(queueBlue.get(0).getUniqueId());
                 red.remove(p2);
                 blue.add(p2);
                 p2.setTeam(false);
-                p2.getPlayer().sendMessage(Main.c("HotPotato","You have joined &3Blue&r team."));
-                ScoreboardManager.changeLine(p2.getPlayer(), 8, Main.c(null,"&3Blue"));
+                p2.getPlayer().sendMessage(Main.c(true,Main.getInstance().getConfig().getString("Messages.Game.Join.Join-Blue")));
                 queueBlue.remove(0);
                 return;
             }
             queueRed.add(p.getPlayer());
-            p.getPlayer().sendMessage(Main.c("HotPotato","You have queued for &cRed &rteam."));
+            p.getPlayer().sendMessage(Main.c(true,Main.getInstance().getConfig().getString("Messages.Game.Queue-Red")));
         }
     }
 
@@ -771,14 +798,12 @@ public class Game implements Listener {
             red.remove(p);
             blue.add(p);
             p.setTeam(false);
-            p.getPlayer().sendMessage(Main.c("HotPotato","You have joined &3Blue&r team."));
-            ScoreboardManager.changeLine(p.getPlayer(), 8, Main.c(null,"&3Blue"));
+            p.getPlayer().sendMessage(Main.c(true,Main.getInstance().getConfig().getString("Messages.Game.Join.Join-Blue")));
         } else {
             blue.remove(p);
             red.add(p);
             p.setTeam(true);
-            p.getPlayer().sendMessage(Main.c("HotPotato","You have joined &cRed&r team."));
-            ScoreboardManager.changeLine(p.getPlayer(), 8, Main.c(null,"&cRed"));
+            p.getPlayer().sendMessage(Main.c(true,Main.getInstance().getConfig().getString("Messages.Game.Join.Join-Red")));
         }
     }
 
@@ -805,5 +830,19 @@ public class Game implements Listener {
         } else {
             lastHitBlue = p;
         }
+    }
+
+    public HPMap getMap() {
+        return map;
+    }
+
+    public int getMAX() {return MAX;}
+
+    public int getLivesBlue() {
+        return livesBlue;
+    }
+
+    public int getLivesRed() {
+        return livesRed;
     }
 }

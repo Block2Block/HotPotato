@@ -17,10 +17,14 @@ public class SignPlaceListener implements Listener {
             Sign sign = (Sign) e.getBlock().getState();
             switch (e.getLines()[1]) {
                 case "queue":
-                    sign.setLine(0, Main.c(null, "&2&l[HotPotato]"));
-                    sign.setLine(1, Main.c(null, "Click to join"));
-                    sign.setLine(2, Main.c(null, "the Queue!"));
-                    sign.setLine(3, Main.c(null, "Players Queued: &a" + Main.getQueueManager().playersQueued()));
+                    int counter = 0;
+                    for (String s : Main.getInstance().getConfig().getStringList("Settings.Signs.Queue-Format")) {
+                        sign.setLine(counter, Main.c(false, s.replace("{games-active}",CacheManager.getGames().size() + "").replace("{players}",CacheManager.getPlayers().size() + "").replace("{queued}",Main.getQueueManager().playersQueued() + "")));
+                        counter++;
+                        if (counter == 4) {
+                            break;
+                        }
+                    }
 
                     sign.update(true);
 
@@ -31,10 +35,14 @@ public class SignPlaceListener implements Listener {
 
                     break;
                 case "stats":
-                    sign.setLine(0, Main.c(null, "&2&l[HotPotato]"));
-                    sign.setLine(1, Main.c(null, "Games Active: &a" + CacheManager.getGames().size()));
-                    sign.setLine(2, Main.c(null, "Players: &a" + CacheManager.getPlayers().size()));
-                    sign.setLine(3, Main.c(null, "Players Queued: &a" + Main.getQueueManager().playersQueued()));
+                    int counter2 = 0;
+                    for (String s : Main.getInstance().getConfig().getStringList("Settings.Signs.Stats-Format")) {
+                        sign.setLine(counter2, Main.c(false, s.replace("{games-active}",CacheManager.getGames().size() + "").replace("{players}",CacheManager.getPlayers().size() + "").replace("{queued}",Main.getQueueManager().playersQueued() + "")));
+                        counter2++;
+                        if (counter2 == 4) {
+                            break;
+                        }
+                    }
 
                     sign.update(true);
 

@@ -1,5 +1,7 @@
 package me.Block2Block.HotPotato.Entities;
 
+import com.nametagedit.plugin.NametagEdit;
+import com.nametagedit.plugin.api.data.FakeTeam;
 import me.Block2Block.HotPotato.Kits.PlayerKit;
 import me.Block2Block.HotPotato.Main;
 import org.bukkit.Bukkit;
@@ -32,13 +34,18 @@ public class HotPotatoPlayer {
         ScoreboardManager scoreboardManager = Bukkit.getScoreboardManager();
         Scoreboard scoreboard = scoreboardManager.getNewScoreboard();
         Team red = scoreboard.registerNewTeam("Red");
-        red.setPrefix(Main.c(null, "&c"));
+        red.setPrefix(Main.c(false, Main.getInstance().getConfig().getString("Settings.Player-Names.Red-Format")));
         Team blue = scoreboard.registerNewTeam("Blue");
-        blue.setPrefix(Main.c(null, "&9"));
+        blue.setPrefix(Main.c(false, Main.getInstance().getConfig().getString("Settings.Player-Names.Blue-Format")));
 
-        Objective o = scoreboard.registerNewObjective(player.getName(), "dummy");
+        String name = player.getName();
+        if (me.Block2Block.HotPotato.Managers.ScoreboardManager.isEnabled() && !me.Block2Block.HotPotato.Managers.ScoreboardManager.isCustomScoreboard()) {
+            FakeTeam team = NametagEdit.getApi().getFakeTeam(player.getPlayer());
+            name = team.getName();
+        }
+        Objective o = scoreboard.registerNewObjective(name, "dummy");
         o.setDisplaySlot(DisplaySlot.SIDEBAR);
-        o.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&9&m----&b&l HOTPOTATO &9&m----"));
+        o.setDisplayName(ChatColor.translateAlternateColorCodes('&', Main.getInstance().getConfig().getString("Settings.Scoreboard.Title")));
 
         this.objective = o;
         this.scoreboard = scoreboard;
@@ -117,11 +124,4 @@ public class HotPotatoPlayer {
         }
     }
 
-    public void setKit(int id) {
-        for (PlayerKit pk : PlayerKit.values()) {
-            if (pk.getId() == id) {
-                this.kit = pk.getKit();
-            }
-        }
-    }
 }

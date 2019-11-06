@@ -5,6 +5,7 @@ import me.Block2Block.HotPotato.Main;
 import me.Block2Block.HotPotato.Managers.CacheManager;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 
 import java.io.File;
@@ -22,21 +23,25 @@ public class DatabaseManager {
     public static DatabaseManager i;
 
     private static SQLite db;
+    private static MySQL dbMySql;
     private static boolean isMysql;
     private static Connection connection;
 
-    public DatabaseManager() {
+    public DatabaseManager(boolean mysql) {
+        isMysql = mysql;
         i = this;
     }
 
     public void setup() throws SQLException, ClassNotFoundException {
         db = new SQLite("storage.db");
         if (isMysql) {
-            db = new SQLite("storage.db");
+            dbMySql = new MySQL(Main.getInstance().getConfig().getString("Settings.Database.MySQL.Hostname"), Main.getInstance().getConfig().getString("Settings.Database.MySQL.Port"),Main.getInstance().getConfig().getString("Settings.Database.MySQL.Database"), Main.getInstance().getConfig().getString("Settings.Database.MySQL.Username"), Main.getInstance().getConfig().getString("Settings.Database.MySQL.Password"));
+            connection = dbMySql.openConnection();
         } else {
             db = new SQLite("storage.db");
+            connection = db.openConnection();
         }
-        connection = db.openConnection();
+
         createTables();
         loadMaps();
         loadSigns();
@@ -45,17 +50,32 @@ public class DatabaseManager {
 
     private void createTables() {
         try {
-            PreparedStatement statement = connection.prepareStatement("CREATE TABLE IF NOT EXISTS hp_maps ( `id` INTEGER PRIMARY KEY AUTOINCREMENT , `name` TEXT NOT NULL , `red_spawns` TEXT NOT NULL , `blue_spawns` TEXT NOT NULL , `tnt_spawns` TEXT NOT NULL , `zip_name` TEXT NOT NULL , `waiting_lobby` TEXT NOT NULL , `author` TEXT NOT NULL)");
-            boolean set = statement.execute();
+            if (isMysql) {
+                PreparedStatement statement = connection.prepareStatement("CREATE TABLE IF NOT EXISTS hp_maps ( `id` INT PRIMARY KEY AUTOINCREMENT , `name` TEXT NOT NULL , `red_spawns` TEXT NOT NULL , `blue_spawns` TEXT NOT NULL , `tnt_spawns` TEXT NOT NULL , `zip_name` TEXT NOT NULL , `waiting_lobby` TEXT NOT NULL , `author` TEXT NOT NULL)");
+                boolean set = statement.execute();
 
-            statement = connection.prepareStatement("CREATE TABLE IF NOT EXISTS hp_signs ( `id` INTEGER PRIMARY KEY AUTOINCREMENT, `type` TEXT NOT NULL , `world` TEXT NOT NULL , `x` INTEGER NOT NULL , `y` INTEGER NOT NULL , `z` INTEGER NOT NULL)");
-            set = statement.execute();
+                statement = connection.prepareStatement("CREATE TABLE IF NOT EXISTS hp_signs ( `id` INT PRIMARY KEY AUTOINCREMENT, `type` TEXT NOT NULL , `world` TEXT NOT NULL , `x` INT NOT NULL , `y` INT NOT NULL , `z` INT NOT NULL)");
+                set = statement.execute();
 
-            statement = connection.prepareStatement("CREATE TABLE IF NOT EXISTS hp_playerdata ( `uuid` VARCHAR(36) NOT NULL , `balance` INTEGER NOT NULL , `kits_unlocked` TEXT NOT NULL , `wins` INTEGER NOT NULL , `games_played` INTEGER NOT NULL , `winning_punch` INTEGER NOT NULL )");
-            set = statement.execute();
+                statement = connection.prepareStatement("CREATE TABLE IF NOT EXISTS hp_playerdata ( `uuid` VARCHAR(36) NOT NULL , `balance` INT NOT NULL , `kits_unlocked` TEXT NOT NULL , `wins` INT NOT NULL , `games_played` INT NOT NULL , `winning_punch` INT NOT NULL )");
+                set = statement.execute();
 
-            statement = connection.prepareStatement("CREATE TABLE IF NOT EXISTS hp_data ( `world` TEXT NOT NULL , `x` REAL NOT NULL , `y` REAL NOT NULL , `z` REAL NOT NULL)");
-            set = statement.execute();
+                statement = connection.prepareStatement("CREATE TABLE IF NOT EXISTS hp_data ( `world` TEXT NOT NULL , `x` REAL NOT NULL , `y` REAL NOT NULL , `z` REAL NOT NULL)");
+                set = statement.execute();
+            } else {
+                PreparedStatement statement = connection.prepareStatement("CREATE TABLE IF NOT EXISTS hp_maps ( `id` INTEGER PRIMARY KEY AUTOINCREMENT , `name` TEXT NOT NULL , `red_spawns` TEXT NOT NULL , `blue_spawns` TEXT NOT NULL , `tnt_spawns` TEXT NOT NULL , `zip_name` TEXT NOT NULL , `waiting_lobby` TEXT NOT NULL , `author` TEXT NOT NULL)");
+                boolean set = statement.execute();
+
+                statement = connection.prepareStatement("CREATE TABLE IF NOT EXISTS hp_signs ( `id` INTEGER PRIMARY KEY AUTOINCREMENT, `type` TEXT NOT NULL , `world` TEXT NOT NULL , `x` INTEGER NOT NULL , `y` INTEGER NOT NULL , `z` INTEGER NOT NULL)");
+                set = statement.execute();
+
+                statement = connection.prepareStatement("CREATE TABLE IF NOT EXISTS hp_playerdata ( `uuid` VARCHAR(36) NOT NULL , `balance` INTEGER NOT NULL , `kits_unlocked` TEXT NOT NULL , `wins` INTEGER NOT NULL , `games_played` INTEGER NOT NULL , `winning_punch` INTEGER NOT NULL )");
+                set = statement.execute();
+
+                statement = connection.prepareStatement("CREATE TABLE IF NOT EXISTS hp_data ( `world` TEXT NOT NULL , `x` REAL NOT NULL , `y` REAL NOT NULL , `z` REAL NOT NULL)");
+                set = statement.execute();
+            }
+
         } catch (Exception e) {
             Bukkit.getLogger().log(Level.SEVERE, "There has been an error creating Database tables. The plugin will be disabled. Stack Trace:");
             e.printStackTrace();
@@ -252,7 +272,12 @@ public class DatabaseManager {
 
             if (set.next()) {
                 List<Integer> kits = new ArrayList<>();
-                kits.add(set.getInt(1));
+                    if (!Main.getInstance().getConfig().getBoolean("Settings.Economy.Use-Custom-Economy") && Main.isVault()) {
+                        kits.add((int) Math.round(Main.getEcon().getBalance(p)));
+                    } else {
+                        kits.add(set.getInt(1));
+                    }
+
                 kits.add(set.getInt(2));
                 kits.add(set.getInt(3));
                 kits.add(set.getInt(4));
@@ -285,7 +310,13 @@ public class DatabaseManager {
 
      public void addWin(Player p) {
          try {
-             PreparedStatement statement = connection.prepareStatement("UPDATE hp_playerdata SET (wins = wins + 1), games_played = (games_played + 1), balance = (balance + 100) WHERE uuid = '" + p.getUniqueId().toString() + "'");
+             if (!Main.getInstance().getConfig().getBoolean("Settings.Economy.Use-Custom-Economy") && Main.isVault()) {
+                 Main.getEcon().depositPlayer(p, Main.getInstance().getConfig().getInt("Settings.Economy.Money-On-Win"));
+                 PreparedStatement statement = connection.prepareStatement("UPDATE hp_playerdata SET (wins = wins + 1), games_played = (games_played + 1) WHERE uuid = '" + p.getUniqueId().toString() + "'");
+                 boolean set = statement.execute();
+                 return;
+             }
+             PreparedStatement statement = connection.prepareStatement("UPDATE hp_playerdata SET (wins = wins + 1), games_played = (games_played + 1), balance = (balance + " + Main.getInstance().getConfig().getInt("Settings.Economy.Money-On-Win") + ") WHERE uuid = '" + p.getUniqueId().toString() + "'");
              boolean set = statement.execute();
          } catch (Exception e) {
              Bukkit.getLogger().info("Unable to add stats to database. Please try restarting your server.");
@@ -294,7 +325,13 @@ public class DatabaseManager {
 
     public void addWinningPunch(Player p) {
         try {
-            PreparedStatement statement = connection.prepareStatement("UPDATE hp_playerdata SET wins = (wins + 1), games_played = (games_played + 1), winning_punch = (winning_punch + 1), balance = (balance + 150) WHERE uuid = '" + p.getUniqueId().toString() + "'");
+            if (!Main.getInstance().getConfig().getBoolean("Settings.Economy.Use-Custom-Economy") && Main.isVault()) {
+                Main.getEcon().depositPlayer(p, Main.getInstance().getConfig().getInt("Settings.Economy.Money-On-Winning-Punch"));
+                PreparedStatement statement = connection.prepareStatement("UPDATE hp_playerdata SET (wins = wins + 1), games_played = (games_played + 1), winning_punch = (winning_punch + 1) WHERE uuid = '" + p.getUniqueId().toString() + "'");
+                boolean set = statement.execute();
+                return;
+            }
+            PreparedStatement statement = connection.prepareStatement("UPDATE hp_playerdata SET wins = (wins + 1), games_played = (games_played + 1), winning_punch = (winning_punch + 1), balance = (balance + " + Main.getInstance().getConfig().getInt("Settings.Economy.Money-On-Winning-Punch") + ") WHERE uuid = '" + p.getUniqueId().toString() + "'");
             boolean set = statement.execute();
         } catch (Exception e) {
             Bukkit.getLogger().info("Unable to add stats to database. Please try restarting your server.");
@@ -303,7 +340,13 @@ public class DatabaseManager {
 
     public void addLoss(Player p) {
         try {
-            PreparedStatement statement = connection.prepareStatement("UPDATE hp_playerdata SET games_played = (games_played + 1), balance = (balance + 50) WHERE uuid = '" + p.getUniqueId().toString() + "'");
+            if (!Main.getInstance().getConfig().getBoolean("Settings.Economy.Use-Custom-Economy") && Main.isVault()) {
+                Main.getEcon().depositPlayer(p, Main.getInstance().getConfig().getInt("Settings.Economy.Money-On-Loss"));
+                PreparedStatement statement = connection.prepareStatement("UPDATE hp_playerdata SET games_played = (games_played + 1) WHERE uuid = '" + p.getUniqueId().toString() + "'");
+                boolean set = statement.execute();
+                return;
+            }
+            PreparedStatement statement = connection.prepareStatement("UPDATE hp_playerdata SET games_played = (games_played + 1), balance = (balance + " + Main.getInstance().getConfig().getInt("Settings.Economy.Money-On-Loss") + ") WHERE uuid = '" + p.getUniqueId().toString() + "'");
             boolean set = statement.execute();
         } catch (Exception e) {
             Bukkit.getLogger().info("Unable to add stats to database. Please try restarting your server.");

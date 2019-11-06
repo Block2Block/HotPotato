@@ -3,6 +3,7 @@ package me.Block2Block.HotPotato.Listeners;
 import me.Block2Block.HotPotato.Main;
 import me.Block2Block.HotPotato.Managers.CacheManager;
 import org.bukkit.GameMode;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Sign;
 import org.bukkit.event.EventHandler;
@@ -28,30 +29,50 @@ public class SignClickListener implements Listener {
                                 return;
                             }
 
-                            if (Main.getQueueManager().addToQueue(e.getPlayer())) {
-                                sign.setLine(3, Main.c(null, "Players Queued: &a" + Main.getQueueManager().playersQueued()));
-                            } else {
-                                sign.setLine(3, Main.c(null, "Players Queued: &a" +  + Main.getQueueManager().playersQueued()));
+                            Main.getQueueManager().addToQueue(e.getPlayer());
+
+                            for (Location loc : CacheManager.getSigns().keySet()) {
+                                if (CacheManager.getSigns().get(loc).equals("queue")) {
+                                    Sign sign2 = (Sign) loc.getBlock().getState();
+
+                                    int counter = 0;
+                                    for (String s : Main.getInstance().getConfig().getStringList("Settings.Signs.Queue-Format")) {
+                                        sign2.setLine(counter, Main.c(false, s.replace("{games-active}",CacheManager.getGames().size() + "").replace("{players}",CacheManager.getPlayers().size() + "").replace("{queued}",Main.getQueueManager().playersQueued() + "")));
+                                        counter++;
+                                        if (counter == 4) {
+                                            break;
+                                        }
+                                    }
+
+                                    sign2.update(true);
+                                } else if (CacheManager.getSigns().get(loc).equals("stats")) {
+                                    Sign sign2 = (Sign) loc.getBlock().getState();
+
+                                    int counter = 0;
+                                    for (String s : Main.getInstance().getConfig().getStringList("Settings.Signs.Stats-Format")) {
+                                        sign2.setLine(counter, Main.c(false, s.replace("{games-active}",CacheManager.getGames().size() + "").replace("{players}",CacheManager.getPlayers().size() + "").replace("{queued}",Main.getQueueManager().playersQueued() + "")));
+                                        counter++;
+                                        if (counter == 4) {
+                                            break;
+                                        }
+                                    }
+
+                                    sign2.update(true);
+                                }
                             }
-                            sign.update(true);
                             break;
                         case "stats":
                             if (e.getPlayer().getGameMode() == GameMode.CREATIVE && e.getAction() == Action.LEFT_CLICK_BLOCK) {
                                 return;
                             }
 
-                            e.getPlayer().sendMessage(Main.c("HotPotato","Loading statistics..."));
+                            e.getPlayer().sendMessage(Main.c(true,Main.getInstance().getConfig().getString("Messages.Signs.Stats.Loading-Stats")));
 
                             new BukkitRunnable() {
                                 @Override
                                 public void run() {
                                     List<Integer> stats = Main.getDbManager().getStats(e.getPlayer());
-                                    e.getPlayer().sendMessage(Main.c("HotPotato","Statistics for &a" + e.getPlayer().getName() + "&r:\n" +
-                                            "Balance: &a" + stats.get(0) + "&r\n" +
-                                            "Games Played: &a" + stats.get(2) + "&r\n" +
-                                            "Wins: &a" + stats.get(1) + "&r\n" +
-                                            "Winning Punch: &a" + stats.get(3)));
-
+                                    e.getPlayer().sendMessage(Main.c(true,Main.getInstance().getConfig().getString("Messages.Signs.Stats.Stats").replace("{balance}",stats.get(0) + "").replace("{games-played}","" + stats.get(2)).replace("{wins}","" + stats.get(1)).replace("{winning-punch}","" + stats.get(3)).replace("{player-name}",e.getPlayer().getName())));
                                 }
                             }.runTaskAsynchronously(Main.getInstance());
                             return;

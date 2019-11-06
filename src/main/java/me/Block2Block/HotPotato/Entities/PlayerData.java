@@ -9,7 +9,7 @@ import java.util.List;
 public class PlayerData {
 
     private List<Integer> unlockedKits;
-    private long balance;
+    private int balance;
     private int wins;
     private int gamesPlayed;
     private int winningPunch;
@@ -26,7 +26,10 @@ public class PlayerData {
             this.p = p;
     }
 
-    public long getBalance() {
+    public int getBalance() {
+        if (!Main.getInstance().getConfig().getBoolean("Settings.Economy.Use-Custom-Economy") && Main.isVault()) {
+            return (int) Math.round(Main.getEcon().getBalance(p));
+        }
         return balance;
     }
 
@@ -57,6 +60,10 @@ public class PlayerData {
     }
 
     public void removeFromBalance(int amount) {
+        if (!Main.getInstance().getConfig().getBoolean("Settings.Economy.Use-Custom-Economy") && Main.isVault()) {
+            Main.getEcon().withdrawPlayer(p, amount);
+            return;
+        }
         balance -= amount;
         new BukkitRunnable() {
             @Override

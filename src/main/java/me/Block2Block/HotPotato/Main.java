@@ -7,8 +7,11 @@ import me.Block2Block.HotPotato.Kits.Abilities.PotatoWhacker;
 import me.Block2Block.HotPotato.Kits.KitLoader;
 import me.Block2Block.HotPotato.Listeners.*;
 import me.Block2Block.HotPotato.Managers.CacheManager;
+import me.Block2Block.HotPotato.Managers.HotPotatoExpansion;
 import me.Block2Block.HotPotato.Managers.QueueManager;
+import me.Block2Block.HotPotato.Managers.ScoreboardManager;
 import me.Block2Block.HotPotato.Managers.StorageManager.DatabaseManager;
+import net.milkbowl.vault.economy.Economy;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.bukkit.Bukkit;
@@ -20,6 +23,7 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
+import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.*;
@@ -42,6 +46,14 @@ public class Main extends JavaPlugin {
     private static QueueManager queueManager;
     private static DatabaseManager dbManager;
     private static KitLoader kl;
+
+
+    private static boolean vault = false;
+    private static boolean nte = false;
+    private static boolean ph = false;
+
+    private static Economy econ = null;
+
 
     @Override
     public void onEnable() {
@@ -67,6 +79,32 @@ public class Main extends JavaPlugin {
         }
         config.options().copyHeader(true);
 
+
+        if (Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null) {
+            ph = true;
+            new HotPotatoExpansion(this).register();
+            ScoreboardManager.setEnabled(getConfig().getBoolean("Settings.Scoreboard.Enabled"));
+            ScoreboardManager.setCustomScoreboard(getConfig().getBoolean("Settings.Scoreboard.Use-Custom-Scoreboard"));
+        } else if (!getConfig().getBoolean("Settings.Scoreboard.Use-Custom-Scoreboard") && getConfig().getBoolean("Settings.Scoreboard.Enabled")) {
+            getLogger().info("You currently have Use-Custom-Scoreboard set to false, they are enabled and you do not have PlaceholderAPI installed. The custom Scoreboard Manager will be used until PlaceholderAPI is installed.");
+            ScoreboardManager.setCustomScoreboard(true);
+            ScoreboardManager.setEnabled(true);
+        } else {
+            ScoreboardManager.setEnabled(getConfig().getBoolean("Settings.Scoreboard.Enabled"));
+            ScoreboardManager.setCustomScoreboard(true);
+        }
+        if (Bukkit.getPluginManager().getPlugin("NameTagEdit") != null) {
+            nte = true;
+        } else if (!getConfig().getBoolean("Settings.Player-Names.Use-Custom-Playernames") && getConfig().getBoolean("Settings.Player-Names.Enabled")) {
+            getLogger().info("You currently have Use-Custom-Playernames set to false, they are enabled and you do not have NameTagEdit installed. The custom Player Name Manager will be used until NameTagEdit is installed.");
+        }
+        if (Bukkit.getPluginManager().getPlugin("Vault") != null) {
+            vault = setupEcon();
+        } else if (!getConfig().getBoolean("Settings.Economy.Use-Custom-Economy")) {
+            getLogger().info("You currently have Use-Custom-Economy set to false and you do not have Vault installed. The custom economy will be used until vault is installed.");
+        }
+
+
         File dataFolder = new File(this.getDataFolder().getAbsolutePath() + "/maps");
         if (!dataFolder.exists()) {
             dataFolder.mkdirs();
@@ -74,7 +112,7 @@ public class Main extends JavaPlugin {
 
         queueManager = new QueueManager();
 
-        dbManager = new DatabaseManager();
+        dbManager = new DatabaseManager(getConfig().getString("Settings.Database.Type").toLowerCase().equals("mysql"));
         try {
             dbManager.setup();
         } catch (Exception e) {
@@ -96,13 +134,13 @@ public class Main extends JavaPlugin {
             }
             if (CacheManager.getSigns().get(loc).equals("queue")) {
                 Sign sign = (Sign) loc.getBlock().getState();
-                sign.setLine(3, Main.c(null, "Players Queued: &a" + Main.getQueueManager().playersQueued()));
+                sign.setLine(3, Main.c(false, "Players Queued: &a" + Main.getQueueManager().playersQueued()));
                 sign.update(true);
             } else if (CacheManager.getSigns().get(loc).equals("stats")) {
                 Sign sign = (Sign) loc.getBlock().getState();
-                sign.setLine(1, Main.c(null, "Games Active: &a" + CacheManager.getGames().size()));
-                sign.setLine(2, Main.c(null, "Players: &a" + CacheManager.getPlayers().size()));
-                sign.setLine(3, Main.c(null, "Players Queued: &a" + Main.getQueueManager().playersQueued()));
+                sign.setLine(1, Main.c(false, "Games Active: &a" + CacheManager.getGames().size()));
+                sign.setLine(2, Main.c(false, "Players: &a" + CacheManager.getPlayers().size()));
+                sign.setLine(3, Main.c(false, "Players Queued: &a" + Main.getQueueManager().playersQueued()));
 
                 sign.update(true);
             }
@@ -164,8 +202,8 @@ public class Main extends JavaPlugin {
 
     public static Main getInstance() {return i;}
 
-    public static String c(String prefix, String message) {
-        return ChatColor.translateAlternateColorCodes('&', ((prefix==null)?"&r":"&2"+prefix+">> &r") + message);
+    public static String c(boolean prefix, String message) {
+        return ChatColor.translateAlternateColorCodes('&', ((!prefix)?"&r":config.get("Messages.Prefix")) + message);
     }
 
     public static String newVersionCheck() {
@@ -252,5 +290,35 @@ public class Main extends JavaPlugin {
 
     public static KitLoader getKitLoader() {
         return kl;
+    }
+
+    @Override
+    public FileConfiguration getConfig() {
+        return config;
+    }
+
+    public static boolean isNte() {
+        return nte;
+    }
+
+    public static boolean isPh() {
+        return ph;
+    }
+
+    public static boolean isVault() {
+        return vault;
+    }
+
+    private boolean setupEcon() {
+        RegisteredServiceProvider<Economy> rsp = getServer().getServicesManager().getRegistration(Economy.class);
+        if (rsp == null) {
+            return false;
+        }
+        econ = rsp.getProvider();
+        return econ != null;
+    }
+
+    public static Economy getEcon() {
+        return econ;
     }
 }

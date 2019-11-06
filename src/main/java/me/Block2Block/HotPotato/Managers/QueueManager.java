@@ -23,18 +23,33 @@ public class QueueManager {
     public boolean addToQueue(Player p) {
         if (queue.contains(p)) {
             queue.removeFromQueue(p);
-            p.sendMessage(Main.c("HotPotato","You have left the game queue."));
+            p.sendMessage(Main.c(true,Main.getInstance().getConfig().getString("Messages.Game.Queue.Leave")));
 
             for (Location loc : CacheManager.getSigns().keySet()) {
                 if (CacheManager.getSigns().get(loc).equals("queue")) {
                     Sign sign = (Sign) loc.getBlock().getState();
-                    sign.setLine(3, Main.c(null, "Players Queued: &a" + Main.getQueueManager().playersQueued()));
+
+                    int counter = 0;
+                    for (String s : Main.getInstance().getConfig().getStringList("Settings.Signs.Queue-Format")) {
+                        sign.setLine(counter, Main.c(false, s.replace("{games-active}",CacheManager.getGames().size() + "").replace("{players}",CacheManager.getPlayers().size() + "").replace("{queued}",Main.getQueueManager().playersQueued() + "")));
+                        counter++;
+                        if (counter == 4) {
+                            break;
+                        }
+                    }
+
                     sign.update(true);
                 } else if (CacheManager.getSigns().get(loc).equals("stats")) {
                     Sign sign = (Sign) loc.getBlock().getState();
-                    sign.setLine(1, Main.c(null, "Games Active: &a" + CacheManager.getGames().size()));
-                    sign.setLine(2, Main.c(null, "Players: &a" + CacheManager.getPlayers().size()));
-                    sign.setLine(3, Main.c(null, "Players Queued: &a" + Main.getQueueManager().playersQueued()));
+
+                    int counter = 0;
+                    for (String s : Main.getInstance().getConfig().getStringList("Settings.Signs.Stats-Format")) {
+                        sign.setLine(counter, Main.c(false, s.replace("{games-active}",CacheManager.getGames().size() + "").replace("{players}",CacheManager.getPlayers().size() + "").replace("{queued}",Main.getQueueManager().playersQueued() + "")));
+                        counter++;
+                        if (counter == 4) {
+                            break;
+                        }
+                    }
 
                     sign.update(true);
                 }
@@ -43,10 +58,10 @@ public class QueueManager {
             return false;
         }
         int count = queue.enQueue(p);
-        if (count == 2) {
+        if (count >= Main.getInstance().getConfig().getInt("Settings.Game.Queue-Min-New-Game")) {
             if (CacheManager.getMaps().size() < 1) {
                 for (Player player : queue.deQueue()) {
-                    p.sendMessage(Main.c("Queue Manager","There are currently no maps set up. You have been removed from the queue."));
+                    p.sendMessage(Main.c(true,Main.getInstance().getConfig().getString("Messages.Game.Queue.No-Maps")));
                 }
                 queue.clear();
                 return false;
@@ -62,13 +77,28 @@ public class QueueManager {
             for (Location loc : CacheManager.getSigns().keySet()) {
                 if (CacheManager.getSigns().get(loc).equals("queue")) {
                     Sign sign = (Sign) loc.getBlock().getState();
-                    sign.setLine(3, Main.c(null, "Players Queued: &a" + Main.getQueueManager().playersQueued()));
+
+                    int counter = 0;
+                    for (String s : Main.getInstance().getConfig().getStringList("Settings.Signs.Queue-Format")) {
+                        sign.setLine(counter, Main.c(false, s.replace("{games-active}",CacheManager.getGames().size() + "").replace("{players}",CacheManager.getPlayers().size() + "").replace("{queued}",Main.getQueueManager().playersQueued() + "")));
+                        counter++;
+                        if (counter == 4) {
+                            break;
+                        }
+                    }
+
                     sign.update(true);
                 } else if (CacheManager.getSigns().get(loc).equals("stats")) {
                     Sign sign = (Sign) loc.getBlock().getState();
-                    sign.setLine(1, Main.c(null, "Games Active: &a" + CacheManager.getGames().size()));
-                    sign.setLine(2, Main.c(null, "Players: &a" + CacheManager.getPlayers().size()));
-                    sign.setLine(3, Main.c(null, "Players Queued: &a" + Main.getQueueManager().playersQueued()));
+
+                    int counter = 0;
+                    for (String s : Main.getInstance().getConfig().getStringList("Settings.Signs.Stats-Format")) {
+                        sign.setLine(counter, Main.c(false, s.replace("{games-active}",CacheManager.getGames().size() + "").replace("{players}",CacheManager.getPlayers().size() + "").replace("{queued}",Main.getQueueManager().playersQueued() + "")));
+                        counter++;
+                        if (counter == 4) {
+                            break;
+                        }
+                    }
 
                     sign.update(true);
                 }
@@ -79,19 +109,31 @@ public class QueueManager {
             if (recruiting != -1) {
                 CacheManager.getGames().get(recruiting).join(queue.deQueue());
             } else {
-                p.sendMessage(Main.c("Queue Manager", "You have been added to the game queue."));
+                p.sendMessage(Main.c(true, Main.getInstance().getConfig().getString("Messages.Game.Queue.Join")));
             }
 
             for (Location loc : CacheManager.getSigns().keySet()) {
                 if (CacheManager.getSigns().get(loc).equals("queue")) {
                     Sign sign = (Sign) loc.getBlock().getState();
-                    sign.setLine(3, Main.c(null, "Players Queued: &a" + Main.getQueueManager().playersQueued()));
+                    int counter = 0;
+                    for (String s : Main.getInstance().getConfig().getStringList("Settings.Signs.Queue-Format")) {
+                        sign.setLine(counter, Main.c(false, s.replace("{games-active}",CacheManager.getGames().size() + "").replace("{players}",CacheManager.getPlayers().size() + "").replace("{queued}",Main.getQueueManager().playersQueued() + "")));
+                        counter++;
+                        if (counter == 4) {
+                            break;
+                        }
+                    }
                     sign.update(true);
                 } else if (CacheManager.getSigns().get(loc).equals("stats")) {
                     Sign sign = (Sign) loc.getBlock().getState();
-                    sign.setLine(1, Main.c(null, "Games Active: &a" + CacheManager.getGames().size()));
-                    sign.setLine(2, Main.c(null, "Players: &a" + CacheManager.getPlayers().size()));
-                    sign.setLine(3, Main.c(null, "Players Queued: &a" + Main.getQueueManager().playersQueued()));
+                    int counter = 0;
+                    for (String s : Main.getInstance().getConfig().getStringList("Settings.Signs.Stats-Format")) {
+                        sign.setLine(counter, Main.c(false, s.replace("{games-active}",CacheManager.getGames().size() + "").replace("{players}",CacheManager.getPlayers().size() + "").replace("{queued}",Main.getQueueManager().playersQueued() + "")));
+                        counter++;
+                        if (counter == 4) {
+                            break;
+                        }
+                    }
 
                     sign.update(true);
                 }

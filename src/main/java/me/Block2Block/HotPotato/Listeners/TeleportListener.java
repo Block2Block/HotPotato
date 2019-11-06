@@ -14,7 +14,7 @@ public class TeleportListener implements Listener {
         if (CacheManager.getEditMode().containsKey(e.getPlayer())) {
             if (!e.getTo().getWorld().getName().equals("HPEdit")) {
                 CacheManager.getEditMode().remove(e.getPlayer());
-                e.getPlayer().sendMessage(Main.c("HotPotato","You have left edit mode."));
+                e.getPlayer().sendMessage(Main.c(true,Main.getInstance().getConfig().getString("Messages.Commands.Edit.Left-Edit-Mode")));
                 if (CacheManager.getEditMode().size() == 0) {
                     Bukkit.getServer().unloadWorld("HPEdit",true);
                 }
@@ -22,7 +22,7 @@ public class TeleportListener implements Listener {
         } else {
             if (e.getTo().getWorld().getName().equals("HPEdit")) {
                 e.setCancelled(true);
-                e.getPlayer().sendMessage(Main.c("HotPotato","You must be in edit mode in order to teleport to players also in edit mode."));
+                e.getPlayer().sendMessage(Main.c(true,Main.getInstance().getConfig().getString("Messages.Commands.Edit.Teleport-Not-In-Edit-Mode")));
             }
         }
     }
