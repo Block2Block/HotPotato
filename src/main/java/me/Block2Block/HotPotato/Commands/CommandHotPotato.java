@@ -21,6 +21,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.io.File;
+import java.util.UUID;
 
 public class CommandHotPotato implements CommandExecutor {
 
@@ -310,7 +311,12 @@ public class CommandHotPotato implements CommandExecutor {
                                 new BukkitRunnable() {
                                     @Override
                                     public void run() {
-                                        String uuid = UUIDUtil.getUUID(args[1]).toString();
+                                        UUID playerUuid = UUIDUtil.getUUID(args[1]);
+                                        if (playerUuid == null) {
+                                            p.sendMessage(Main.c(true,Main.getInstance().getConfig().getString("Messages.Commands.Add-Balance.No-User")));
+                                            return;
+                                        }
+                                        String uuid = playerUuid.toString();
                                         if (uuid == null) {
                                             p.sendMessage(Main.c(true,Main.getInstance().getConfig().getString("Messages.Commands.Add-Balance.No-User")));
                                             return;

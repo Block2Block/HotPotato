@@ -31,7 +31,7 @@ public class DatabaseManager {
         i = this;
     }
 
-    public void setup() throws SQLException, ClassNotFoundException {
+    public boolean setup() throws SQLException, ClassNotFoundException {
         db = new SQLite("storage.db");
         if (isMysql) {
             dbMySql = new MySQL(Main.getInstance().getConfig().getString("Settings.Database.MySQL.Hostname"), Main.getInstance().getConfig().getString("Settings.Database.MySQL.Port"),Main.getInstance().getConfig().getString("Settings.Database.MySQL.Database"), Main.getInstance().getConfig().getString("Settings.Database.MySQL.Username"), Main.getInstance().getConfig().getString("Settings.Database.MySQL.Password"));
@@ -41,19 +41,23 @@ public class DatabaseManager {
             connection = db.openConnection();
         }
 
-        createTables();
+        boolean successful =  createTables();
+        if (!successful) {
+            return false;
+        }
         loadMaps();
         loadSigns();
         loadLobby();
+        return true;
     }
 
-    private void createTables() {
+    private boolean createTables() {
         try {
             if (isMysql) {
-                PreparedStatement statement = connection.prepareStatement("CREATE TABLE IF NOT EXISTS hp_maps ( `id` INT PRIMARY KEY AUTOINCREMENT , `name` TEXT NOT NULL , `red_spawns` TEXT NOT NULL , `blue_spawns` TEXT NOT NULL , `tnt_spawns` TEXT NOT NULL , `zip_name` TEXT NOT NULL , `waiting_lobby` TEXT NOT NULL , `author` TEXT NOT NULL)");
+                PreparedStatement statement = connection.prepareStatement("CREATE TABLE IF NOT EXISTS hp_maps (`id` INT NOT NULL AUTO_INCREMENT , `name` TEXT NOT NULL , `red_spawns` TEXT NOT NULL , `blue_spawns` TEXT NOT NULL , `tnt_spawns` TEXT NOT NULL , `zip_name` TEXT NOT NULL , `waiting_lobby` TEXT NOT NULL , `author` TEXT NOT NULL, PRIMARY KEY (`id`))");
                 boolean set = statement.execute();
 
-                statement = connection.prepareStatement("CREATE TABLE IF NOT EXISTS hp_signs ( `id` INT PRIMARY KEY AUTOINCREMENT, `type` TEXT NOT NULL , `world` TEXT NOT NULL , `x` INT NOT NULL , `y` INT NOT NULL , `z` INT NOT NULL)");
+                statement = connection.prepareStatement("CREATE TABLE IF NOT EXISTS hp_signs ( `id` INT NOT NULL AUTO_INCREMENT, `type` TEXT NOT NULL , `world` TEXT NOT NULL , `x` INT NOT NULL , `y` INT NOT NULL , `z` INT NOT NULL,PRIMARY KEY (`id`))");
                 set = statement.execute();
 
                 statement = connection.prepareStatement("CREATE TABLE IF NOT EXISTS hp_playerdata ( `uuid` VARCHAR(36) NOT NULL , `balance` INT NOT NULL , `kits_unlocked` TEXT NOT NULL , `wins` INT NOT NULL , `games_played` INT NOT NULL , `winning_punch` INT NOT NULL )");
@@ -62,7 +66,7 @@ public class DatabaseManager {
                 statement = connection.prepareStatement("CREATE TABLE IF NOT EXISTS hp_data ( `world` TEXT NOT NULL , `x` REAL NOT NULL , `y` REAL NOT NULL , `z` REAL NOT NULL)");
                 set = statement.execute();
             } else {
-                PreparedStatement statement = connection.prepareStatement("CREATE TABLE IF NOT EXISTS hp_maps ( `id` INTEGER PRIMARY KEY AUTOINCREMENT , `name` TEXT NOT NULL , `red_spawns` TEXT NOT NULL , `blue_spawns` TEXT NOT NULL , `tnt_spawns` TEXT NOT NULL , `zip_name` TEXT NOT NULL , `waiting_lobby` TEXT NOT NULL , `author` TEXT NOT NULL)");
+                PreparedStatement statement = connection.prepareStatement("CREATE TABLE IF NOT EXISTS hp_maps ( `id` INT PRIMARY KEY AUTOINCREMENT , `name` TEXT NOT NULL , `red_spawns` TEXT NOT NULL , `blue_spawns` TEXT NOT NULL , `tnt_spawns` TEXT NOT NULL , `zip_name` TEXT NOT NULL , `waiting_lobby` TEXT NOT NULL , `author` TEXT NOT NULL)");
                 boolean set = statement.execute();
 
                 statement = connection.prepareStatement("CREATE TABLE IF NOT EXISTS hp_signs ( `id` INTEGER PRIMARY KEY AUTOINCREMENT, `type` TEXT NOT NULL , `world` TEXT NOT NULL , `x` INTEGER NOT NULL , `y` INTEGER NOT NULL , `z` INTEGER NOT NULL)");
@@ -74,11 +78,13 @@ public class DatabaseManager {
                 statement = connection.prepareStatement("CREATE TABLE IF NOT EXISTS hp_data ( `world` TEXT NOT NULL , `x` REAL NOT NULL , `y` REAL NOT NULL , `z` REAL NOT NULL)");
                 set = statement.execute();
             }
+            return true;
 
         } catch (Exception e) {
             Bukkit.getLogger().log(Level.SEVERE, "There has been an error creating Database tables. The plugin will be disabled. Stack Trace:");
             e.printStackTrace();
             Bukkit.getServer().getPluginManager().disablePlugin(Main.getInstance());
+            return false;
         }
     }
 
@@ -174,12 +180,14 @@ public class DatabaseManager {
             if (rs.next()) {
                 if (Bukkit.getWorld(rs.getString(1))== null) {
                     Bukkit.getLogger().info("The world your previous lobby location was in has been deleted. Please re-set your lobby location in order to play games. If the world still exists, please ensure that the world is loaded on server start.");
+                    CacheManager.setLobby(null);
                 } else {
                     Location l = new Location(Bukkit.getWorld(rs.getString(1)),rs.getDouble(2),rs.getDouble(3),rs.getDouble(4));
                     CacheManager.setLobby(l);
                 }
             } else {
                 Bukkit.getLogger().info("Your lobby has not yet been set. Execute /hotpotato setlobby to set your lobby. You will not be able to set up maps until you do.");
+                CacheManager.setLobby(null);
             }
         } catch (Exception e) {
             Bukkit.getLogger().log(Level.SEVERE, "There has been an error loading Database tables. The plugin will be disabled. Stack Trace:");

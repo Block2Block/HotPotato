@@ -47,7 +47,6 @@ public class Main extends JavaPlugin {
     private static DatabaseManager dbManager;
     private static KitLoader kl;
 
-
     private static boolean vault = false;
     private static boolean nte = false;
     private static boolean ph = false;
@@ -112,13 +111,17 @@ public class Main extends JavaPlugin {
 
         queueManager = new QueueManager();
 
+        boolean successful;
         dbManager = new DatabaseManager(getConfig().getString("Settings.Database.Type").toLowerCase().equals("mysql"));
         try {
-            dbManager.setup();
+            successful = dbManager.setup();
         } catch (Exception e) {
             Bukkit.getLogger().log(Level.SEVERE, "There has been an error loading the Database. The plugin will be disabled. Stack Trace:");
             e.printStackTrace();
             Bukkit.getServer().getPluginManager().disablePlugin(this);
+            return;
+        }
+        if (!successful) {
             return;
         }
 

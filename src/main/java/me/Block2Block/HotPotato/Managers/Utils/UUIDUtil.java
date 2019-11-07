@@ -41,6 +41,10 @@ public class UUIDUtil {
 
         String output = callURL("https://api.mojang.com/users/profiles/minecraft/" + playername);
 
+        if (output.length() == 0) {
+            return null;
+        }
+
         StringBuilder result = new StringBuilder();
 
         readData(output, result);

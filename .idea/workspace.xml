@@ -2,13 +2,13 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="09b0fe40-8a05-433f-97d0-58d254690623" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/sqldialects.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/sqldialects.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/me/Block2Block/HotPotato/Commands/CommandHotPotato.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/Block2Block/HotPotato/Commands/CommandHotPotato.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/me/Block2Block/HotPotato/Entities/Game.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/Block2Block/HotPotato/Entities/Game.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/me/Block2Block/HotPotato/Entities/HotPotatoPlayer.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/Block2Block/HotPotato/Entities/HotPotatoPlayer.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/me/Block2Block/HotPotato/Kits/Abilities/Leaper.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/Block2Block/HotPotato/Kits/Abilities/Leaper.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/me/Block2Block/HotPotato/Kits/Abilities/PotatoWhacker.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/Block2Block/HotPotato/Kits/Abilities/PotatoWhacker.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/me/Block2Block/HotPotato/Kits/KitLoader.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/Block2Block/HotPotato/Kits/KitLoader.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/me/Block2Block/HotPotato/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/Block2Block/HotPotato/Main.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/me/Block2Block/HotPotato/Managers/StorageManager/DatabaseManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/Block2Block/HotPotato/Managers/StorageManager/DatabaseManager.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/me/Block2Block/HotPotato/Managers/Utils/UUIDUtil.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/Block2Block/HotPotato/Managers/Utils/UUIDUtil.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/config.yml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/config.yml" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -31,6 +31,17 @@
       <path>
         <item name="Database" type="3277223f:DatabaseStructure$DbRootGroup" />
         <item name="block2block.me" type="feb32156:DbDataSourceImpl" />
+      </path>
+      <path>
+        <item name="Database" type="3277223f:DatabaseStructure$DbRootGroup" />
+        <item name="block2block.me" type="feb32156:DbDataSourceImpl" />
+        <item name="schemas" type="d4e8921:DatabaseStructure$FamilyGroup" />
+      </path>
+      <path>
+        <item name="Database" type="3277223f:DatabaseStructure$DbRootGroup" />
+        <item name="block2block.me" type="feb32156:DbDataSourceImpl" />
+        <item name="schemas" type="d4e8921:DatabaseStructure$FamilyGroup" />
+        <item name="amc_ranks: schema" type="76f4a085:MysqlImplModel$Schema" />
       </path>
       <path>
         <item name="Database" type="3277223f:DatabaseStructure$DbRootGroup" />
@@ -144,7 +155,7 @@
       <workItem from="1572473463075" duration="27000" />
       <workItem from="1572474220098" duration="886000" />
       <workItem from="1572815948891" duration="28948000" />
-      <workItem from="1573078011606" duration="3592000" />
+      <workItem from="1573078011606" duration="7117000" />
     </task>
     <task id="LOCAL-00001" summary="Did some work">
       <created>1570748869740</created>
@@ -167,7 +178,14 @@
       <option name="project" value="LOCAL" />
       <updated>1573082174261</updated>
     </task>
-    <option name="localTasksCounter" value="4" />
+    <task id="LOCAL-00004" summary="Removed unnecessary imports">
+      <created>1573082343251</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1573082343251</updated>
+    </task>
+    <option name="localTasksCounter" value="5" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -191,6 +209,7 @@
     <MESSAGE value="preparing for merge" />
     <MESSAGE value="Added new kit, fixed up current kits and fixed some other misc bugs" />
     <MESSAGE value="Added customisation to pretty much everything, changed how I do Scoreboard/Signs and added hooks for PlaceholderAPI, NametagEdit and Vault." />
-    <option name="LAST_COMMIT_MESSAGE" value="Added customisation to pretty much everything, changed how I do Scoreboard/Signs and added hooks for PlaceholderAPI, NametagEdit and Vault." />
+    <MESSAGE value="Removed unnecessary imports" />
+    <option name="LAST_COMMIT_MESSAGE" value="Removed unnecessary imports" />
   </component>
 </project>
