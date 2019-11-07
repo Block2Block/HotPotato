@@ -2,12 +2,10 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="09b0fe40-8a05-433f-97d0-58d254690623" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/sqldialects.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/sqldialects.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/me/Block2Block/HotPotato/Commands/CommandHotPotato.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/Block2Block/HotPotato/Commands/CommandHotPotato.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/me/Block2Block/HotPotato/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/Block2Block/HotPotato/Main.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/me/Block2Block/HotPotato/Managers/StorageManager/DatabaseManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/Block2Block/HotPotato/Managers/StorageManager/DatabaseManager.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/me/Block2Block/HotPotato/Managers/Utils/UUIDUtil.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/Block2Block/HotPotato/Managers/Utils/UUIDUtil.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/me/Block2Block/HotPotato/Entities/Game.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/Block2Block/HotPotato/Entities/Game.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/me/Block2Block/HotPotato/Entities/HotPotatoPlayer.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/Block2Block/HotPotato/Entities/HotPotatoPlayer.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/me/Block2Block/HotPotato/Managers/ScoreboardManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/Block2Block/HotPotato/Managers/ScoreboardManager.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/resources/config.yml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/config.yml" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -103,7 +101,7 @@
     <property name="project.structure.last.edited" value="Project" />
     <property name="project.structure.proportion" value="0.0" />
     <property name="project.structure.side.proportion" value="0.2" />
-    <property name="settings.editor.selected.configurable" value="SQL Dialects" />
+    <property name="settings.editor.selected.configurable" value="File.Encoding" />
   </component>
   <component name="RunDashboard">
     <option name="ruleStates">
@@ -155,7 +153,7 @@
       <workItem from="1572473463075" duration="27000" />
       <workItem from="1572474220098" duration="886000" />
       <workItem from="1572815948891" duration="28948000" />
-      <workItem from="1573078011606" duration="7117000" />
+      <workItem from="1573078011606" duration="9623000" />
     </task>
     <task id="LOCAL-00001" summary="Did some work">
       <created>1570748869740</created>
@@ -185,7 +183,14 @@
       <option name="project" value="LOCAL" />
       <updated>1573082343251</updated>
     </task>
-    <option name="localTasksCounter" value="5" />
+    <task id="LOCAL-00005" summary="Fixed a bug where an error would cause an error when typing an invalid username.&#10;Fixed a bug where users were able to go into edit mode when a lobby location had not been set.&#10;]Fixed a bug with MySQL not generating tables due to incorrect SQL syntax.">
+      <created>1573126541809</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1573126541809</updated>
+    </task>
+    <option name="localTasksCounter" value="6" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -210,6 +215,7 @@
     <MESSAGE value="Added new kit, fixed up current kits and fixed some other misc bugs" />
     <MESSAGE value="Added customisation to pretty much everything, changed how I do Scoreboard/Signs and added hooks for PlaceholderAPI, NametagEdit and Vault." />
     <MESSAGE value="Removed unnecessary imports" />
-    <option name="LAST_COMMIT_MESSAGE" value="Removed unnecessary imports" />
+    <MESSAGE value="Fixed a bug where an error would cause an error when typing an invalid username.&#10;Fixed a bug where users were able to go into edit mode when a lobby location had not been set.&#10;]Fixed a bug with MySQL not generating tables due to incorrect SQL syntax." />
+    <option name="LAST_COMMIT_MESSAGE" value="Fixed a bug where an error would cause an error when typing an invalid username.&#10;Fixed a bug where users were able to go into edit mode when a lobby location had not been set.&#10;]Fixed a bug with MySQL not generating tables due to incorrect SQL syntax." />
   </component>
 </project>

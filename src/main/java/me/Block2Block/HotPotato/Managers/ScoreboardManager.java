@@ -1,6 +1,7 @@
 package me.Block2Block.HotPotato.Managers;
 
 import me.Block2Block.HotPotato.Entities.Game;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.scoreboard.Score;
 
@@ -85,6 +86,17 @@ public class ScoreboardManager {
 
     }
 
+    public static void resetBoard(Player player) {
+        if (isEnabled && customScoreboard) {
+            Set<String> entries = CacheManager.getPlayers().get(player.getUniqueId()).getScoreboard().getEntries();
+            for (String pl : entries) {
+                CacheManager.getPlayers().get(player.getUniqueId()).getScoreboard().resetScores(pl);
+            }
+            player.setScoreboard(CacheManager.getPlayers().get(player.getUniqueId()).getScoreboard());
+
+        }
+    }
+
     public static boolean isCustomScoreboard() {
         return customScoreboard;
     }
@@ -95,5 +107,5 @@ public class ScoreboardManager {
 
     public static void setEnabled(boolean enabled) {isEnabled = enabled;}
 
-    public static void setCustomScoreboard(boolean customScoreboard1) {customScoreboard1 = customScoreboard;}
+    public static void setCustomScoreboard(boolean customScoreboard1) {customScoreboard = customScoreboard1;}
 }

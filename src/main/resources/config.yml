@@ -9,7 +9,10 @@
 #
 # Do not remove any of the different values. They cannot be disabled, however
 # I may introduce a system for them to be disabled in the near future if there
-# is enough demand. If you do remove values, the plugin may not work.
+# is enough demand. If you do remove values, the plugin may not work. Using invalid
+# values e.g. putting text where a number should be will result in the plugin
+# not working as expected. Do not post bug reports because you have changed config
+# values to something other than it should  be.
 #
 # This config file is VERY comprehensive. Every message is customisable, with
 # the exception of GUI, kit and phrase names. I have worked quite hard on the

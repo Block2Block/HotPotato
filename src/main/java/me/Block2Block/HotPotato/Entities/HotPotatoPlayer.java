@@ -38,7 +38,7 @@ public class HotPotatoPlayer {
         blue.setPrefix(Main.c(false, Main.getInstance().getConfig().getString("Settings.Player-Names.Blue-Format")));
 
         String name = player.getName();
-        if (me.Block2Block.HotPotato.Managers.ScoreboardManager.isEnabled() && !me.Block2Block.HotPotato.Managers.ScoreboardManager.isCustomScoreboard()) {
+        if (me.Block2Block.HotPotato.Managers.ScoreboardManager.isEnabled() && !me.Block2Block.HotPotato.Managers.ScoreboardManager.isCustomScoreboard() && Main.isNte()) {
             FakeTeam team = NametagEdit.getApi().getFakeTeam(player.getPlayer());
             name = team.getName();
         }
