@@ -324,6 +324,13 @@ public class CommandHotPotato implements CommandExecutor {
                                         if (!Main.getDbManager().addBalance(amount, uuid)) {
                                             p.sendMessage(Main.c(true,Main.getInstance().getConfig().getString("Messages.Commands.Add-Balance.Not-Played-Game")));
                                             return;
+                                        } else {
+                                            UUID uuid1 = UUID.fromString(uuid);
+                                            if (Bukkit.getPlayer(uuid1).isOnline()) {
+                                                if (CacheManager.getPlayers().containsKey(uuid1)) {
+                                                    CacheManager.getPlayers().get(uuid1).getPlayerData().addBalance(amount);
+                                                }
+                                            }
                                         }
                                         p.sendMessage(Main.c(true,Main.getInstance().getConfig().getString("Messages.Commands.Add-Balance.Success").replace("{amount}",amount + "").replace("{player}",args[1])));
                                     }

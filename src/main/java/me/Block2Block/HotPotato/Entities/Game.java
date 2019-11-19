@@ -226,7 +226,7 @@ public class Game implements Listener {
             HotPotatoPlayer hp = CacheManager.getPlayers().get(p.getUniqueId());
             int counter = 15;
             for (String line : scoreboardLayout) {
-                ScoreboardManager.changeLine(p, counter, Main.c(false, line.replace("{team}",Main.getInstance().getConfig().getString("Messages.Scoreboard.Team." + ((hp.isRed())?"Red-Format":"Blue-Format"))).replace("{players}",players.size() + "").replace("{max}",MAX + "").replace("{map-name}",map.getName()).replace("{map-author}",map.getAuthor()).replace("{game-id}",this.gameID + "").replace("{kit}",hp.getKit().name()).replace("{red-lives}","" + livesRed).replace("{blue-lives}",livesBlue + " ")).replaceAll("Â", ""));
+                ScoreboardManager.changeLine(p, counter, Main.c(false, line.replace("{team}",Main.getInstance().getConfig().getString("Messages.Scoreboard.Team." + ((hp.isRed())?"Red-Format":"Blue-Format"))).replace("{players}",this.players.size() + "").replace("{max}",MAX + "").replace("{map-name}",map.getName()).replace("{map-author}",map.getAuthor()).replace("{game-id}",this.gameID + "").replace("{kit}",hp.getKit().name()).replace("{red-lives}","" + livesRed).replace("{blue-lives}",livesBlue + " ")).replaceAll("Â", ""));
                 counter--;
                 if (counter == 0) {
                     break;
@@ -371,7 +371,10 @@ public class Game implements Listener {
             }
             p.getPlayer().sendMessage(Main.c(true,Main.getInstance().getConfig().getString("Messages.Game.Leave.User-Message")));
             if (players.size() < 2) {
-                timer.cancel();
+                if (timer != null) {
+                    timer.cancel();
+                    timer = null;
+                }
                 for (Player pl : players) {
                     pl.setLevel(0);
                 }
@@ -514,7 +517,7 @@ public class Game implements Listener {
                                 HotPotatoPlayer hp = CacheManager.getPlayers().get(p.getUniqueId());
                                 int counter = 15;
                                 for (String line : scoreboardLayout) {
-                                    ScoreboardManager.changeLine(p, counter, Main.c(false, line.replace("{team}",Main.getInstance().getConfig().getString("Messages.Scoreboard.Team." + ((hp.isRed())?"Red-Format":"Blue-Format"))).replace("{players}",players.size() + "").replace("{max}",MAX + "").replace("{map-name}",map.getName()).replace("{map-author}",map.getAuthor()).replace("{game-id}",gameID + "").replace("{kit}",hp.getKit().name()).replace("{red-lives}","" + livesRed).replace("{blue-lives}","" + livesBlue)).replace("Â",""));
+                                    ScoreboardManager.changeLine(p, counter, Main.c(false, line.replace("{team}",Main.getInstance().getConfig().getString("Messages.Scoreboard.Team." + ((hp.isRed())?"Red-Format":"Blue-Format"))).replace("{players}",players.size() + "").replace("{max}",MAX + "").replace("{map-name}",map.getName()).replace("{map-author}",map.getAuthor()).replace("{game-id}",gameID + "").replace("{kit}",hp.getKit().name()).replace("{red-lives}","" + livesRed).replace("{blue-lives}",livesBlue + " ")).replace("Â",""));
                                     counter--;
                                     if (counter == 0) {
                                         break;

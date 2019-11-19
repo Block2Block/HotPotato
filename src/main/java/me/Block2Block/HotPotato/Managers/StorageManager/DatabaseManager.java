@@ -265,10 +265,16 @@ public class DatabaseManager {
 
     public void addKit(int id, Player p) {
         try {
+            if (isMysql) {
+                PreparedStatement statement = connection.prepareStatement("UPDATE hp_playerdata SET kits_unlocked = CONCAT(kits_unlocked, '," + id + "') WHERE uuid = '" + p.getUniqueId().toString() + "'");
+                boolean set = statement.execute();
+                return;
+            }
             PreparedStatement statement = connection.prepareStatement("UPDATE hp_playerdata SET kits_unlocked = (kits_unlocked || '," + id + "') WHERE uuid = '" + p.getUniqueId().toString() + "'");
             boolean set = statement.execute();
         } catch (Exception e) {
             Bukkit.getLogger().info("Unable to add kits to database. Please try restarting your server.");
+            e.printStackTrace();
         }
     }
 

@@ -61,7 +61,6 @@ public class KitSelectionListener implements Listener {
                                 player.setKit(kit.getKit());
                                 player.getPlayerData().addKit(kit.getId());
                                 player.getPlayerData().removeFromBalance(kit.getKit().price());
-                                Main.getDbManager().addKit(kit.getId(), p);
                                 p.sendMessage(Main.c(true, Main.getInstance().getConfig().getString("Messages.Kits.Kit-Purchased").replace("{kit-name}",kit.getName())));
                                 p.openInventory(InventoryUtil.kitSelection(p));
                             } else {

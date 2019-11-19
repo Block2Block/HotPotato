@@ -106,4 +106,8 @@ public class PlayerData {
         }.runTaskAsynchronously(Main.getInstance());
     }
 
+    public void addBalance(int i) {
+        balance += i;
+    }
+
 }

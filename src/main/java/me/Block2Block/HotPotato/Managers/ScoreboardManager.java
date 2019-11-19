@@ -1,7 +1,6 @@
 package me.Block2Block.HotPotato.Managers;
 
 import me.Block2Block.HotPotato.Entities.Game;
-import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.scoreboard.Score;
 
