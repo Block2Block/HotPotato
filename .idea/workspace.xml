@@ -3,13 +3,6 @@
   <component name="ChangeListManager">
     <list default="true" id="09b0fe40-8a05-433f-97d0-58d254690623" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/me/Block2Block/HotPotato/Commands/CommandHotPotato.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/Block2Block/HotPotato/Commands/CommandHotPotato.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/me/Block2Block/HotPotato/Entities/Game.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/Block2Block/HotPotato/Entities/Game.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/me/Block2Block/HotPotato/Entities/PlayerData.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/Block2Block/HotPotato/Entities/PlayerData.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/me/Block2Block/HotPotato/Listeners/KitSelectionListener.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/Block2Block/HotPotato/Listeners/KitSelectionListener.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/me/Block2Block/HotPotato/Managers/ScoreboardManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/Block2Block/HotPotato/Managers/ScoreboardManager.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/me/Block2Block/HotPotato/Managers/StorageManager/DatabaseManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/Block2Block/HotPotato/Managers/StorageManager/DatabaseManager.java" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -101,7 +94,7 @@
     <property name="node.js.path.for.package.tslint" value="project" />
     <property name="node.js.selected.package.eslint" value="(autodetect)" />
     <property name="node.js.selected.package.tslint" value="(autodetect)" />
-    <property name="project.structure.last.edited" value="Project" />
+    <property name="project.structure.last.edited" value="Artifacts" />
     <property name="project.structure.proportion" value="0.0" />
     <property name="project.structure.side.proportion" value="0.2" />
     <property name="settings.editor.selected.configurable" value="File.Encoding" />
@@ -161,7 +154,7 @@
       <workItem from="1573134082504" duration="60000" />
       <workItem from="1573135541242" duration="79000" />
       <workItem from="1573135625754" duration="136000" />
-      <workItem from="1574096232109" duration="1560000" />
+      <workItem from="1574096232109" duration="2096000" />
     </task>
     <task id="LOCAL-00001" summary="Did some work">
       <created>1570748869740</created>
@@ -205,7 +198,14 @@
       <option name="project" value="LOCAL" />
       <updated>1573129165792</updated>
     </task>
-    <option name="localTasksCounter" value="7" />
+    <task id="LOCAL-00007" summary="Fixed a few misc bugs">
+      <created>1574194007376</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1574194007376</updated>
+    </task>
+    <option name="localTasksCounter" value="8" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -232,6 +232,7 @@
     <MESSAGE value="Removed unnecessary imports" />
     <MESSAGE value="Fixed a bug where an error would cause an error when typing an invalid username.&#10;Fixed a bug where users were able to go into edit mode when a lobby location had not been set.&#10;]Fixed a bug with MySQL not generating tables due to incorrect SQL syntax." />
     <MESSAGE value="Fixed a few bug with scoreboard" />
-    <option name="LAST_COMMIT_MESSAGE" value="Fixed a few bug with scoreboard" />
+    <MESSAGE value="Fixed a few misc bugs" />
+    <option name="LAST_COMMIT_MESSAGE" value="Fixed a few misc bugs" />
   </component>
 </project>
