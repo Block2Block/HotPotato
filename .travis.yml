@@ -1,2 +1,4 @@
 langauge: java
 script: mvn package
+addons:
+  artifacts: true
