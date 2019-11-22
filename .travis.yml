@@ -10,3 +10,4 @@ deploy:
 branches:
   only:
     - master
+    - develop
