@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="09b0fe40-8a05-433f-97d0-58d254690623" name="Default Changelist" comment="">
+    <list default="true" id="09b0fe40-8a05-433f-97d0-58d254690623" name="Default Changelist" comment="Travis-CI Testing">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.travis.yml" beforeDir="false" afterPath="$PROJECT_DIR$/.travis.yml" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -155,7 +156,7 @@
       <workItem from="1573135541242" duration="79000" />
       <workItem from="1573135625754" duration="136000" />
       <workItem from="1574096232109" duration="2096000" />
-      <workItem from="1574432630528" duration="1103000" />
+      <workItem from="1574432630528" duration="3432000" />
     </task>
     <task id="LOCAL-00001" summary="Did some work">
       <created>1570748869740</created>
@@ -220,7 +221,14 @@
       <option name="project" value="LOCAL" />
       <updated>1574433355109</updated>
     </task>
-    <option name="localTasksCounter" value="10" />
+    <task id="LOCAL-00010" summary="Travis-CI Testing">
+      <created>1574437850303</created>
+      <option name="number" value="00010" />
+      <option name="presentableId" value="LOCAL-00010" />
+      <option name="project" value="LOCAL" />
+      <updated>1574437850303</updated>
+    </task>
+    <option name="localTasksCounter" value="11" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -250,6 +258,7 @@
     <MESSAGE value="Fixed a few misc bugs" />
     <MESSAGE value="updating so I can setup a workflow" />
     <MESSAGE value="Added Travis-CI Integration" />
-    <option name="LAST_COMMIT_MESSAGE" value="Added Travis-CI Integration" />
+    <MESSAGE value="Travis-CI Testing" />
+    <option name="LAST_COMMIT_MESSAGE" value="Travis-CI Testing" />
   </component>
 </project>

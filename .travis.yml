@@ -1,4 +1,12 @@
 langauge: java
 script: mvn package
-addons:
-  artifacts: true
+deploy:
+  provider: releases
+  api_key: $GITHUB_TOKEN
+  file: "target/HotPotato-*.jar"
+  skip_cleanup: true
+  on:
+    tags: true
+branches:
+  only:
+    - master
