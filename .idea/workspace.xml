@@ -2,6 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="09b0fe40-8a05-433f-97d0-58d254690623" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/.travis.yml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -155,6 +156,7 @@
       <workItem from="1573135541242" duration="79000" />
       <workItem from="1573135625754" duration="136000" />
       <workItem from="1574096232109" duration="2096000" />
+      <workItem from="1574432630528" duration="627000" />
     </task>
     <task id="LOCAL-00001" summary="Did some work">
       <created>1570748869740</created>
@@ -205,7 +207,14 @@
       <option name="project" value="LOCAL" />
       <updated>1574194007376</updated>
     </task>
-    <option name="localTasksCounter" value="8" />
+    <task id="LOCAL-00008" summary="updating so I can setup a workflow">
+      <created>1574432716958</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1574432716958</updated>
+    </task>
+    <option name="localTasksCounter" value="9" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -233,6 +242,7 @@
     <MESSAGE value="Fixed a bug where an error would cause an error when typing an invalid username.&#10;Fixed a bug where users were able to go into edit mode when a lobby location had not been set.&#10;]Fixed a bug with MySQL not generating tables due to incorrect SQL syntax." />
     <MESSAGE value="Fixed a few bug with scoreboard" />
     <MESSAGE value="Fixed a few misc bugs" />
-    <option name="LAST_COMMIT_MESSAGE" value="Fixed a few misc bugs" />
+    <MESSAGE value="updating so I can setup a workflow" />
+    <option name="LAST_COMMIT_MESSAGE" value="updating so I can setup a workflow" />
   </component>
 </project>
