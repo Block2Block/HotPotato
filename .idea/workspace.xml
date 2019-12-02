@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="09b0fe40-8a05-433f-97d0-58d254690623" name="Default Changelist" comment="Travis-CI Testing">
+    <list default="true" id="09b0fe40-8a05-433f-97d0-58d254690623" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/src/main/java/me/Block2Block/HotPotato/Commands/HotPotatoTabAutoComplete.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.travis.yml" beforeDir="false" afterPath="$PROJECT_DIR$/.travis.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/me/Block2Block/HotPotato/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/Block2Block/HotPotato/Main.java" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -156,7 +158,9 @@
       <workItem from="1573135541242" duration="79000" />
       <workItem from="1573135625754" duration="136000" />
       <workItem from="1574096232109" duration="2096000" />
-      <workItem from="1574432630528" duration="3432000" />
+      <workItem from="1574432630528" duration="5491000" />
+      <workItem from="1574468281556" duration="8000" />
+      <workItem from="1574694074325" duration="960000" />
     </task>
     <task id="LOCAL-00001" summary="Did some work">
       <created>1570748869740</created>
@@ -228,7 +232,21 @@
       <option name="project" value="LOCAL" />
       <updated>1574437850303</updated>
     </task>
-    <option name="localTasksCounter" value="11" />
+    <task id="LOCAL-00011" summary="Travis-CI Testing">
+      <created>1574466037724</created>
+      <option name="number" value="00011" />
+      <option name="presentableId" value="LOCAL-00011" />
+      <option name="project" value="LOCAL" />
+      <updated>1574466037724</updated>
+    </task>
+    <task id="LOCAL-00012" summary="Travis-CI Testing">
+      <created>1574466083426</created>
+      <option name="number" value="00012" />
+      <option name="presentableId" value="LOCAL-00012" />
+      <option name="project" value="LOCAL" />
+      <updated>1574466083426</updated>
+    </task>
+    <option name="localTasksCounter" value="13" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
