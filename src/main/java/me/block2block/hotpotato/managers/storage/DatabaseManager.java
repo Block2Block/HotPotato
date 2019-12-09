@@ -66,7 +66,7 @@ public class DatabaseManager {
                 statement = connection.prepareStatement("CREATE TABLE IF NOT EXISTS hp_data ( `world` TEXT NOT NULL , `x` REAL NOT NULL , `y` REAL NOT NULL , `z` REAL NOT NULL)");
                 set = statement.execute();
             } else {
-                PreparedStatement statement = connection.prepareStatement("CREATE TABLE IF NOT EXISTS hp_maps ( `id` INT PRIMARY KEY AUTOINCREMENT , `name` TEXT NOT NULL , `red_spawns` TEXT NOT NULL , `blue_spawns` TEXT NOT NULL , `tnt_spawns` TEXT NOT NULL , `zip_name` TEXT NOT NULL , `waiting_lobby` TEXT NOT NULL , `author` TEXT NOT NULL)");
+                PreparedStatement statement = connection.prepareStatement("CREATE TABLE IF NOT EXISTS hp_maps ( `id` INTEGER PRIMARY KEY AUTOINCREMENT , `name` TEXT NOT NULL , `red_spawns` TEXT NOT NULL , `blue_spawns` TEXT NOT NULL , `tnt_spawns` TEXT NOT NULL , `zip_name` TEXT NOT NULL , `waiting_lobby` TEXT NOT NULL , `author` TEXT NOT NULL)");
                 boolean set = statement.execute();
 
                 statement = connection.prepareStatement("CREATE TABLE IF NOT EXISTS hp_signs ( `id` INTEGER PRIMARY KEY AUTOINCREMENT, `type` TEXT NOT NULL , `world` TEXT NOT NULL , `x` INTEGER NOT NULL , `y` INTEGER NOT NULL , `z` INTEGER NOT NULL)");

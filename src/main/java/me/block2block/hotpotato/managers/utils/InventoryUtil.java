@@ -41,29 +41,54 @@ public class InventoryUtil {
     public static Inventory confirm(PlayerKit kit) {
         Inventory inv = Bukkit.createInventory(null, 36, Main.c(false, "&c&lPurchase " + kit.getName() + "&c&l?"));
         for (int i = inv.getSize()-1; i>-1; i--) {
-            i(inv, i, STAINED_GLASS_PANE, "Are you sure?", 1, null, (short)7);
+            if (Main.getApiVersion()) {
+                i(inv, i, GRAY_STAINED_GLASS_PANE, "Are you sure?", 1, null, (short)7);
+            } else {
+                i(inv, i, valueOf("STAINED_GLASS_PANE"), "Are you sure?", 1, null, (short)7);
+            }
+
         }
         i(inv, 4, kit.getIcon(), "&e&l" + kit.getName(), 1, kit.getKit().lore(), (short)0, true);
         int[] green = new int[]{9, 10, 11, 18, 19, 20, 27, 28, 29};
         int[] red = new int[]{15, 16, 17, 24, 25, 26, 33, 34, 35};
         int[] decor = new int[]{12, 14, 30, 32};
-        for (int i : green) {
-            i(inv, i, STAINED_CLAY, "&a&lYes", 1, null, (short)5);
+        if (Main.getApiVersion()) {
+            for (int i : green) {
+                i(inv, i, GREEN_CONCRETE, "&a&lYes", 1, null, (short)5);
+            }
+            for (int i : red) {
+                i(inv, i, RED_CONCRETE, "&c&lCancel", 1, null, (short)14);
+            }
+            for (int i : decor) {
+                i(inv, i, WHITE_STAINED_GLASS_PANE, "Are you sure?");
+            }
+        } else {
+            for (int i : green) {
+                i(inv, i, valueOf("STAINED_CLAY"), "&a&lYes", 1, null, (short)5);
+            }
+            for (int i : red) {
+                i(inv, i, valueOf("STAINED_CLAY"), "&c&lCancel", 1, null, (short)14);
+            }
+            for (int i : decor) {
+                i(inv, i, valueOf("STAINED_GLASS_PANE"), "Are you sure?");
+            }
         }
-        for (int i : red) {
-            i(inv, i, STAINED_CLAY, "&c&lCancel", 1, null, (short)14);
-        }
-        for (int i : decor) {
-            i(inv, i, STAINED_GLASS_PANE, "Are you sure?");
-        }
+
         return inv;
     }
 
     public static Inventory teamSelection(Player p) {
         Inventory inv = Bukkit.createInventory(null, 27, Main.c(false, "&a&lTeam Selection"));
 
-        i(inv, 11, WOOL, "&cRed",1,"&rQueue for Red team",(short) 14, CacheManager.getPlayers().get(p.getUniqueId()).isRed());
-        i(inv, 15, WOOL, "&3Blue",1,"&rQueue for Blue team",(short) 9, !CacheManager.getPlayers().get(p.getUniqueId()).isRed());
+        if (Main.getApiVersion()) {
+            i(inv, 11, CYAN_WOOL, "&cRed",1,"&rQueue for Red team",(short) 14, CacheManager.getPlayers().get(p.getUniqueId()).isRed());
+            i(inv, 15, RED_WOOL, "&3Blue",1,"&rQueue for Blue team",(short) 9, !CacheManager.getPlayers().get(p.getUniqueId()).isRed());
+        } else {
+            i(inv, 11, valueOf("WOOL"), "&cRed",1,"&rQueue for Red team",(short) 14, CacheManager.getPlayers().get(p.getUniqueId()).isRed());
+            i(inv, 15, valueOf("WOOL"), "&3Blue",1,"&rQueue for Blue team",(short) 9, !CacheManager.getPlayers().get(p.getUniqueId()).isRed());
+        }
+
+
 
         return inv;
     }
@@ -107,15 +132,28 @@ public class InventoryUtil {
         i(inv, slot, type, "");
     }
     static void i(Inventory inv) {
-        for (int i = inv.getSize()-1; i>-1; i--) {
-            if (inv.getItem(i) == null) {
-                i(inv, i, STAINED_GLASS_PANE, " ");
+        if (Main.getApiVersion()) {
+            for (int i = inv.getSize()-1; i>-1; i--) {
+                if (inv.getItem(i) == null) {
+                    i(inv, i, WHITE_STAINED_GLASS_PANE, " ");
+                }
+            }
+            int[] a = new int[]{10,11,12,13,14,15,16,19,25,28,34,37,38,39,40,41,42,43};
+            for (int i : a) {
+                i(inv, i, GRAY_STAINED_GLASS_PANE, " ", 1, null, (short)7);
+            }
+        } else {
+            for (int i = inv.getSize()-1; i>-1; i--) {
+                if (inv.getItem(i) == null) {
+                    i(inv, i, valueOf("STAINED_GLASS_PANE"), " ");
+                }
+            }
+            int[] a = new int[]{10,11,12,13,14,15,16,19,25,28,34,37,38,39,40,41,42,43};
+            for (int i : a) {
+                i(inv, i, valueOf("STAINED_GLASS_PANE"), " ", 1, null, (short)7);
             }
         }
-        int[] a = new int[]{10,11,12,13,14,15,16,19,25,28,34,37,38,39,40,41,42,43};
-        for (int i : a) {
-            i(inv, i, STAINED_GLASS_PANE, " ", 1, null, (short)7);
-        }
+
     }
 
 

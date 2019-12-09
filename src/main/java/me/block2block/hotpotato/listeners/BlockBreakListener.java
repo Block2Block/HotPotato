@@ -15,7 +15,7 @@ public class BlockBreakListener implements Listener {
         if (CacheManager.getPlayers().containsKey(e.getPlayer().getUniqueId())) {
             e.setCancelled(true);
         }
-        if (e.getBlock().getType() == Material.SIGN_POST||e.getBlock().getType() == Material.WALL_SIGN) {
+        if (e.getBlock().getType().name().toLowerCase().contains("sign")) {
             String type = CacheManager.isSign(e.getBlock().getLocation());
             switch (type) {
                 case "queue":

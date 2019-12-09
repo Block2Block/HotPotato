@@ -40,6 +40,7 @@ import java.util.logging.Level;
 public class Main extends JavaPlugin {
 
     private static Main i;
+    private static boolean api1_13;
 
     private static File configFile;
     private static FileConfiguration config;
@@ -85,6 +86,7 @@ public class Main extends JavaPlugin {
             new HotPotatoExpansion(this).register();
             ScoreboardManager.setEnabled(getConfig().getBoolean("Settings.Scoreboard.Enabled"));
             ScoreboardManager.setCustomScoreboard(getConfig().getBoolean("Settings.Scoreboard.Use-Custom-Scoreboard"));
+            Bukkit.getLogger().info("PlaceHolderAPI found.");
         } else if (!getConfig().getBoolean("Settings.Scoreboard.Use-Custom-Scoreboard") && getConfig().getBoolean("Settings.Scoreboard.Enabled")) {
             getLogger().info("You currently have Use-Custom-Scoreboard set to false, they are enabled and you do not have PlaceholderAPI installed. The custom Scoreboard Manager will be used until PlaceholderAPI is installed.");
             ScoreboardManager.setCustomScoreboard(true);
@@ -93,13 +95,15 @@ public class Main extends JavaPlugin {
             ScoreboardManager.setEnabled(getConfig().getBoolean("Settings.Scoreboard.Enabled"));
             ScoreboardManager.setCustomScoreboard(true);
         }
-        if (Bukkit.getPluginManager().getPlugin("NameTagEdit") != null) {
+        if (Bukkit.getPluginManager().getPlugin("NametagEdit") != null) {
+            Bukkit.getLogger().info("NameTagEdit found.");
             nte = true;
         } else if (!getConfig().getBoolean("Settings.Player-Names.Use-Custom-Playernames") && getConfig().getBoolean("Settings.Player-Names.Enabled")) {
             getLogger().info("You currently have Use-Custom-Playernames set to false, they are enabled and you do not have NameTagEdit installed. The custom Player Name Manager will be used until NameTagEdit is installed.");
         }
         if (Bukkit.getPluginManager().getPlugin("Vault") != null) {
             vault = setupEcon();
+            Bukkit.getLogger().info("Vault found.");
         } else if (!getConfig().getBoolean("Settings.Economy.Use-Custom-Economy")) {
             getLogger().info("You currently have Use-Custom-Economy set to false and you do not have Vault installed. The custom economy will be used until vault is installed.");
         }
@@ -116,6 +120,7 @@ public class Main extends JavaPlugin {
         dbManager = new DatabaseManager(getConfig().getString("Settings.Database.Type").toLowerCase().equals("mysql"));
         try {
             successful = dbManager.setup();
+            getLogger().info("Successfully initialised Database connection.");
         } catch (Exception e) {
             Bukkit.getLogger().log(Level.SEVERE, "There has been an error loading the Database. The plugin will be disabled. Stack Trace:");
             e.printStackTrace();
@@ -150,15 +155,36 @@ public class Main extends JavaPlugin {
             }
         }
 
+        getLogger().info("Successfully loaded signs.");
+
         for (Location l : signsToRemove) {
             CacheManager.getSigns().remove(l);
         }
 
-        registerListeners(new BlockBreakListener(),new HealthListener(), new HungerListener(), new JoinListener(), new LeaveListener(),new SignClickListener(), new SignPlaceListener(), new KitSelectionListener(), new TeamSelectionListener(), new EditModeListener(), new TeleportListener(), new PotatoWhacker(), new Leaper());
+        registerListeners(new BlockBreakListener(),new HealthListener(), new HungerListener(), new JoinListener(), new LeaveListener(),new SignClickListener(), new SignPlaceListener(), new EditModeListener(), new TeleportListener(), new PotatoWhacker(), new Leaper());
+        switch (Bukkit.getServer().getClass().getPackage().getName().split("\\.")[3]) {
+            case "v1_13_R1":
+            case "v1_13_R2":
+            case "v1_14_R1":
+                api1_13 = true;
+                registerListeners(new TeamSelectionListener_1_13(), new KitSelectionListener_1_13());
+                getLogger().info("1.13/1.14 server version detected.");
+                break;
+            default:
+                registerListeners(new TeamSelectionListener(), new KitSelectionListener());
+                getLogger().info("Pre-1.13 server version detected.");
+                api1_13 = false;
+        }
 
         getCommand("hotpotato").setExecutor(new CommandHotPotato());
         getCommand("hotpotato").setTabCompleter(new HotPotatoTabAutoComplete());
 
+        getLogger().info("HotPotato v" + this.getDescription().getVersion() + " has been successfully enabled.");
+
+        String version = newVersionCheck();
+        if (version != null) {
+            getLogger().info("A new version of HotPotato is available on spigot! Download version " + version + " on the Spigot resource page!");
+        }
     }
 
     private void copy(InputStream in, File file) {
@@ -325,5 +351,9 @@ public class Main extends JavaPlugin {
 
     public static Economy getEcon() {
         return econ;
+    }
+
+    public static boolean getApiVersion() {
+        return api1_13;
     }
 }

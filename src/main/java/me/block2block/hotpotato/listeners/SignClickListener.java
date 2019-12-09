@@ -2,6 +2,7 @@ package me.block2block.hotpotato.listeners;
 
 import me.block2block.hotpotato.Main;
 import me.block2block.hotpotato.managers.CacheManager;
+import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -19,7 +20,7 @@ public class SignClickListener implements Listener {
     @EventHandler
     public void onSignClick(PlayerInteractEvent e) {
         if (e.getAction() == Action.LEFT_CLICK_BLOCK || e.getAction() == Action.RIGHT_CLICK_BLOCK) {
-            if (e.getClickedBlock().getType() == Material.WALL_SIGN ||e.getClickedBlock().getType() == Material.SIGN_POST){
+            if (e.getClickedBlock().getType().name().toLowerCase().contains("sign")){
                 Sign sign = (Sign) e.getClickedBlock().getState();
                 if (CacheManager.getSigns().containsKey(sign.getLocation())) {
                     String type = CacheManager.getSigns().get(sign.getLocation());

@@ -19,7 +19,11 @@ public class Leaper implements Listener {
                     e.getPlayer().setFlying(false);
                     e.getPlayer().setAllowFlight(false);
                     e.getPlayer().setVelocity(e.getPlayer().getLocation().getDirection().setY(0.3).normalize().multiply(1.175));
-                    e.getPlayer().playSound(e.getPlayer().getLocation(), Sound.GHAST_FIREBALL, 100, 1);
+                    if (Main.getApiVersion()) {
+                        e.getPlayer().playSound(e.getPlayer().getLocation(), Sound.ENTITY_GHAST_SHOOT, 100, 1);
+                    } else {
+                        e.getPlayer().playSound(e.getPlayer().getLocation(), Sound.valueOf("GHAST_FIREBALL"), 100, 1);
+                    }
 
                     new BukkitRunnable(){
                         @Override

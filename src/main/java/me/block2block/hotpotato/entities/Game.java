@@ -336,7 +336,12 @@ public class Game implements Listener {
                         case 1:
                             for (Player p : players) {
                                 p.sendMessage(Main.c(true,Main.getInstance().getConfig().getString("Messages.Game.Start-Timer.Message").replace("{time}","" + timerTime).replace("{s}",(timerTime>1?"s":""))));
-                                p.playSound(p.getLocation(), Sound.NOTE_PLING,100,1);
+
+                                if (Main.getApiVersion()) {
+                                    p.playSound(p.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING,100,1);
+                                } else {
+                                    p.playSound(p.getLocation(), Sound.valueOf("NOTE_PLING"),100,1);
+                                }
                                 TitleManager.sendTitle(p, Main.c(false, Main.getInstance().getConfig().getString("Messages.Game.Start-Timer.Title-Format")).replace("{time}","" + timerTime),5,20,5, ChatColor.DARK_GREEN);
                             }
                             break;
@@ -462,9 +467,13 @@ public class Game implements Listener {
                     location.getBlock().setType(Material.AIR);
                 }
 
-                location.getWorld().playEffect(location, Effect.EXPLOSION_HUGE, 1);
+                location.getWorld().playEffect(location, Effect.SMOKE, 1);
                 for (Player p : players) {
-                    p.playSound(p.getLocation(), Sound.EXPLODE, 100, 1);
+                    if (Main.getApiVersion()) {
+                        p.playSound(p.getLocation(), Sound.ENTITY_GENERIC_EXPLODE,100,1);
+                    } else {
+                        p.playSound(p.getLocation(), Sound.valueOf("EXPLODE"),100,1);
+                    }
                 }
 
                 int y = location.getBlockY();
@@ -580,7 +589,11 @@ public class Game implements Listener {
                     case 1:
                         for (Player p : players) {
                             p.sendMessage(Main.c(true,Main.getInstance().getConfig().getString("Messages.Game.TNT-Timer-Message").replace("{time}","" + timerTime).replace("{s}",(timerTime>1?"s":""))));
-                            p.playSound(p.getLocation(), Sound.NOTE_PLING,100,1);
+                            if (Main.getApiVersion()) {
+                                p.playSound(p.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING,100,1);
+                            } else {
+                                p.playSound(p.getLocation(), Sound.valueOf("NOTE_PLING"),100,1);
+                            }
                         }
                         break;
                     case 0:
@@ -801,11 +814,13 @@ public class Game implements Listener {
             blue.add(p);
             p.setTeam(false);
             p.getPlayer().sendMessage(Main.c(true,Main.getInstance().getConfig().getString("Messages.Game.Join.Join-Blue")));
+            PlayerNameManager.changeTeam(p, gameID);
         } else {
             blue.remove(p);
             red.add(p);
             p.setTeam(true);
             p.getPlayer().sendMessage(Main.c(true,Main.getInstance().getConfig().getString("Messages.Game.Join.Join-Red")));
+            PlayerNameManager.changeTeam(p, gameID);
         }
     }
 

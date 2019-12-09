@@ -1,13 +1,26 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="09b0fe40-8a05-433f-97d0-58d254690623" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/src/main/java/me/Block2Block/HotPotato/Commands/HotPotatoTabAutoComplete.java" afterDir="false" />
+    <list default="true" id="09b0fe40-8a05-433f-97d0-58d254690623" name="Default Changelist" comment="Forgot to change a few things whoops">
+      <change afterPath="$PROJECT_DIR$/src/main/java/me/block2block/hotpotato/listeners/KitSelectionListener_1_13.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/me/block2block/hotpotato/listeners/TeamSelectionListener_1_13.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.travis.yml" beforeDir="false" afterPath="$PROJECT_DIR$/.travis.yml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/me/Block2Block/HotPotato/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/Block2Block/HotPotato/Main.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/me/block2block/hotpotato/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/block2block/hotpotato/Main.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/me/block2block/hotpotato/entities/Game.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/block2block/hotpotato/entities/Game.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/me/block2block/hotpotato/entities/HotPotatoPlayer.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/block2block/hotpotato/entities/HotPotatoPlayer.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/me/block2block/hotpotato/entities/TimerEvent.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/me/block2block/hotpotato/kits/Abilities/Leaper.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/block2block/hotpotato/kits/Abilities/Leaper.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/me/block2block/hotpotato/listeners/BlockBreakListener.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/block2block/hotpotato/listeners/BlockBreakListener.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/me/block2block/hotpotato/listeners/SignClickListener.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/block2block/hotpotato/listeners/SignClickListener.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/me/block2block/hotpotato/listeners/TeamSelectionListener.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/block2block/hotpotato/listeners/TeamSelectionListener.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/me/block2block/hotpotato/managers/TitleManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/block2block/hotpotato/managers/TitleManager.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/me/block2block/hotpotato/managers/storage/DatabaseManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/block2block/hotpotato/managers/storage/DatabaseManager.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/me/block2block/hotpotato/managers/utils/InventoryUtil.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/me/block2block/hotpotato/managers/utils/InventoryUtil.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/config.yml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/config.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/plugin.yml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/plugin.yml" afterDir="false" />
     </list>
-    <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -85,6 +98,11 @@
     <OptionsSetting value="false" id="Update" />
     <ConfirmationsSetting value="2" id="Add" />
   </component>
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showExcludedFiles" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
   <component name="PropertiesComponent">
     <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
@@ -102,26 +120,28 @@
     <property name="project.structure.side.proportion" value="0.2" />
     <property name="settings.editor.selected.configurable" value="File.Encoding" />
   </component>
-  <component name="RunDashboard">
-    <option name="ruleStates">
-      <list>
-        <RuleState>
-          <option name="name" value="ConfigurationTypeDashboardGroupingRule" />
-        </RuleState>
-        <RuleState>
-          <option name="name" value="StatusDashboardGroupingRule" />
-        </RuleState>
-      </list>
+  <component name="RecentsManager">
+    <key name="CopyClassDialog.RECENTS_KEY">
+      <recent name="me.block2block.hotpotato.listeners" />
+    </key>
+  </component>
+  <component name="RunAnythingCache">
+    <option name="myCommands">
+      <command value="mvn clean package" />
+      <command value="mvn clean package install deploy" />
+      <command value="mvn clean package install" />
     </option>
   </component>
   <component name="ServiceViewManager">
-    <option name="allServicesViewState">
-      <serviceView>
-        <treeState>
-          <expand />
-          <select />
-        </treeState>
-      </serviceView>
+    <option name="viewStates">
+      <list>
+        <serviceView>
+          <treeState>
+            <expand />
+            <select />
+          </treeState>
+        </serviceView>
+      </list>
     </option>
   </component>
   <component name="SvnConfiguration">
@@ -161,6 +181,16 @@
       <workItem from="1574432630528" duration="5491000" />
       <workItem from="1574468281556" duration="8000" />
       <workItem from="1574694074325" duration="960000" />
+      <workItem from="1575299084855" duration="2174000" />
+      <workItem from="1575568917987" duration="1352000" />
+      <workItem from="1575622378573" duration="4760000" />
+      <workItem from="1575638369698" duration="39000" />
+      <workItem from="1575638443395" duration="1285000" />
+      <workItem from="1575640330930" duration="550000" />
+      <workItem from="1575647284091" duration="793000" />
+      <workItem from="1575899673381" duration="6081000" />
+      <workItem from="1575929045764" duration="1224000" />
+      <workItem from="1575930309140" duration="464000" />
     </task>
     <task id="LOCAL-00001" summary="Did some work">
       <created>1570748869740</created>
@@ -246,7 +276,21 @@
       <option name="project" value="LOCAL" />
       <updated>1574466083426</updated>
     </task>
-    <option name="localTasksCounter" value="13" />
+    <task id="LOCAL-00013" summary="Refactored everything to use lowercase packages">
+      <created>1575299273849</created>
+      <option name="number" value="00013" />
+      <option name="presentableId" value="LOCAL-00013" />
+      <option name="project" value="LOCAL" />
+      <updated>1575299273849</updated>
+    </task>
+    <task id="LOCAL-00014" summary="Forgot to change a few things whoops">
+      <created>1575299306943</created>
+      <option name="number" value="00014" />
+      <option name="presentableId" value="LOCAL-00014" />
+      <option name="project" value="LOCAL" />
+      <updated>1575299306943</updated>
+    </task>
+    <option name="localTasksCounter" value="15" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -277,6 +321,57 @@
     <MESSAGE value="updating so I can setup a workflow" />
     <MESSAGE value="Added Travis-CI Integration" />
     <MESSAGE value="Travis-CI Testing" />
-    <option name="LAST_COMMIT_MESSAGE" value="Travis-CI Testing" />
+    <MESSAGE value="Refactored everything to use lowercase packages" />
+    <MESSAGE value="Forgot to change a few things whoops" />
+    <option name="LAST_COMMIT_MESSAGE" value="Forgot to change a few things whoops" />
+  </component>
+  <component name="WindowStateProjectService">
+    <state x="569" y="319" key="#com.intellij.ide.util.projectWizard.JdkChooserPanel.MyDialog" timestamp="1575568943158">
+      <screen x="0" y="23" width="1440" height="800" />
+    </state>
+    <state x="569" y="319" key="#com.intellij.ide.util.projectWizard.JdkChooserPanel.MyDialog/0.23.1440.800@0.23.1440.800" timestamp="1575568943158" />
+    <state width="1398" height="204" key="GridCell.Tab.0.bottom" timestamp="1575931849516">
+      <screen x="0" y="23" width="1440" height="807" />
+    </state>
+    <state width="1398" height="204" key="GridCell.Tab.0.bottom/0.23.1440.803@0.23.1440.803" timestamp="1575930389317" />
+    <state width="1398" height="204" key="GridCell.Tab.0.bottom/0.23.1440.805@0.23.1440.805" timestamp="1575922419740" />
+    <state width="1398" height="204" key="GridCell.Tab.0.bottom/0.23.1440.807@0.23.1440.807" timestamp="1575931849516" />
+    <state width="1398" height="204" key="GridCell.Tab.0.center" timestamp="1575931849515">
+      <screen x="0" y="23" width="1440" height="807" />
+    </state>
+    <state width="1398" height="204" key="GridCell.Tab.0.center/0.23.1440.803@0.23.1440.803" timestamp="1575930389317" />
+    <state width="1398" height="204" key="GridCell.Tab.0.center/0.23.1440.805@0.23.1440.805" timestamp="1575922419739" />
+    <state width="1398" height="204" key="GridCell.Tab.0.center/0.23.1440.807@0.23.1440.807" timestamp="1575931849515" />
+    <state width="1398" height="204" key="GridCell.Tab.0.left" timestamp="1575931849515">
+      <screen x="0" y="23" width="1440" height="807" />
+    </state>
+    <state width="1398" height="204" key="GridCell.Tab.0.left/0.23.1440.803@0.23.1440.803" timestamp="1575930389316" />
+    <state width="1398" height="204" key="GridCell.Tab.0.left/0.23.1440.805@0.23.1440.805" timestamp="1575922419738" />
+    <state width="1398" height="204" key="GridCell.Tab.0.left/0.23.1440.807@0.23.1440.807" timestamp="1575931849515" />
+    <state width="1398" height="204" key="GridCell.Tab.0.right" timestamp="1575931849516">
+      <screen x="0" y="23" width="1440" height="807" />
+    </state>
+    <state width="1398" height="204" key="GridCell.Tab.0.right/0.23.1440.803@0.23.1440.803" timestamp="1575930389317" />
+    <state width="1398" height="204" key="GridCell.Tab.0.right/0.23.1440.805@0.23.1440.805" timestamp="1575922419739" />
+    <state width="1398" height="204" key="GridCell.Tab.0.right/0.23.1440.807@0.23.1440.807" timestamp="1575931849516" />
+    <state x="100" y="123" width="1240" height="600" key="dock-window-1" timestamp="1575636646534">
+      <screen x="0" y="23" width="1440" height="805" />
+    </state>
+    <state x="100" y="123" width="1240" height="600" key="dock-window-1/0.23.1440.805@0.23.1440.805" timestamp="1575636646534" />
+    <state x="100" y="123" width="1240" height="600" key="dock-window-2" timestamp="1575636646534">
+      <screen x="0" y="23" width="1440" height="805" />
+    </state>
+    <state x="100" y="123" width="1240" height="600" key="dock-window-2/0.23.1440.805@0.23.1440.805" timestamp="1575636646534" />
+    <state x="301" y="153" width="837" height="540" key="find.popup" timestamp="1575635535807">
+      <screen x="0" y="23" width="1440" height="805" />
+    </state>
+    <state x="301" y="153" width="837" height="540" key="find.popup/0.23.1440.805@0.23.1440.805" timestamp="1575635535807" />
+    <state x="385" y="192" width="670" height="682" key="run.anything.popup" timestamp="1575931898419">
+      <screen x="0" y="23" width="1440" height="807" />
+    </state>
+    <state x="385" y="191" width="670" height="675" key="run.anything.popup/0.23.1440.800@0.23.1440.800" timestamp="1575569012943" />
+    <state x="385" y="192" width="670" height="679" key="run.anything.popup/0.23.1440.803@0.23.1440.803" timestamp="1575930389333" />
+    <state x="385" y="192" width="670" height="680" key="run.anything.popup/0.23.1440.805@0.23.1440.805" timestamp="1575922419769" />
+    <state x="385" y="192" width="670" height="682" key="run.anything.popup/0.23.1440.807@0.23.1440.807" timestamp="1575931898419" />
   </component>
 </project>

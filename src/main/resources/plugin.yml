@@ -1,11 +1,12 @@
 name: HotPotato
-main: me.block2block.hotpotato.main
+main: me.block2block.hotpotato.Main
 version: 1.0-ALPHA
 author: Block2Block
 website: http://forums.raptorpvp.net/
 prefix: Hot Potato
 load: POSTWORLD
-softdepend: [Vault,PlaceholderAPI,NameTagEdit]
+softdepend: [Vault,PlaceholderAPI,NametagEdit]
+api-version: "1.13"
 commands:
   hotpotato:
     description: The main Hot Potato command

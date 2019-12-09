@@ -3,6 +3,7 @@ package me.block2block.hotpotato.entities;
 import com.nametagedit.plugin.NametagEdit;
 import com.nametagedit.plugin.api.data.FakeTeam;
 import me.block2block.hotpotato.Main;
+import me.block2block.hotpotato.kits.KitLoader;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -29,7 +30,7 @@ public class HotPotatoPlayer {
         this.uuid = player.getUniqueId();
         this.name = player.getName();
         this.gameID = gameID;
-        this.kit = Main.getKitLoader().get().Default();
+        this.kit = KitLoader.get().Default();
         ScoreboardManager scoreboardManager = Bukkit.getScoreboardManager();
         Scoreboard scoreboard = scoreboardManager.getNewScoreboard();
         Team red = scoreboard.registerNewTeam("Red");

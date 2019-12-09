@@ -1,6 +1,5 @@
 package me.block2block.hotpotato.listeners;
 
-import me.block2block.hotpotato.Main;
 import me.block2block.hotpotato.entities.HotPotatoPlayer;
 import me.block2block.hotpotato.managers.CacheManager;
 import org.bukkit.ChatColor;
@@ -12,7 +11,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
 
-public class TeamSelectionListener implements Listener {
+public class TeamSelectionListener_1_13 implements Listener {
 
     @EventHandler
     public void onInventoryClick(InventoryClickEvent e) {
@@ -21,13 +20,13 @@ public class TeamSelectionListener implements Listener {
             if (e.getClickedInventory() == null) {
                 return;
             }
-            if (e.getClickedInventory().getName() == null) {
+            if (e.getView().getTitle() == null) {
                 return;
             }
-            if (e.getClickedInventory().getName().equals("")) {
+            if (e.getView().getTitle().equals("")) {
                 return;
             }
-            if (!ChatColor.stripColor(e.getClickedInventory().getName()).equals("Team Selection")) {
+            if (!ChatColor.stripColor(e.getView().getTitle()).equals("Team Selection")) {
                 return;
             }
             HotPotatoPlayer player = CacheManager.getPlayers().get(p.getUniqueId());
@@ -50,13 +49,8 @@ public class TeamSelectionListener implements Listener {
                         } else {
                             CacheManager.getGames().get(player.getGameID()).queueForTeam(player);
                         }
-                        player.getPlayer().closeInventory();
                     } else {
-                        if (Main.getApiVersion()) {
-                            p.playSound(p.getLocation(), Sound.ENTITY_ITEM_BREAK, 100, 2);
-                        } else {
-                            p.playSound(p.getLocation(), Sound.valueOf("ITEM_BREAK"), 100, 2);
-                        }
+                        p.playSound(p.getLocation(), Sound.valueOf("ENTITY_ITEM_BREAK"), 100, 2);
                     }
                 } else if (itemName.equals("Blue")) {
                     if (player.isRed()) {
@@ -65,13 +59,8 @@ public class TeamSelectionListener implements Listener {
                         } else {
                             CacheManager.getGames().get(player.getGameID()).queueForTeam(player);
                         }
-                        player.getPlayer().closeInventory();
                     } else {
-                        if (Main.getApiVersion()) {
-                            p.playSound(p.getLocation(), Sound.ENTITY_ITEM_BREAK, 100, 2);
-                        } else {
-                            p.playSound(p.getLocation(), Sound.valueOf("ITEM_BREAK"), 100, 2);
-                        }
+                        p.playSound(p.getLocation(), Sound.valueOf("ENTITY_ITEM_BREAK"), 100, 2);
                     }
                 } else {
                     return;
