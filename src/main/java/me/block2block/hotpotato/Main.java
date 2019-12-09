@@ -181,10 +181,13 @@ public class Main extends JavaPlugin {
 
         getLogger().info("HotPotato v" + this.getDescription().getVersion() + " has been successfully enabled.");
 
+
+        /* Because this is the first version, the version check need not work (and I need to be able to get the resource ID first).
+
         String version = newVersionCheck();
         if (version != null) {
             getLogger().info("A new version of HotPotato is available on spigot! Download version " + version + " on the Spigot resource page!");
-        }
+        }*/
     }
 
     private void copy(InputStream in, File file) {

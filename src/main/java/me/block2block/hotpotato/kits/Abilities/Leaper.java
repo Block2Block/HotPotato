@@ -31,7 +31,7 @@ public class Leaper implements Listener {
                             e.getPlayer().setAllowFlight(true);
                             e.getPlayer().setFlying(false);
                         }
-                    }.runTaskLater(Main.getInstance(), 10);
+                    }.runTaskLater(Main.getInstance(), 15);
                 }
             }
         }

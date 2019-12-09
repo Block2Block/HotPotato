@@ -6,7 +6,7 @@
 
     <groupId>me.block2block</groupId>
     <artifactId>HotPotato</artifactId>
-    <version>1.0-ALPHA</version>
+    <version>1.0-BETA</version>
 
     <build>
         <plugins>

@@ -1,6 +1,6 @@
 name: HotPotato
 main: me.block2block.hotpotato.Main
-version: 1.0-ALPHA
+version: "1.0-BETA"
 author: Block2Block
 website: http://forums.raptorpvp.net/
 prefix: Hot Potato
